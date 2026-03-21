@@ -42,6 +42,48 @@ a {
   text-decoration: none;
 }
 
+.page {
+  width: 100dvw;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.gap {
+  gap: 0.5rem;
+}
+
+.link-btn {
+  width: 100px;
+  border: 1px solid black;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn {
+  width: 100px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
