@@ -7,8 +7,10 @@ import { generateCategoryRule } from "@/lib/category-rules";
 import { sanitizeTextInput } from "@/utils/transactions";
 
 // TO DO
-// for each transaction - we should call generateCategoryRule to generate a rule pattern
-// store that pattern in the db in a category_rules table with the category id
+// when a user changes changes an existing category - we want to make sure we handle that
+// take in existing categoryId as well
+// when its null - we handle normally
+// when its not null - we trigger the recategorize function
 export async function categorizeTransaction(
   transactionId: string,
   categoryId: string,

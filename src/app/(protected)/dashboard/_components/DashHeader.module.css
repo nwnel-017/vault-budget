@@ -1,0 +1,20 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid var(--foreground);
+  padding: 1rem;
+}
+
+.categoryBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  gap: 0.5rem;
+  border: 1px solid var(--foreground);
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  max-height: 20dvh;
+  padding: 0.5rem;
+}

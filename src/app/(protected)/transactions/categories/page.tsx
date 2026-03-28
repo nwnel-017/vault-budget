@@ -10,8 +10,10 @@ export default async function ReviewTransactions() {
   });
 
   return (
-    <section className={styles.page}>
-      <CategoryGrid categories={categories} />
-    </section>
+    <div className="page">
+      <section className={styles.page}>
+        <CategoryGrid categories={categories} />
+      </section>
+    </div>
   );
 }

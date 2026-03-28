@@ -33,6 +33,11 @@ export default function NavBar() {
             </Link>
           </li>
           <li>
+            <Link href="/goals" className={styles.navItem}>
+              Savings Goals
+            </Link>
+          </li>
+          <li>
             <Link href="/settings" className={styles.navItem}>
               Settings
             </Link>
