@@ -12,24 +12,19 @@ datasource db {
   provider = "postgresql"
 }
 
-model Category {
-  id        String   @id @default(cuid())
-  title     String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  id                String            @id
+  name              String
+  email             String
+  emailVerified     Boolean           @default(false)
+  image             String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  transactions      Transaction[]
+  categories        Category[]
+  transaction_rules TransactionRule[]
 
   @@unique([email])
   @@map("user")
@@ -81,4 +76,52 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Transaction {
+    id             String    @id @default(cuid())
+    user_id        String
+    user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    merchant       String
+    category_id    String?
+    category       Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+    amount         Decimal
+    date_purchased DateTime
+    created_at     DateTime  @default(now())
+    updated_at     DateTime  @updatedAt
+
+    @@index([user_id])
+    @@index([category_id])
+    @@map("transaction")
+}
+
+model Category {
+    id                String            @id @default(cuid())
+    user_id           String
+    user              User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    category_name     String
+    transactions      Transaction[]
+    transaction_rules TransactionRule[]
+    created_at        DateTime          @default(now())
+    updated_at        DateTime          @updatedAt
+
+    @@index([user_id])
+    @@map("category")
+}
+
+model TransactionRule {
+    id          String   @id @default(cuid())
+    user_id     String
+    user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    pattern     String
+    category_id String
+    category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+
+    @@unique([user_id, pattern])
+    @@index([user_id])
+    @@index([category_id])
+    @@index([pattern])
+    @@map("transaction_rule")
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { signup } from "../actions";
-import SignupForm from "../../../components/signup-form";
+import SignupForm from "../_components/signup-form";
 
 export default function Signup() {
   async function login(e: React.SubmitEvent) {}

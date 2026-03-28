@@ -1,6 +1,8 @@
 import { auth } from "../../lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import NavBar from "@/components/nav-bar";
+import styles from "./layout.module.css";
 
 export default async function RootLayout({
   children,
@@ -15,5 +17,10 @@ export default async function RootLayout({
     redirect("/login");
   }
 
-  return <div>{children}</div>;
+  return (
+    <div className={styles.layout}>
+      <NavBar />
+      <main className={styles.content}>{children}</main>
+    </div>
+  );
 }

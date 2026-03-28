@@ -16,6 +16,19 @@
   justify-content: center;
   font-family: var(--font-geist-sans);
   background-color: var(--background);
+  position: relative;
+}
+
+.nav-bar {
+  position: absolute;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  width: 30rem;
+  border: 1px solid black;
 }
 
 .main {
