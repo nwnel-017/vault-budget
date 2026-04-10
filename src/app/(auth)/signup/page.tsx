@@ -10,7 +10,7 @@ export default function Signup() {
       <div className="flex-center">
         <h1>Signup</h1>
       </div>
-      <SignupForm signupAction={signup} />
+      <SignupForm />
       <div className="space-between gap">
         <Link href="login" className="link-btn">
           Login

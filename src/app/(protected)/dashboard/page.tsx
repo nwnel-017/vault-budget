@@ -1,39 +1,67 @@
 import db from "../../../lib/prisma";
 import { requireSession } from "@/lib/auth-helpers";
-import ReviewTransactions from "../transactions/categories/page";
-import Transactions from "../transactions/review/_components/Transactions";
+import TopCategories from "./_components/TopCategories";
 import DashHeader from "./_components/DashHeader";
+import RangeSelector from "./_components/RangeSelector";
+import styles from "./page.module.css";
 
-// /Findings - Review this feedback
+type DashboardRange = "week" | "month" | "year";
 
-//   1. Medium: “Top category” is showing a negative amount for spending, which is likely the wrong user-facing value. In /C:/xampp/htdocs/budgeting-app/src/app/
-//      (protected)/dashboard/page.tsx:79, amountSpent is built from the summed negative transaction total, and in /C:/xampp/htdocs/budgeting-app/src/app/
-//      (protected)/dashboard/_components/DashHeader.tsx:31 it is rendered directly with formatFunds(). That means a label like Top category: Groceries
-//      (-$245.00), which reads as a signed balance, not “amount spent.” If the intent is “spent,” this should usually be displayed as a positive absolute value.
-//   2. Low: The dashboard still carries dead code and misleading comments. /C:/xampp/htdocs/budgeting-app/src/app/(protected)/dashboard/page.tsx:3 imports
-//      ReviewTransactions but never uses it, and the TODO at /C:/xampp/htdocs/budgeting-app/src/app/(protected)/dashboard/page.tsx:7 says user filtering is
-//      missing even though user_id: userId is now present at /C:/xampp/htdocs/budgeting-app/src/app/(protected)/dashboard/page.tsx:28. That increases
-//      maintenance noise and makes future review harder.
-//   3. Low: The main transaction query is broader than necessary. In /C:/xampp/htdocs/budgeting-app/src/app/(protected)/dashboard/page.tsx:22, include:
-//      { category: true } loads full category records for every monthly transaction, but the page only uses category.id and category.category_name later at /C:/
-//      xampp/htdocs/budgeting-app/src/app/(protected)/dashboard/page.tsx:119. Switching to select for just the fields you render will reduce payload size and
-//      keep the query cleaner.
-export default async function Dashboard() {
+function getSelectedRange(
+  rangeValue: string | string[] | undefined,
+): DashboardRange {
+  if (
+    rangeValue === "week" ||
+    rangeValue === "month" ||
+    rangeValue === "year"
+  ) {
+    return rangeValue;
+  }
+
+  return "month";
+}
+
+function getRangeStartDate(selectedRange: DashboardRange, endDate: Date) {
+  const startDate = new Date(endDate);
+
+  if (selectedRange === "week") {
+    startDate.setDate(startDate.getDate() - 7);
+    return startDate;
+  }
+
+  if (selectedRange === "year") {
+    startDate.setFullYear(startDate.getFullYear() - 1);
+    return startDate;
+  }
+
+  startDate.setMonth(startDate.getMonth() - 1);
+  return startDate;
+}
+
+// TO DO - review code and improve logic
+// fix UI - on full screens categories  can expand
+export default async function Dashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ range?: string | string[] }>;
+}) {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
+  const resolvedSearchParams = await searchParams;
+  const selectedRange = getSelectedRange(resolvedSearchParams.range); // gets date interval for analytics
 
   if (!userId) {
     return null;
   }
 
   const today = new Date();
-  const oneMonthAgo = new Date(today);
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+  const startDate = getRangeStartDate(selectedRange, today); // the date where we start the calculations for the analytics
 
+  // joining transactions to categories to get all transactions with categories for date interval
   const transactions = await db.transaction.findMany({
     where: {
       date_purchased: {
-        gte: oneMonthAgo,
+        gte: startDate,
         lte: today,
       },
       user_id: userId,
@@ -46,54 +74,49 @@ export default async function Dashboard() {
     },
   });
 
-  // we need to get the user id
-  const topCategorySpend = await db.transaction.groupBy({
-    by: ["category_id"],
-    where: {
-      user_id: userId,
-      category_id: {
-        not: null,
-      },
-      amount: {
-        lt: 0,
-      },
-      date_purchased: {
-        gte: oneMonthAgo,
-        lte: today,
-      },
-    },
-    _sum: {
-      amount: true,
-    },
-    orderBy: {
-      _sum: {
-        amount: "asc",
-      },
-    },
-    take: 1,
-  });
+  // spending total for each category
+  const spendingByCategory = transactions.reduce<
+    Map<string, { id: string; categoryName: string; totalSpent: number }> // TO DO - clean up return type
+  >((categoryTotals, transaction) => {
+    const amount = Number(transaction.amount);
 
-  const topCategoryId = topCategorySpend[0]?.category_id;
-  const topCategoryAmount = topCategorySpend[0]?._sum.amount;
+    if (Number.isNaN(amount) || amount >= 0 || !transaction.category) {
+      return categoryTotals;
+    }
 
-  const topCategoryRecord = topCategoryId
-    ? await db.category.findUnique({
-        where: {
-          id: topCategoryId,
-        },
-        select: {
-          category_name: true,
-        },
-      })
-    : null;
+    const existingCategory = categoryTotals.get(transaction.category.id);
+    const spentAmount = Math.abs(amount);
 
-  const topCategory = topCategoryRecord
+    if (existingCategory) {
+      existingCategory.totalSpent += spentAmount;
+      return categoryTotals;
+    }
+
+    categoryTotals.set(transaction.category.id, {
+      id: transaction.category.id,
+      categoryName: transaction.category.category_name,
+      totalSpent: spentAmount,
+    });
+
+    return categoryTotals;
+  }, new Map());
+
+  // only grabs the first 10 categories with the most spending
+  const topCategories = Array.from(spendingByCategory.values())
+    .sort((firstCategory, secondCategory) => {
+      return secondCategory.totalSpent - firstCategory.totalSpent;
+    })
+    .slice(0, 10);
+
+  // top category to be displayed in the header
+  const topCategory = topCategories[0]
     ? {
-        categoryName: topCategoryRecord.category_name,
-        amountSpent: Number(topCategoryAmount ?? 0),
+        categoryName: topCategories[0].categoryName,
+        amountSpent: topCategories[0].totalSpent,
       }
     : null;
 
+  // total spent for the date range
   const totalSpent = transactions.reduce((total, transaction) => {
     const amount = Number(transaction.amount);
 
@@ -104,6 +127,7 @@ export default async function Dashboard() {
     return total + amount;
   }, 0);
 
+  // total earned for the date range
   const totalEarned = transactions.reduce((total, transaction) => {
     const amount = Number(transaction.amount);
 
@@ -116,25 +140,15 @@ export default async function Dashboard() {
 
   return (
     <div>
+      <div className={styles.headingBlock}>
+        <RangeSelector selectedRange={selectedRange} />
+      </div>
       <DashHeader
         totalSpent={totalSpent}
         totalEarned={totalEarned}
         topCategory={topCategory}
       />
-      <Transactions
-        transactions={transactions.map((transaction) => ({
-          id: transaction.id,
-          amount: transaction.amount.toString(),
-          merchant: transaction.merchant,
-          date_purchased: transaction.date_purchased.toISOString(),
-          category: transaction.category
-            ? {
-                id: transaction.category.id,
-                category_name: transaction.category.category_name,
-              }
-            : null,
-        }))}
-      />
+      <TopCategories categories={topCategories} />
     </div>
   );
 }

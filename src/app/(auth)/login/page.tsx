@@ -2,13 +2,13 @@ import Link from "next/link";
 import LoginForm from "../_components/login-form";
 import { login } from "../actions";
 
-export default function Login() {
+export default function Login({ login }: { login: any }) {
   return (
     <div>
       <div className="flex-center">
         <h1>Login</h1>
       </div>
-      <LoginForm loginAction={login} />
+      <LoginForm />
       <div className="space-between gap">
         <Link href="signup" className="link-btn">
           Signup

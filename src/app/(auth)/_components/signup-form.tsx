@@ -18,11 +18,11 @@ export default function SignupForm() {
 
     const res = await signup(email, password, name);
 
-    if (res.error) {
-      setError(res.error);
+    if (!res.success) {
+      setError(res.message);
+    } else {
+      router.push("/login");
     }
-
-    router.push("/login");
   }
 
   return (

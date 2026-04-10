@@ -3,6 +3,7 @@
 import { auth } from "../../lib/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { success } from "better-auth";
 
 export async function login(email: string, password: string) {
   if (!email || !password) {
@@ -13,15 +14,13 @@ export async function login(email: string, password: string) {
     const result = await auth.api.signInEmail({
       body: { email, password },
     });
-
-    // if (result) {
-    //   throw new Error(result.error.message);
-    // }
-
-    // On successful login, redirect to dashboard or home
+    return { success: true, message: "Login successful" };
   } catch (error) {
     console.error("Login error:", error);
-    throw error;
+    return {
+      success: false,
+      message: "Login failed. Please check your credentials and try again.",
+    };
   }
 }
 
@@ -35,6 +34,8 @@ export async function signup(email: string, password: string, name: string) {
       body: { email, password, name },
     });
 
+    return { success: true, message: "Signup successful" };
+
     // if (result.error) {
     //   throw new Error(result.error.message);
     // }
@@ -42,7 +43,7 @@ export async function signup(email: string, password: string, name: string) {
     // On successful signup, redirect to login or home
   } catch (error) {
     console.error("Signup error:", error);
-    throw error;
+    return { success: false, message: "Signup failed. Please try again." };
   }
 }
 

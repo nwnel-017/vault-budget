@@ -81,6 +81,16 @@
   cursor: pointer;
 }
 
+.changeCategoryButton {
+  border: 1px solid #1f1f1f;
+  border-radius: 999px;
+  background-color: rgb(62, 186, 105);
+  color: white;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  cursor: pointer;
+}
+
 .addCategoryButton:hover {
   background-color: #1f1f1f;
   color: #ffffff;

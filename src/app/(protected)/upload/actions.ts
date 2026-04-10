@@ -4,58 +4,64 @@ import { Readable } from "node:stream";
 import csv from "csv-parser";
 import { requireSession } from "@/lib/auth-helpers";
 import { matchTransactionCategory } from "@/lib/category-rules";
+import { parseValidTransactionRow } from "@/lib/csv-helpers";
 import db from "@/lib/prisma";
 import {
   fileValidationErrorResult,
-  normalizeAmountValue,
-  normalizeTextValue,
   sanitizeHeader,
   validateCsvFile,
 } from "@/utils/transactions";
 
-type SelectedUploadColumns = {
+// TO DO - move these to types
+export type SelectedUploadColumns = {
   merchantType: string;
   amount: string;
   transactionDate: string;
 };
 
-type ParsedTransactionRow = {
+export type ParsedTransactionRow = {
   merchantType: string;
   amount: number;
   transactionDate: Date;
 };
 
-function parseValidTransactionRow(
-  row: Record<string, unknown>,
-  selectedColumns: SelectedUploadColumns,
-): ParsedTransactionRow | null {
-  const merchantType = normalizeTextValue(row[selectedColumns.merchantType]);
-  const amountValue = normalizeAmountValue(row[selectedColumns.amount]);
-  const transactionDateValue = normalizeTextValue(
-    row[selectedColumns.transactionDate],
-  );
+// this was moved to @lib
+// takes in a row from the csv and the selected column mappings
+// function parseValidTransactionRow(
+//   row: Record<string, unknown>,
+//   selectedColumns: SelectedUploadColumns,
+// ): ParsedTransactionRow | null {
+//   // look up the values in the row and normalize
+//   const merchantType = normalizeTextValue(row[selectedColumns.merchantType]);
+//   const amountValue = normalizeAmountValue(row[selectedColumns.amount]);
+//   const transactionDateValue = normalizeTextValue(
+//     row[selectedColumns.transactionDate],
+//   );
 
-  if (!merchantType || !amountValue || !transactionDateValue) {
-    return null;
-  }
+//   if (!merchantType || !amountValue || !transactionDateValue) {
+//     return null;
+//   }
 
-  const amount = Number(amountValue);
-  const transactionDate = new Date(transactionDateValue);
+//   // TO DO - handle invalid amounts and dates here
+//   const amount = Number(amountValue);
+//   const transactionDate = new Date(transactionDateValue);
 
-  if (!Number.isFinite(amount) || Number.isNaN(transactionDate.getTime())) {
-    return null;
-  }
+//   if (!Number.isFinite(amount) || Number.isNaN(transactionDate.getTime())) {
+//     return null;
+//   }
 
-  return {
-    merchantType,
-    amount,
-    transactionDate,
-  };
-}
+//   return {
+//     merchantType,
+//     amount,
+//     transactionDate,
+//   };
+// }
 
+// function to validate file and return the normalized headers
 export async function normalizeFile(form: FormData) {
   const sessionResult = await requireSession();
 
+  // validate the session
   if (sessionResult.error) {
     return fileValidationErrorResult(sessionResult.error);
   }
@@ -66,6 +72,9 @@ export async function normalizeFile(form: FormData) {
     return fileValidationErrorResult(fileResult.error ?? "No file");
   }
 
+  // we just want to retrieve the headers of the csv file
+  // we will just grab the first line and normalize
+  // either retrieve the headers or return an error if we are unable to read the file
   try {
     const chunk = await fileResult.file.slice(0, 1024).text();
     const firstLine = chunk.split(/\r?\n/)[0];
@@ -88,13 +97,15 @@ export async function normalizeFile(form: FormData) {
   }
 }
 
-// TO DO - review and see if we can refactor
+// uploads the entire file
+// takes in the form and the selected column mappings
 export async function uploadInput(
   form: FormData,
   merchantTypeColumn: string,
   amountColumn: string,
   transactionDateColumn: string,
 ) {
+  // validate session
   const sessionResult = await requireSession();
 
   if (sessionResult.error) {
@@ -105,6 +116,7 @@ export async function uploadInput(
     };
   }
 
+  // validate the file
   const fileResult = validateCsvFile(form);
 
   if (!fileResult || fileResult.error || !fileResult.file) {
@@ -115,6 +127,7 @@ export async function uploadInput(
     };
   }
 
+  // validate input column selections
   const selectedColumns = {
     merchantType: sanitizeHeader(merchantTypeColumn),
     amount: sanitizeHeader(amountColumn),
@@ -133,6 +146,8 @@ export async function uploadInput(
     };
   }
 
+  // parse the file
+  // add parsed rows to parsedRows array, keep track of skipped rows
   try {
     const arrayBuffer = await fileResult.file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
@@ -160,32 +175,47 @@ export async function uploadInput(
         .on("error", reject);
     });
 
+    // check user id in session
+    // TO DO - do this check before
     const userId = sessionResult.session?.user.id;
     if (!userId) {
       return fileValidationErrorResult("Missing user id in session");
     }
 
+    // find transaction rules for the user
     const userTransactionRules = await db.transactionRule.findMany({
       where: {
         user_id: userId,
       },
       select: {
+        id: true,
         pattern: true,
         category_id: true,
       },
     });
+    const sortedUserTransactionRules = userTransactionRules
+      .filter((rule) => rule.pattern)
+      .sort((a, b) => b.pattern.length - a.pattern.length);
 
+    // insert parsed transactions
+    // for each row - we call matchTransactionCategory to find a category match
+    // if no category match is found - category = null
     await db.transaction.createMany({
-      data: parsedRows.map((row) => ({
-        merchant: row.merchantType,
-        amount: row.amount,
-        date_purchased: row.transactionDate,
-        user_id: userId,
-        category_id: matchTransactionCategory(
+      data: parsedRows.map((row) => {
+        const matchedRule = matchTransactionCategory(
           row.merchantType,
-          userTransactionRules,
-        ),
-      })),
+          sortedUserTransactionRules,
+        );
+
+        return {
+          merchant: row.merchantType,
+          amount: row.amount,
+          date_purchased: row.transactionDate,
+          user_id: userId,
+          category_id: matchedRule?.category_id ?? null,
+          transaction_rule_id: matchedRule?.id ?? null,
+        };
+      }),
     });
 
     return {

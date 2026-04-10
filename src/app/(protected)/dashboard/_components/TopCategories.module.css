@@ -1,0 +1,65 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* width: min(100%, 90dvw); */
+  max-width: 90dvw;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid var(--foreground);
+  border-radius: 0.75rem;
+  background-color: var(--background);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.gridWrapper {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.gridHeader,
+.gridRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+}
+
+.gridHeader {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--foreground) 20%, transparent);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.gridBody {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.gridRow {
+  padding: 0.875rem 0;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.gridRow:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.amount {
+  font-weight: 700;
+}

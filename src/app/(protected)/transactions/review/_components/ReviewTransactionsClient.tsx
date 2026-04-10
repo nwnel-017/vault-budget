@@ -98,7 +98,14 @@ export default function ReviewTransactionsClient({
                   <span>{formattedDate}</span>
                   <span>
                     {transaction.category ? (
-                      transaction.category.category_name
+                      // transaction.category.category_name
+                      <button
+                        className={styles.changeCategoryButton}
+                        type="button"
+                        onClick={() => selectTransaction(transaction.id)}
+                      >
+                        {transaction.category.category_name}
+                      </button>
                     ) : (
                       <button
                         className={styles.addCategoryButton}

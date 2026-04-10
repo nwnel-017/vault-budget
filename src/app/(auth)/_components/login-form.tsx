@@ -17,11 +17,11 @@ export default function LoginForm() {
 
     const res = await login(email, password);
 
-    if (res.error) {
-      setError(res.error);
+    if (!res.success) {
+      setError(res?.message || "Login failed. Please try again.");
+    } else {
+      router.push("/dashboard");
     }
-
-    router.push("/dashboard");
   }
 
   return (

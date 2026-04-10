@@ -79,19 +79,22 @@ model Verification {
 }
 
 model Transaction {
-    id             String    @id @default(cuid())
-    user_id        String
-    user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-    merchant       String
-    category_id    String?
-    category       Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
-    amount         Decimal
-    date_purchased DateTime
-    created_at     DateTime  @default(now())
-    updated_at     DateTime  @updatedAt
+    id                  String           @id @default(cuid())
+    user_id             String
+    user                User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    merchant            String
+    category_id         String?
+    category            Category?        @relation(fields: [category_id], references: [id], onDelete: SetNull)
+    transaction_rule_id String?
+    transaction_rule    TransactionRule? @relation(fields: [transaction_rule_id], references: [id], onDelete: SetNull)
+    amount              Decimal
+    date_purchased      DateTime
+    created_at          DateTime         @default(now())
+    updated_at          DateTime         @updatedAt
 
     @@index([user_id])
     @@index([category_id])
+    @@index([transaction_rule_id])
     @@map("transaction")
 }
 
@@ -102,6 +105,7 @@ model Category {
     category_name     String
     transactions      Transaction[]
     transaction_rules TransactionRule[]
+    goals             CategoryGoal[]
     created_at        DateTime          @default(now())
     updated_at        DateTime          @updatedAt
 
@@ -109,15 +113,28 @@ model Category {
     @@map("category")
 }
 
-model TransactionRule {
+model CategoryGoal {
     id          String   @id @default(cuid())
-    user_id     String
-    user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-    pattern     String
     category_id String
     category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+    amount      Decimal
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
+
+    @@unique([category_id])
+    @@map("category_goal")
+}
+
+model TransactionRule {
+    id           String        @id @default(cuid())
+    user_id      String
+    user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    pattern      String
+    category_id  String
+    category     Category      @relation(fields: [category_id], references: [id], onDelete: Cascade)
+    transactions Transaction[]
+    created_at   DateTime      @default(now())
+    updated_at   DateTime      @updatedAt
 
     @@unique([user_id, pattern])
     @@index([user_id])
