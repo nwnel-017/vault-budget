@@ -1,68 +1,82 @@
 import db from "../../../lib/prisma";
 import { requireSession } from "@/lib/auth-helpers";
+import { getDashboardSpendingSummary } from "@/lib/dashboard-calculations";
+import {
+  formatDateInputValue,
+  formatSelectedDateLabel,
+  getEndDateExclusive,
+  getSelectedDateRange,
+  getDefaultDateRange,
+} from "@/utils/date";
 import TopCategories from "./_components/TopCategories";
 import DashHeader from "./_components/DashHeader";
 import RangeSelector from "./_components/RangeSelector";
 import styles from "./page.module.css";
 
-type DashboardRange = "week" | "month" | "year";
-
-function getSelectedRange(
-  rangeValue: string | string[] | undefined,
-): DashboardRange {
-  if (
-    rangeValue === "week" ||
-    rangeValue === "month" ||
-    rangeValue === "year"
-  ) {
-    return rangeValue;
-  }
-
-  return "month";
+function getSearchParamValue(value: string | string[] | undefined) {
+  return typeof value === "string" ? value : null;
 }
 
-function getRangeStartDate(selectedRange: DashboardRange, endDate: Date) {
-  const startDate = new Date(endDate);
-
-  if (selectedRange === "week") {
-    startDate.setDate(startDate.getDate() - 7);
-    return startDate;
-  }
-
-  if (selectedRange === "year") {
-    startDate.setFullYear(startDate.getFullYear() - 1);
-    return startDate;
-  }
-
-  startDate.setMonth(startDate.getMonth() - 1);
-  return startDate;
-}
-
-// TO DO - review code and improve logic
-// fix UI - on full screens categories  can expand
+// TO DO - spending calculation logic is off - we need to investigate
+// make sure the same date column (effective date / posting date) are used across all files - could that be the issue?
+// we should make the user select effective date
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: Promise<{ range?: string | string[] }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
-  const resolvedSearchParams = await searchParams;
-  const selectedRange = getSelectedRange(resolvedSearchParams.range); // gets date interval for analytics
 
   if (!userId) {
     return null;
   }
 
-  const today = new Date();
-  const startDate = getRangeStartDate(selectedRange, today); // the date where we start the calculations for the analytics
+  const resolvedSearchParams = await searchParams;
 
-  // joining transactions to categories to get all transactions with categories for date interval
+  let startDateString: string | null = null;
+  let endDateString: string | null = null;
+  let startDate: Date | null = null;
+  let endDate: Date | null = null;
+
+  startDateString = getSearchParamValue(resolvedSearchParams.start);
+  endDateString = getSearchParamValue(resolvedSearchParams.end);
+
+  if (!startDateString || !endDateString) {
+    const defaultRange = getDefaultDateRange();
+
+    if (!defaultRange.startDate || !defaultRange.endDate) {
+      return null;
+    }
+
+    startDateString = formatDateInputValue(defaultRange.startDate);
+    endDateString = formatDateInputValue(defaultRange.endDate);
+  }
+
+  const selectedDateRange = getSelectedDateRange(
+    startDateString,
+    endDateString,
+  );
+  startDate = selectedDateRange.startDate;
+  endDate = selectedDateRange.endDate;
+
+  if (!startDate || !endDate) {
+    return null;
+  }
+
+  const endDateExclusive = getEndDateExclusive(endDate);
+  const selectedLabel = formatSelectedDateLabel(startDate, endDate);
+
+  if (!endDateExclusive) {
+    return null;
+  }
+
+  // all transactions and their corresponding categories
   const transactions = await db.transaction.findMany({
     where: {
       date_purchased: {
         gte: startDate,
-        lte: today,
+        lt: endDateExclusive,
       },
       user_id: userId,
     },
@@ -74,74 +88,17 @@ export default async function Dashboard({
     },
   });
 
-  // spending total for each category
-  const spendingByCategory = transactions.reduce<
-    Map<string, { id: string; categoryName: string; totalSpent: number }> // TO DO - clean up return type
-  >((categoryTotals, transaction) => {
-    const amount = Number(transaction.amount);
-
-    if (Number.isNaN(amount) || amount >= 0 || !transaction.category) {
-      return categoryTotals;
-    }
-
-    const existingCategory = categoryTotals.get(transaction.category.id);
-    const spentAmount = Math.abs(amount);
-
-    if (existingCategory) {
-      existingCategory.totalSpent += spentAmount;
-      return categoryTotals;
-    }
-
-    categoryTotals.set(transaction.category.id, {
-      id: transaction.category.id,
-      categoryName: transaction.category.category_name,
-      totalSpent: spentAmount,
-    });
-
-    return categoryTotals;
-  }, new Map());
-
-  // only grabs the first 10 categories with the most spending
-  const topCategories = Array.from(spendingByCategory.values())
-    .sort((firstCategory, secondCategory) => {
-      return secondCategory.totalSpent - firstCategory.totalSpent;
-    })
-    .slice(0, 10);
-
-  // top category to be displayed in the header
-  const topCategory = topCategories[0]
-    ? {
-        categoryName: topCategories[0].categoryName,
-        amountSpent: topCategories[0].totalSpent,
-      }
-    : null;
-
-  // total spent for the date range
-  const totalSpent = transactions.reduce((total, transaction) => {
-    const amount = Number(transaction.amount);
-
-    if (Number.isNaN(amount) || amount > 0) {
-      return total;
-    }
-
-    return total + amount;
-  }, 0);
-
-  // total earned for the date range
-  const totalEarned = transactions.reduce((total, transaction) => {
-    const amount = Number(transaction.amount);
-
-    if (Number.isNaN(amount) || amount < 0) {
-      return total;
-    }
-
-    return total + amount;
-  }, 0);
+  const { topCategories, topCategory, totalSpent, totalEarned } =
+    getDashboardSpendingSummary(transactions);
 
   return (
     <div>
       <div className={styles.headingBlock}>
-        <RangeSelector selectedRange={selectedRange} />
+        <RangeSelector
+          startDate={startDate}
+          endDate={endDate}
+          selectedLabel={selectedLabel}
+        />
       </div>
       <DashHeader
         totalSpent={totalSpent}
