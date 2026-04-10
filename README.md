@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VaultBudget
 
-## Getting Started
+A full-stack personal finance application built to help users organize spending, review imported transactions, assign categories, and track category-based goals over time.
 
-First, run the development server:
+This project is designed around a practical budgeting workflow: upload transaction data, review and categorize spending, monitor top spending categories, and set goals to stay on track.
+
+## Overview
+
+The Budgeting App gives users a structured way to manage transaction data and turn it into useful financial insights. Users can import CSV files, categorize transactions, and view a dashboard that summarizes spending activity across different time ranges. Over time, a built-in rule engine learns user behavior to auto-categorize future transactions. When complete, this app will provide a free-tier account and offer premium subscriptions.
+
+## Features
+
+- Secure user authentication with email and password
+- Dashboard and budgeting analytics
+- CSV transaction upload with configurable column mapping
+- Transaction review for assigning categories
+- Category management for organizing spending
+- Top spending category insights
+- Category-based budgeting and goal tracking
+
+## Stack Summary
+
+- Next.js
+- React
+- TypeScript
+- Better Auth
+- PostgreSQL
+- Prisma ORM
+
+## Current Budgeting Workflow
+
+1. A user signs up or logs in
+2. The user uploads a CSV file of transaction data
+3. The app normalizes the file and allows column selection for merchant, amount, and date
+4. Transactions are stored and reviewed - rule engine auto categorizes if rules exist
+5. The user assigns or updates categories and improve auto-categorizaton with the rule engine.
+6. The dashboard summarizes spending patterns
+7. The user can define category goals and track spending against them
+
+## Local Development
+
+### Prerequisites
+
+- Node.js
+- PostgreSQL
+- npm
+
+### Run the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Lint the project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Build for production
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Future Improvements
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Smarter automatic transaction categorization rules
+- More advanced charts and visual reporting
+- Recurring transaction detection
+- Budget alerts and notifications
+- Expanded account and transaction filtering
+- Improved settings and profile management
+- Improved UI and UX
+- Account subscriptions through Stripe's API
