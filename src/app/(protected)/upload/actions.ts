@@ -25,38 +25,6 @@ export type ParsedTransactionRow = {
   transactionDate: Date;
 };
 
-// this was moved to @lib
-// takes in a row from the csv and the selected column mappings
-// function parseValidTransactionRow(
-//   row: Record<string, unknown>,
-//   selectedColumns: SelectedUploadColumns,
-// ): ParsedTransactionRow | null {
-//   // look up the values in the row and normalize
-//   const merchantType = normalizeTextValue(row[selectedColumns.merchantType]);
-//   const amountValue = normalizeAmountValue(row[selectedColumns.amount]);
-//   const transactionDateValue = normalizeTextValue(
-//     row[selectedColumns.transactionDate],
-//   );
-
-//   if (!merchantType || !amountValue || !transactionDateValue) {
-//     return null;
-//   }
-
-//   // TO DO - handle invalid amounts and dates here
-//   const amount = Number(amountValue);
-//   const transactionDate = new Date(transactionDateValue);
-
-//   if (!Number.isFinite(amount) || Number.isNaN(transactionDate.getTime())) {
-//     return null;
-//   }
-
-//   return {
-//     merchantType,
-//     amount,
-//     transactionDate,
-//   };
-// }
-
 // function to validate file and return the normalized headers
 export async function normalizeFile(form: FormData) {
   const sessionResult = await requireSession();
@@ -200,6 +168,8 @@ export async function uploadInput(
     // insert parsed transactions
     // for each row - we call matchTransactionCategory to find a category match
     // if no category match is found - category = null
+
+    // TO DO - when a transaction rule is used - we increment matches
     await db.transaction.createMany({
       data: parsedRows.map((row) => {
         const matchedRule = matchTransactionCategory(

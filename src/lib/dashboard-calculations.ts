@@ -1,6 +1,9 @@
 type TransactionCategory = {
   id: string;
   category_name: string;
+  goals?: {
+    amount: unknown;
+  }[];
 };
 
 type DashboardTransaction = {
@@ -12,6 +15,8 @@ type CategorySpending = {
   id: string;
   categoryName: string;
   totalSpent: number;
+  goalAmount: number | null;
+  goalDifference: number | null;
 };
 
 type TopCategory = {
@@ -22,6 +27,7 @@ type TopCategory = {
 // TO DO
 // we need to investigate spending calculation logic for total spent and total earned
 // something is off with the bounds
+// can we simplify this?
 export function getDashboardSpendingSummary(
   transactions: DashboardTransaction[] | null | undefined,
 ) {
@@ -44,6 +50,7 @@ export function getDashboardSpendingSummary(
       const amount = Number(transaction?.amount);
       const categoryId = transaction?.category?.id;
       const categoryName = transaction?.category?.category_name;
+      const goalAmount = transaction?.category?.goals?.[0]?.amount;
 
       if (Number.isNaN(amount) || amount >= 0 || !categoryId || !categoryName) {
         return categoryTotals;
@@ -57,14 +64,32 @@ export function getDashboardSpendingSummary(
         return categoryTotals;
       }
 
+      const parsedGoalAmount =
+        goalAmount === undefined || goalAmount === null
+          ? null
+          : Number(goalAmount);
+
       categoryTotals.set(categoryId, {
         id: categoryId,
         categoryName,
         totalSpent: spentAmount,
+        goalAmount:
+          parsedGoalAmount === null || Number.isNaN(parsedGoalAmount)
+            ? null
+            : parsedGoalAmount,
+        goalDifference: null,
       });
 
       return categoryTotals;
     }, new Map());
+
+    spendingByCategory.forEach((category) => {
+      if (category.goalAmount === null) {
+        return;
+      }
+
+      category.goalDifference = category.goalAmount - category.totalSpent; // positive if user has spent below their goal
+    });
 
     // categories sorted by total spent in descending order
     const topCategories = Array.from(spendingByCategory.values()).sort(

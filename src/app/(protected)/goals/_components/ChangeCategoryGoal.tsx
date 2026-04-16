@@ -33,7 +33,7 @@ export default function ChangeCategoryGoal({
     return null;
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const sanitizedAmount = amount.trim();

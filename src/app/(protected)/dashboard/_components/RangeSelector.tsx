@@ -1,5 +1,11 @@
 import styles from "./RangeSelector.module.css";
-import { formatDateInputValue } from "@/utils/date";
+import {
+  formatDateInputValue,
+  getFirstDayLastMonth,
+  getFirstDayNextMonth,
+  getLastDayLastMonth,
+  getLastDayNextMonth,
+} from "@/utils/date";
 
 type RangeSelectorProps = {
   startDate: Date | null;
@@ -16,24 +22,23 @@ export default function RangeSelector({
     return null;
   }
 
-  // TO DO - move this functionality to a helper function to get previous month interval
-
   // get range dates for previous and next month buttons
-  const previousRangeStart: Date = new Date(startDate);
-  const previousRangeEnd: Date = new Date(endDate);
-  previousRangeStart.setMonth(startDate.getMonth() - 1);
-  previousRangeEnd.setMonth(endDate.getMonth() - 1);
-
-  const nextRangeStart: Date = new Date(startDate);
-  const nextRangeEnd: Date = new Date(endDate);
-  nextRangeStart.setMonth(startDate.getMonth() + 1);
-  nextRangeEnd.setMonth(endDate.getMonth() + 1);
+  const previousRangeStart = getFirstDayLastMonth(startDate);
+  const previousRangeEnd = getLastDayLastMonth(endDate);
+  const nextRangeStart = getFirstDayNextMonth(startDate);
+  const nextRangeEnd = getLastDayNextMonth(endDate);
 
   // convert to string
-  const previousMonthStart = formatDateInputValue(previousRangeStart);
-  const previousMonthEnd = formatDateInputValue(previousRangeEnd);
-  const nextMonthStart = formatDateInputValue(nextRangeStart);
-  const nextMonthEnd = formatDateInputValue(nextRangeEnd);
+  const previousMonthStart = previousRangeStart
+    ? formatDateInputValue(previousRangeStart)
+    : "";
+  const previousMonthEnd = previousRangeEnd
+    ? formatDateInputValue(previousRangeEnd)
+    : "";
+  const nextMonthStart = nextRangeStart
+    ? formatDateInputValue(nextRangeStart)
+    : "";
+  const nextMonthEnd = nextRangeEnd ? formatDateInputValue(nextRangeEnd) : "";
 
   return (
     <div className={styles.rangeCard}>

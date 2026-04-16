@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import db from "@/lib/prisma";
 import { requireSession } from "@/lib/auth-helpers";
 import CategoryGoals from "./_components/CategoryGoals";
+import SpendingGoal from "./_components/SpendingGoal";
 
 // TO DO - review logic and improve
 export default async function SavingsGoals() {
@@ -37,8 +38,18 @@ export default async function SavingsGoals() {
     };
   });
 
+  const savingsGoal = await db.savingsGoal.findFirst({
+    where: {
+      user_id: userId,
+    },
+    select: {
+      amount: true,
+    },
+  });
+
   return (
-    <div className="page">
+    <div className="page flex-col">
+      <SpendingGoal currentGoal={savingsGoal?.amount.toString() ?? null} />
       <CategoryGoals categories={categoryGoals} />
     </div>
   );

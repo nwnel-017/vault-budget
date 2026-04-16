@@ -58,7 +58,7 @@ type CategoryRuleMatch = {
   category_id: string;
 };
 
-// we will take in the transactiond description and list of category rules that were found for the user
+// we will take in the transaction description and list of category rules that were found for the user
 // we will search the transaction rules to find one where our transactionDesc includes the pattern
 // if we find a match - we return the category id to be inserted into the transaction
 // if not - we return null and the transaction will be uncategorized

@@ -51,17 +51,170 @@ export function parseDateInputValue(value: string | undefined) {
   return parsedDate;
 }
 
-// TO DO - review
-export function getDefaultDateRange() {
-  const endDate = new Date();
-  const startDate = new Date(endDate);
-  startDate.setMonth(startDate.getMonth() - 12);
+export function getDate(value: string) {
+  try {
+    const parsedDate = new Date(value);
+
+    if (!isValidDate(parsedDate)) {
+      return null;
+    }
+
+    return parsedDate;
+  } catch {
+    return null;
+  }
+}
+
+// TO DO - rewrite function
+// take in date object of most recent transaction
+// use the value to find the default interval of the most recent month
+// the interval will go from the 1st of the month to the last day of the month
+export function getDefaultDateRange(mostRecentTransactionDate: Date) {
+  if (!mostRecentTransactionDate || !isValidDate(mostRecentTransactionDate)) {
+    return { startDate: null, endDate: null };
+  }
+
+  const startDate = new Date(
+    mostRecentTransactionDate.getFullYear(),
+    mostRecentTransactionDate.getMonth(),
+    1,
+  );
+  const endDate = new Date(
+    mostRecentTransactionDate.getFullYear(),
+    mostRecentTransactionDate.getMonth() + 1,
+    0,
+  );
 
   if (!isValidDate(startDate) || !isValidDate(endDate)) {
     return { startDate: null, endDate: null };
   }
 
   return { startDate, endDate };
+}
+
+// TO DO - complete function
+// this function gets the same day of the previous month
+// if the date is invalid, return null
+// if the same date of the previous month does not exist (ex: february does not have 31st day) - then return the corresponding day of the month (ex: february 28th)
+export function getDatePreviousMonth(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const previousMonthLastDay = new Date(date.getFullYear(), date.getMonth(), 0);
+
+  if (!isValidDate(previousMonthLastDay)) {
+    return null;
+  }
+
+  const previousMonthDate = new Date(
+    date.getFullYear(),
+    date.getMonth() - 1,
+    Math.min(date.getDate(), previousMonthLastDay.getDate()),
+  );
+
+  if (!isValidDate(previousMonthDate)) {
+    return null;
+  }
+
+  return previousMonthDate;
+}
+
+// TO DO - split into these functions:
+// getLastDayNextMonth()
+// getLastDayLastMonth()
+// getFirstDayNextMonth()
+// getFirstDayLastMonth()
+export function getFirstDayNextMonth(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const firstDayNextMonth = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    1,
+  );
+
+  if (!isValidDate(firstDayNextMonth)) {
+    return null;
+  }
+
+  return firstDayNextMonth;
+}
+
+export function getLastDayNextMonth(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const lastDayNextMonth = new Date(
+    date.getFullYear(),
+    date.getMonth() + 2,
+    0,
+  );
+
+  if (!isValidDate(lastDayNextMonth)) {
+    return null;
+  }
+
+  return lastDayNextMonth;
+}
+
+export function getFirstDayLastMonth(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const firstDayLastMonth = new Date(
+    date.getFullYear(),
+    date.getMonth() - 1,
+    1,
+  );
+
+  if (!isValidDate(firstDayLastMonth)) {
+    return null;
+  }
+
+  return firstDayLastMonth;
+}
+
+export function getLastDayLastMonth(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const lastDayLastMonth = new Date(date.getFullYear(), date.getMonth(), 0);
+
+  if (!isValidDate(lastDayLastMonth)) {
+    return null;
+  }
+
+  return lastDayLastMonth;
+}
+
+export function getDateNextMonth(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const nextMonthLastDay = new Date(date.getFullYear(), date.getMonth() + 2, 0);
+
+  if (!isValidDate(nextMonthLastDay)) {
+    return null;
+  }
+
+  const nextMonthDate = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    Math.min(date.getDate(), nextMonthLastDay.getDate()),
+  );
+
+  if (!isValidDate(nextMonthDate)) {
+    return null;
+  }
+
+  return nextMonthDate;
 }
 
 export function getSelectedDateRange(

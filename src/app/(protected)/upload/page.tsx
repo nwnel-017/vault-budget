@@ -108,7 +108,17 @@ export default function FileUpload() {
         headers={headers}
         onComplete={handleFileConfigComplete}
       />
-      <div className="file-upload-shell">
+      <div className="file-upload-shell flex-col gap">
+        <h1>IMPORTANT:</h1>
+        <p className="max-width text-center">
+          For budget vault to track your spending accurately, please use
+          exclusive dates when retrieving the transaction spreadsheet from your
+          bank so that you do not have duplicate transactions.
+        </p>
+        <p className="max-width text-center">
+          This means that instead of choosing 11/1/2026 and 12/1/2026 for your
+          starting and ending dates, please use 11/1/2026 and 11/31/2026.
+        </p>
         <form onSubmit={submit} className="file-upload-form">
           <input
             onChange={change}

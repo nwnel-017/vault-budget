@@ -25,19 +25,75 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   min-height: 7rem;
   width: 100%;
   border: 1px solid var(--foreground);
-  border-radius: 8px;
+  border-radius: 0.5rem;
   padding: 1rem;
   text-align: center;
   background-color: var(--background);
+}
+
+.totalSavedCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+  gap: 0.25rem;
+  padding-top: 1.5rem;
+}
+
+.goalDifference {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  max-width: 70%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.aboveGoal {
+  color: #15803d;
+}
+
+.belowGoal {
+  color: #b91c1c;
+}
+
+.totalSavedLabel {
+  font-size: 0.95rem;
+}
+
+.totalSavedAmount {
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
 .headerStrip {
   display: flex;
   width: 100%;
   transition: transform 0.3s ease;
+}
+
+.shift0 {
+  transform: translateX(0%);
+}
+
+.shift1 {
+  transform: translateX(-100%);
+}
+
+.shift2 {
+  transform: translateX(-200%);
+}
+
+.shift3 {
+  transform: translateX(-300%);
 }
 
 .controls {
@@ -64,4 +120,26 @@
 .status {
   min-width: 3rem;
   text-align: center;
+}
+
+@media (min-width: 64rem) {
+  .carouselViewport {
+    overflow: visible;
+  }
+
+  .headerStrip {
+    transform: none;
+  }
+
+  .boxContainer {
+    flex: 0 0 25%;
+  }
+
+  .categoryBox {
+    min-height: 9rem;
+  }
+
+  .controls {
+    display: none;
+  }
 }

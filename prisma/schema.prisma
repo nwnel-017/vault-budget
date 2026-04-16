@@ -25,6 +25,7 @@ model User {
   transactions      Transaction[]
   categories        Category[]
   transaction_rules TransactionRule[]
+  savings_goal      SavingsGoal?
 
   @@unique([email])
   @@map("user")
@@ -125,11 +126,25 @@ model CategoryGoal {
     @@map("category_goal")
 }
 
+model SavingsGoal {
+  id          String     @id @default(cuid())
+  amount      Decimal       
+  user_id     String
+  user        User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([user_id])
+  @@map("savings_goal")
+}
+
 model TransactionRule {
     id           String        @id @default(cuid())
     user_id      String
     user         User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
     pattern      String
+    matches      Int           @default(1)
+    errors       Int           @default(0)
     category_id  String
     category     Category      @relation(fields: [category_id], references: [id], onDelete: Cascade)
     transactions Transaction[]

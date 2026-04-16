@@ -8,10 +8,13 @@ type TopCategoriesProps = {
     id: string;
     categoryName: string;
     totalSpent: number;
+    goalAmount: number | null;
+    goalDifference: number | null;
   }[];
 };
 
 // TO DO - review html and css
+// change goal difference message to be more intuitive for the user
 export default function TopCategories({ categories }: TopCategoriesProps) {
   return (
     <section className={styles.section}>
@@ -26,7 +29,26 @@ export default function TopCategories({ categories }: TopCategoriesProps) {
         <div className={styles.gridBody}>
           {categories.map((category) => (
             <div className={styles.gridRow} key={category.id} role="row">
-              <span>{category.categoryName}</span>
+              <div className={styles.categoryDetails}>
+                <span>{category.categoryName}</span>
+                {category.goalDifference !== null ? (
+                  <span
+                    className={`${styles.goalDifference} ${
+                      category.goalDifference > 0
+                        ? styles.belowGoal
+                        : styles.aboveGoal
+                    }`}
+                  >
+                    {`${category.goalDifference >= 0 ? "+" : "-"}${formatFunds(
+                      Math.abs(category.goalDifference),
+                    )} ${
+                      category.goalDifference >= 0
+                        ? "until you reach your goal"
+                        : "spent over your goal"
+                    }`}
+                  </span>
+                ) : null}
+              </div>
               <span className={styles.amount}>
                 {formatFunds(category.totalSpent)}
               </span>

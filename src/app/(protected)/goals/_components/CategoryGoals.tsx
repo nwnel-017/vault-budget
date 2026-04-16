@@ -13,6 +13,7 @@ type CategoryGoalsProps = {
   }[];
 };
 
+// TO DO - remove - I already have formatting helper for this
 function formatSpendingGoal(spendingGoal: string | null) {
   if (!spendingGoal) {
     return "No goal set";

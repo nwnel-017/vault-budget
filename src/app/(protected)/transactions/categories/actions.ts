@@ -70,8 +70,9 @@ export async function createCategory(category: string) {
 
 export async function deleteCategory(categoryId: string) {
   const sessionResult = await requireSession();
+  const userId = sessionResult?.session?.user.id;
 
-  if (sessionResult.error) {
+  if (sessionResult.error || !userId) {
     return {
       success: false,
       error: sessionResult.error,
@@ -84,15 +85,6 @@ export async function deleteCategory(categoryId: string) {
     return {
       success: false,
       error: "Category id is required.",
-    };
-  }
-
-  const userId = sessionResult.session?.user.id;
-
-  if (!userId) {
-    return {
-      success: false,
-      error: "Missing user id in session",
     };
   }
 

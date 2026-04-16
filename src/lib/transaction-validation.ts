@@ -20,6 +20,14 @@ type TransactionValidationResult =
       error: string;
     };
 
+// TO DO - move to generic types folder
+export type Transaction = {
+  id: string;
+  merchant: string;
+  category_id: string | null;
+  transaction_rule_id: string | null;
+};
+
 export async function validateCategoryTransaction(
   userId: string,
   transactionId: string,
