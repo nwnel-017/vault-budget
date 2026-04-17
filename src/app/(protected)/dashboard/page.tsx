@@ -53,12 +53,23 @@ export default async function Dashboard({
       },
       orderBy: { date_purchased: "desc" },
     });
+    const userPayPeriod = await db.userPayPeriod.findUnique({
+      where: {
+        user_id: userId,
+      },
+      select: {
+        pay_period_start_day: true,
+      },
+    });
 
     if (!latestTransaction) {
       return null;
     }
 
-    const defaultRange = getDefaultDateRange(latestTransaction.date_purchased);
+    const defaultRange = getDefaultDateRange(
+      latestTransaction.date_purchased,
+      userPayPeriod?.pay_period_start_day,
+    );
 
     if (!defaultRange.startDate || !defaultRange.endDate) {
       return null;

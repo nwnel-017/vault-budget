@@ -28,6 +28,9 @@ type TopCategory = {
 // we need to investigate spending calculation logic for total spent and total earned
 // something is off with the bounds
 // can we simplify this?
+// TO DO - make sign conventions standard
+// total spent should be a + number
+// total earned should be a + number
 export function getDashboardSpendingSummary(
   transactions: DashboardTransaction[] | null | undefined,
 ) {

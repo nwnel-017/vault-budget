@@ -1,6 +1,8 @@
 import styles from "./RangeSelector.module.css";
 import {
   formatDateInputValue,
+  getDateNextMonth,
+  getDatePreviousMonth,
   getFirstDayLastMonth,
   getFirstDayNextMonth,
   getLastDayLastMonth,
@@ -23,10 +25,10 @@ export default function RangeSelector({
   }
 
   // get range dates for previous and next month buttons
-  const previousRangeStart = getFirstDayLastMonth(startDate);
-  const previousRangeEnd = getLastDayLastMonth(endDate);
-  const nextRangeStart = getFirstDayNextMonth(startDate);
-  const nextRangeEnd = getLastDayNextMonth(endDate);
+  const previousRangeStart = getDatePreviousMonth(startDate);
+  const previousRangeEnd = getDatePreviousMonth(endDate);
+  const nextRangeStart = getDateNextMonth(startDate);
+  const nextRangeEnd = getDateNextMonth(endDate);
 
   // convert to string
   const previousMonthStart = previousRangeStart
@@ -59,7 +61,7 @@ export default function RangeSelector({
           </button>
         </form>
       </div>
-      <form className={styles.selector} action="/dashboard" method="get">
+      {/* <form className={styles.selector} action="/dashboard" method="get">
         <label className={styles.field}>
           <span>Start date</span>
           <input
@@ -85,7 +87,7 @@ export default function RangeSelector({
         <button className={styles.button} type="submit">
           Apply range
         </button>
-      </form>
+      </form> */}
     </div>
   );
 }

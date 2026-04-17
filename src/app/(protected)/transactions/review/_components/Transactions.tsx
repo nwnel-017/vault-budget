@@ -3,7 +3,8 @@
 import { formatTransaction } from "@/utils/funds";
 import styles from "../page.module.css";
 
-type TransactionsProps = {
+// TO DO - move to types/
+export type TransactionsProps = {
   transactions: {
     id: string;
     amount: string;

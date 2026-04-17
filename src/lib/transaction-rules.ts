@@ -1,4 +1,7 @@
-"use server";
+import "server-only";
+
+// TO DO - reevaluate structure
+// should we have server functions here and not in server actions?
 
 import { revalidatePath } from "next/cache";
 import db from "@/lib/prisma";

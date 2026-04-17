@@ -1,6 +1,4 @@
-import { start } from "repl";
-
-function isValidDate(value: unknown): value is Date {
+export function isValidDate(value: unknown): value is Date {
   return value instanceof Date && !Number.isNaN(value.getTime());
 }
 
@@ -65,25 +63,68 @@ export function getDate(value: string) {
   }
 }
 
-// TO DO - rewrite function
-// take in date object of most recent transaction
-// use the value to find the default interval of the most recent month
-// the interval will go from the 1st of the month to the last day of the month
-export function getDefaultDateRange(mostRecentTransactionDate: Date) {
+// TO DO - review this function and improve performance
+export function getDefaultDateRange(
+  mostRecentTransactionDate: Date,
+  payPeriodStartDay?: number | null,
+) {
+  // validate
   if (!mostRecentTransactionDate || !isValidDate(mostRecentTransactionDate)) {
     return { startDate: null, endDate: null };
   }
 
-  const startDate = new Date(
-    mostRecentTransactionDate.getFullYear(),
-    mostRecentTransactionDate.getMonth(),
-    1,
-  );
-  const endDate = new Date(
-    mostRecentTransactionDate.getFullYear(),
-    mostRecentTransactionDate.getMonth() + 1,
-    0,
-  );
+  let startDate: Date;
+  let endDate: Date;
+
+  // if the user does not have a default pay period - use 1st to 31st of month
+  if (
+    payPeriodStartDay === undefined ||
+    payPeriodStartDay === null ||
+    !Number.isInteger(payPeriodStartDay) ||
+    payPeriodStartDay < 1 ||
+    payPeriodStartDay > 31
+  ) {
+    startDate = new Date(
+      mostRecentTransactionDate.getFullYear(),
+      mostRecentTransactionDate.getMonth(),
+      1,
+    );
+    endDate = new Date(
+      mostRecentTransactionDate.getFullYear(),
+      mostRecentTransactionDate.getMonth() + 1,
+      0,
+    );
+  } else {
+    // use the most recent completed interval with customized pay period
+    const getPeriodStartForMonth = (year: number, month: number) => {
+      const lastDay = new Date(year, month + 1, 0).getDate();
+
+      return new Date(year, month, Math.min(payPeriodStartDay, lastDay));
+    };
+
+    const getIntervalStart = (date: Date) => {
+      const currentMonthStart = getPeriodStartForMonth(
+        date.getFullYear(),
+        date.getMonth(),
+      );
+
+      if (date >= currentMonthStart) {
+        return currentMonthStart;
+      }
+
+      return getPeriodStartForMonth(
+        date.getFullYear(),
+        date.getMonth() - 1,
+      );
+    };
+
+    const currentIntervalStart = getIntervalStart(mostRecentTransactionDate);
+
+    endDate = new Date(currentIntervalStart);
+    endDate.setDate(currentIntervalStart.getDate() - 1);
+
+    startDate = getIntervalStart(endDate);
+  }
 
   if (!isValidDate(startDate) || !isValidDate(endDate)) {
     return { startDate: null, endDate: null };
@@ -92,24 +133,27 @@ export function getDefaultDateRange(mostRecentTransactionDate: Date) {
   return { startDate, endDate };
 }
 
-// TO DO - complete function
-// this function gets the same day of the previous month
-// if the date is invalid, return null
-// if the same date of the previous month does not exist (ex: february does not have 31st day) - then return the corresponding day of the month (ex: february 28th)
 export function getDatePreviousMonth(date: Date) {
   if (!isValidDate(date)) {
     return null;
   }
 
-  const previousMonthLastDay = new Date(date.getFullYear(), date.getMonth(), 0);
+  const previousMonthYear =
+    date.getMonth() === 0 ? date.getFullYear() - 1 : date.getFullYear();
+  const previousMonth = date.getMonth() === 0 ? 11 : date.getMonth() - 1;
+  const previousMonthLastDay = new Date(
+    previousMonthYear,
+    previousMonth + 1,
+    0,
+  );
 
   if (!isValidDate(previousMonthLastDay)) {
     return null;
   }
 
   const previousMonthDate = new Date(
-    date.getFullYear(),
-    date.getMonth() - 1,
+    previousMonthYear,
+    previousMonth,
     Math.min(date.getDate(), previousMonthLastDay.getDate()),
   );
 
@@ -120,11 +164,6 @@ export function getDatePreviousMonth(date: Date) {
   return previousMonthDate;
 }
 
-// TO DO - split into these functions:
-// getLastDayNextMonth()
-// getLastDayLastMonth()
-// getFirstDayNextMonth()
-// getFirstDayLastMonth()
 export function getFirstDayNextMonth(date: Date) {
   if (!isValidDate(date)) {
     return null;
@@ -148,11 +187,7 @@ export function getLastDayNextMonth(date: Date) {
     return null;
   }
 
-  const lastDayNextMonth = new Date(
-    date.getFullYear(),
-    date.getMonth() + 2,
-    0,
-  );
+  const lastDayNextMonth = new Date(date.getFullYear(), date.getMonth() + 2, 0);
 
   if (!isValidDate(lastDayNextMonth)) {
     return null;

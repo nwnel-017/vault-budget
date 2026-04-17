@@ -1,9 +1,11 @@
 "use client";
 
-import { normalizeFile, uploadInput } from "./actions";
+import { normalizeFile, setUserPayPeriodBegin, uploadInput } from "./actions";
 import { useFormStatus } from "react-dom";
 import { useState } from "react";
 import FileConfig from "./_components/FileConfig";
+import IncomeSelect from "./_components/IncomeSelect";
+import type { IncomeSelectionTransaction } from "./actions";
 
 const MAX_SERVER_ACTION_FILE_SIZE_BYTES = 1024 * 1024;
 
@@ -21,6 +23,10 @@ export default function FileUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [showFileConfig, setShowFileConfig] = useState(false);
   const [headers, setHeaders] = useState<string[]>([]);
+  const [showIncomeSelect, setShowIncomeSelect] = useState(false);
+  const [incomeTransactions, setIncomeTransactions] = useState<
+    IncomeSelectionTransaction[]
+  >([]);
 
   function fileExceedsSizeLimit(selectedFile: File) {
     return selectedFile.size > MAX_SERVER_ACTION_FILE_SIZE_BYTES;
@@ -34,7 +40,9 @@ export default function FileUpload() {
       event.target.value = "";
       setFile(null);
       setShowFileConfig(false);
+      setShowIncomeSelect(false);
       setHeaders([]);
+      setIncomeTransactions([]);
       return;
     }
 
@@ -64,6 +72,8 @@ export default function FileUpload() {
       console.log(res?.headers);
       setHeaders(res.headers);
       setShowFileConfig(true);
+      setShowIncomeSelect(false);
+      setIncomeTransactions([]);
     }
   }
 
@@ -97,8 +107,31 @@ export default function FileUpload() {
       return;
     }
 
-    alert("Upload complete.");
     setShowFileConfig(false);
+
+    if (res.firstTimeUser) {
+      setIncomeTransactions(res.transactions);
+      setShowIncomeSelect(true);
+      alert("Upload complete. Please select your primary income transaction.");
+      return;
+    }
+
+    alert("Upload complete.");
+  }
+
+  async function handleSetPayPeriod(periodBegin: string) {
+    const res = await setUserPayPeriodBegin(periodBegin);
+
+    if (!res.success) {
+      alert(res.error ?? "Something went wrong!");
+      return;
+    }
+
+    alert(
+      "Pay period start saved. Please go to the review page to begin categorizing your transactions",
+    );
+    setShowIncomeSelect(false);
+    setIncomeTransactions([]);
   }
 
   return (
@@ -129,6 +162,9 @@ export default function FileUpload() {
           />
           <SubmitButton />
         </form>
+        {showIncomeSelect ? (
+          <IncomeSelect onSelectPayPeriod={handleSetPayPeriod} />
+        ) : null}
       </div>
     </>
   );

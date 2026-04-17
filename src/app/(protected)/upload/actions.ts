@@ -25,6 +25,21 @@ export type ParsedTransactionRow = {
   transactionDate: Date;
 };
 
+export type IncomeSelectionTransaction = {
+  id: string;
+  amount: string;
+  merchant: string;
+  date_purchased: string;
+};
+
+export type UploadInputResult = {
+  success: boolean;
+  error: string | null;
+  message: string | null;
+  firstTimeUser: boolean;
+  transactions: IncomeSelectionTransaction[];
+};
+
 // function to validate file and return the normalized headers
 export async function normalizeFile(form: FormData) {
   const sessionResult = await requireSession();
@@ -72,7 +87,7 @@ export async function uploadInput(
   merchantTypeColumn: string,
   amountColumn: string,
   transactionDateColumn: string,
-) {
+): Promise<UploadInputResult> {
   // validate session
   const sessionResult = await requireSession();
 
@@ -81,6 +96,19 @@ export async function uploadInput(
       success: false,
       error: sessionResult.error,
       message: null,
+      firstTimeUser: false,
+      transactions: [],
+    };
+  }
+
+  const userId = sessionResult.session?.user.id;
+  if (!userId) {
+    return {
+      success: false,
+      error: "Missing user id in session",
+      message: null,
+      firstTimeUser: false,
+      transactions: [],
     };
   }
 
@@ -90,8 +118,10 @@ export async function uploadInput(
   if (!fileResult || fileResult.error || !fileResult.file) {
     return {
       success: false,
-      error: fileResult.error,
+      error: fileResult.error ?? "No file",
       message: null,
+      firstTimeUser: false,
+      transactions: [],
     };
   }
 
@@ -111,12 +141,23 @@ export async function uploadInput(
       success: false,
       error: "All column selections are required.",
       message: null,
+      firstTimeUser: false,
+      transactions: [],
     };
   }
 
   // parse the file
   // add parsed rows to parsedRows array, keep track of skipped rows
   try {
+    const existingPayPeriod = await db.userPayPeriod.findUnique({
+      where: {
+        user_id: userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
     const arrayBuffer = await fileResult.file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
     const parsedRows: ParsedTransactionRow[] = [];
@@ -143,13 +184,6 @@ export async function uploadInput(
         .on("error", reject);
     });
 
-    // check user id in session
-    // TO DO - do this check before
-    const userId = sessionResult.session?.user.id;
-    if (!userId) {
-      return fileValidationErrorResult("Missing user id in session");
-    }
-
     // find transaction rules for the user
     const userTransactionRules = await db.transactionRule.findMany({
       where: {
@@ -170,7 +204,7 @@ export async function uploadInput(
     // if no category match is found - category = null
 
     // TO DO - when a transaction rule is used - we increment matches
-    await db.transaction.createMany({
+    const createdTransactions = await db.transaction.createManyAndReturn({
       data: parsedRows.map((row) => {
         const matchedRule = matchTransactionCategory(
           row.merchantType,
@@ -186,18 +220,95 @@ export async function uploadInput(
           transaction_rule_id: matchedRule?.id ?? null,
         };
       }),
+      select: {
+        id: true,
+        amount: true,
+        merchant: true,
+        date_purchased: true,
+      },
     });
+
+    const incomeSelectionTransactions = createdTransactions.map(
+      (transaction) => ({
+        id: transaction.id,
+        amount: transaction.amount.toString(),
+        merchant: transaction.merchant,
+        date_purchased: transaction.date_purchased.toISOString(),
+      }),
+    );
 
     return {
       success: true,
       error: null,
       message: `Parsed ${parsedRows.length} transaction rows successfully. Skipped ${skippedRows} invalid rows.`,
+      firstTimeUser: !existingPayPeriod,
+      transactions: !existingPayPeriod ? incomeSelectionTransactions : [],
     };
   } catch {
     return {
       success: false,
       error: "Unable to process CSV upload.",
       message: null,
+      firstTimeUser: false,
+      transactions: [],
     };
   }
+}
+
+// sets the default pay period
+// used as the beginning of the month for tracking spending
+export async function setUserPayPeriodBegin(periodBegin: string) {
+  const sessionResult = await requireSession();
+
+  if (sessionResult.error) {
+    return {
+      success: false,
+      error: sessionResult.error,
+    };
+  }
+
+  const userId = sessionResult.session?.user.id;
+  if (!userId) {
+    return {
+      success: false,
+      error: "Missing user id in session",
+    };
+  }
+
+  if (!periodBegin) {
+    return {
+      success: false,
+      error: "Pay period start day is required.",
+    };
+  }
+
+  const parsedPeriodBegin = Number.parseInt(periodBegin, 10);
+  if (
+    Number.isNaN(parsedPeriodBegin) ||
+    parsedPeriodBegin < 1 ||
+    parsedPeriodBegin > 31
+  ) {
+    return {
+      success: false,
+      error: "Invalid pay period start day.",
+    };
+  }
+
+  await db.userPayPeriod.upsert({
+    where: {
+      user_id: userId,
+    },
+    create: {
+      user_id: userId,
+      pay_period_start_day: parsedPeriodBegin,
+    },
+    update: {
+      pay_period_start_day: parsedPeriodBegin,
+    },
+  });
+
+  return {
+    success: true,
+    error: null,
+  };
 }
