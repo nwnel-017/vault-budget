@@ -3,12 +3,14 @@
   flex-direction: column;
   gap: 1rem;
   /* width: min(100%, 90dvw); */
-  max-width: 90dvw;
+  width: 90dvw;
   margin: 0 auto;
   padding: 1rem;
-  border: 1px solid var(--foreground);
   border-radius: 0.75rem;
   background-color: var(--background);
+  box-shadow:
+    0 0.2rem 0.5rem color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 1rem 1.8rem -0.2rem color-mix(in srgb, var(--foreground) 18%, transparent);
 }
 
 .header {

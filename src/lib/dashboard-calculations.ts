@@ -1,3 +1,5 @@
+import db from "./prisma";
+
 type TransactionCategory = {
   id: string;
   category_name: string;
@@ -24,16 +26,17 @@ type TopCategory = {
   amountSpent: number;
 };
 
-// TO DO
-// we need to investigate spending calculation logic for total spent and total earned
-// something is off with the bounds
-// can we simplify this?
-// TO DO - make sign conventions standard
-// total spent should be a + number
-// total earned should be a + number
+type SavingsHistoryPoint = {
+  monthStart: string;
+  totalSaved: number;
+};
+
+// TO DO - review
 export function getDashboardSpendingSummary(
   transactions: DashboardTransaction[] | null | undefined,
 ) {
+  const uncategorizedCategoryId = "uncategorized";
+  const uncategorizedCategoryName = "Uncategorized";
   const emptySummary = {
     topCategories: [] as CategorySpending[],
     topCategory: null as TopCategory | null,
@@ -51,11 +54,12 @@ export function getDashboardSpendingSummary(
       Map<string, CategorySpending>
     >((categoryTotals, transaction) => {
       const amount = Number(transaction?.amount);
-      const categoryId = transaction?.category?.id;
-      const categoryName = transaction?.category?.category_name;
-      const goalAmount = transaction?.category?.goals?.[0]?.amount;
+      const categoryId = transaction?.category?.id ?? uncategorizedCategoryId;
+      const categoryName =
+        transaction?.category?.category_name ?? uncategorizedCategoryName;
+      const goalAmount = transaction?.category?.goals?.[0]?.amount ?? null;
 
-      if (Number.isNaN(amount) || amount >= 0 || !categoryId || !categoryName) {
+      if (Number.isNaN(amount) || amount >= 0) {
         return categoryTotals;
       }
 
@@ -67,10 +71,7 @@ export function getDashboardSpendingSummary(
         return categoryTotals;
       }
 
-      const parsedGoalAmount =
-        goalAmount === undefined || goalAmount === null
-          ? null
-          : Number(goalAmount);
+      const parsedGoalAmount = goalAmount === null ? null : Number(goalAmount);
 
       categoryTotals.set(categoryId, {
         id: categoryId,
@@ -139,4 +140,69 @@ export function getDashboardSpendingSummary(
   } catch {
     return emptySummary;
   }
+}
+
+// TO DO - review
+// do not use raw SQL
+// this isnt running the calculations correctly
+export async function getSavedHistoryLastThreeMonths(
+  userId: string,
+  anchorDate: Date,
+) {
+  const currentMonthStart = new Date(anchorDate);
+  currentMonthStart.setDate(1);
+  currentMonthStart.setHours(0, 0, 0, 0);
+
+  const firstMonthStart = new Date(
+    currentMonthStart.getFullYear(),
+    currentMonthStart.getMonth() - 2,
+    1,
+  );
+  const nextMonthStart = new Date(
+    currentMonthStart.getFullYear(),
+    currentMonthStart.getMonth() + 1,
+    1,
+  );
+
+  const savingsRows = await db.$queryRaw<
+    {
+      month_start: Date;
+      total_saved: unknown;
+    }[]
+  >`
+    SELECT
+      date_trunc('month', date_purchased)::date AS month_start,
+      COALESCE(SUM(amount), 0) AS total_saved
+    FROM "transaction"
+    WHERE user_id = ${userId}
+      AND date_purchased >= ${firstMonthStart}
+      AND date_purchased < ${nextMonthStart}
+    GROUP BY month_start
+    ORDER BY month_start ASC
+  `;
+
+  const savingsByMonth = new Map<string, number>(
+    savingsRows.map((row) => [
+      `${row.month_start.getFullYear()}-${`${row.month_start.getMonth() + 1}`.padStart(2, "0")}`,
+      Number(row.total_saved),
+    ]),
+  );
+
+  const savingsHistory: SavingsHistoryPoint[] = [];
+
+  for (let monthOffset = 0; monthOffset < 3; monthOffset += 1) {
+    const monthStart = new Date(
+      firstMonthStart.getFullYear(),
+      firstMonthStart.getMonth() + monthOffset,
+      1,
+    );
+    const monthKey = `${monthStart.getFullYear()}-${`${monthStart.getMonth() + 1}`.padStart(2, "0")}`;
+
+    savingsHistory.push({
+      monthStart: monthStart.toISOString(),
+      totalSaved: savingsByMonth.get(monthKey) ?? 0,
+    });
+  }
+
+  return savingsHistory;
 }

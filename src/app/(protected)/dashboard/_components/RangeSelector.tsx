@@ -44,22 +44,27 @@ export default function RangeSelector({
 
   return (
     <div className={styles.rangeCard}>
-      <h1>Spending results for {selectedLabel}</h1>
       <div className={styles.selector}>
-        <form action="/dashboard" method="get">
-          <input type="hidden" name="start" value={previousMonthStart} />
-          <input type="hidden" name="end" value={previousMonthEnd} />
-          <button className={styles.button} type="submit">
-            Previous month
-          </button>
-        </form>
-        <form action="/dashboard" method="get">
-          <input type="hidden" name="start" value={nextMonthStart} />
-          <input type="hidden" name="end" value={nextMonthEnd} />
-          <button className={styles.button} type="submit">
-            Next month
-          </button>
-        </form>
+        <div>
+          <form action="/dashboard" method="get">
+            <input type="hidden" name="start" value={previousMonthStart} />
+            <input type="hidden" name="end" value={previousMonthEnd} />
+            <button className={styles.button} type="submit">
+              --
+            </button>
+          </form>
+        </div>
+        <h3>{selectedLabel}</h3>
+
+        <div>
+          <form action="/dashboard" method="get">
+            <input type="hidden" name="start" value={nextMonthStart} />
+            <input type="hidden" name="end" value={nextMonthEnd} />
+            <button className={styles.button} type="submit">
+              --
+            </button>
+          </form>
+        </div>
       </div>
       {/* <form className={styles.selector} action="/dashboard" method="get">
         <label className={styles.field}>

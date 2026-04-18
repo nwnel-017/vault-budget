@@ -1,24 +1,41 @@
 .header {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   margin: 0 auto;
   gap: 1rem;
-  padding: 1rem;
-  overflow: hidden;
-  max-width: 90dvw;
+  /* padding: 1rem; */
+  overflow-x: hidden;
+  overflow-y: visible;
+  width: 100dvw;
   background-color: var(--accent);
+  /* border: 1px solid red; */
 }
 
 .carouselViewport {
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .boxContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 0 0 100%;
+  min-width: 100dvw;
+  height: 100%;
+  /* border: 1px solid green; */
+}
+
+.totalSavedChart {
+  width: 100%;
+  height: 70%;
+}
+
+.pieChart {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .categoryBox {
@@ -26,30 +43,53 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  min-height: 7rem;
-  width: 100%;
-  border: 1px solid var(--foreground);
+  height: 100%;
+  width: 90dvw;
   border-radius: 0.5rem;
   padding: 1rem;
   text-align: center;
   background-color: var(--background);
+  /* border: 1px solid grey; */
+  box-shadow:
+    0 0.2rem 0.5rem color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 1rem 1.8rem -0.2rem color-mix(in srgb, var(--foreground) 18%, transparent);
 }
 
 .totalSavedCard {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
+  min-height: 0;
   gap: 0.25rem;
-  padding-top: 1.5rem;
+}
+
+.pieCard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  gap: 0.5rem;
+}
+
+.pieTitle {
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-size: 0.9rem;
 }
 
 .goalDifference {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
   max-width: 70%;
   font-size: 0.75rem;
   font-weight: 600;
@@ -67,6 +107,8 @@
 
 .totalSavedLabel {
   font-size: 0.95rem;
+  width: 100%;
+  text-align: left;
 }
 
 .totalSavedAmount {
@@ -74,10 +116,26 @@
   font-weight: 700;
 }
 
-.headerStrip {
+.savingsDetail {
   display: flex;
   width: 100%;
+  justify-content: space-between;
+  /* border: 1px solid red; */
+}
+
+.savings {
+  display: flex;
+  flex-direction: column;
+  /* border: 1px solid red; */
+}
+
+.headerStrip {
+  display: flex;
+  width: 100dvw;
+  height: 10rem;
+  justify-content: space-evenly;
   transition: transform 0.3s ease;
+  /* border: 1px solid black; */
 }
 
 .shift0 {
@@ -98,31 +156,29 @@
 
 .controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
   gap: 0.75rem;
 }
 
-.navButton {
-  border: 1px solid var(--foreground);
-  border-radius: 999px;
-  padding: 0.6rem 1rem;
-  background-color: var(--background);
-  color: var(--foreground);
+.dotButton {
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  color: color-mix(in srgb, var(--foreground) 45%, transparent);
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1;
   cursor: pointer;
 }
 
-.navButton:disabled {
-  opacity: 0.5;
+.activeDot {
+  color: var(--foreground);
+  font-weight: 700;
 }
 
-.status {
-  min-width: 3rem;
-  text-align: center;
-}
-
-@media (min-width: 64rem) {
+@media (min-width: 1024px) {
   .carouselViewport {
     overflow: visible;
   }
@@ -132,11 +188,12 @@
   }
 
   .boxContainer {
-    flex: 0 0 25%;
+    min-width: 25%;
   }
 
   .categoryBox {
     min-height: 9rem;
+    max-height: 9rem;
   }
 
   .controls {

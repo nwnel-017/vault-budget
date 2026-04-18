@@ -1,6 +1,9 @@
 import db from "../../../lib/prisma";
 import { requireSession } from "@/lib/auth-helpers";
-import { getDashboardSpendingSummary } from "@/lib/dashboard-calculations";
+import {
+  getDashboardSpendingSummary,
+  getSavedHistoryLastThreeMonths,
+} from "@/lib/dashboard-calculations";
 import {
   formatDateInputValue,
   formatSelectedDateLabel,
@@ -17,7 +20,6 @@ function getSearchParamValue(value: string | string[] | undefined) {
   return typeof value === "string" ? value : null;
 }
 
-// TO DO - spending calculation logic is off? - we need to investigate
 // Review logic
 export default async function Dashboard({
   searchParams,
@@ -43,9 +45,6 @@ export default async function Dashboard({
   startDateString = getSearchParamValue(resolvedSearchParams.start);
   endDateString = getSearchParamValue(resolvedSearchParams.end);
 
-  // TO DO - we want the default range to be the 1st to 31st of the last month of data
-  // if there are no start date or end date - look up date of last transaction
-  // call helper function to get month date range
   if (!startDateString || !endDateString) {
     const latestTransaction = await db.transaction.findFirst({
       where: {
@@ -98,7 +97,6 @@ export default async function Dashboard({
   }
 
   // all transactions and their corresponding categories
-  // TO DO - cache this and only recalculate with start / end dates
   let transactions;
   if (startDateString && endDateString) {
     transactions = await db.transaction.findMany({
@@ -128,10 +126,6 @@ export default async function Dashboard({
   } else {
     // no start and end date values were given
     // we will retrieve transactions for the 1st to 31st of the last month of data
-    // TO DO - fetch the last month of transactions
-    // 1.) fetch latest transaction date
-    // 2.) call getdefaultValue() to get the date interval - 1st to 31st of last month
-    // fetch transaction between these bounds
     transactions = await db.transaction.findMany({
       where: {
         user_id: userId,
@@ -154,22 +148,26 @@ export default async function Dashboard({
     });
   }
 
-  const { topCategories, topCategory, totalSpent, totalEarned } =
+  const { topCategories, totalSpent, totalEarned } =
     getDashboardSpendingSummary(transactions);
 
-  const savingsGoal = await db.savingsGoal.findFirst({
-    where: {
-      user_id: userId,
-    },
-    select: {
-      amount: true,
-    },
-  });
-
+  const [savingsGoal, savedHistory] = await Promise.all([
+    db.savingsGoal.findFirst({
+      where: {
+        user_id: userId,
+      },
+      select: {
+        amount: true,
+      },
+    }),
+    getSavedHistoryLastThreeMonths(userId, endDate),
+  ]);
   const savingsGoalAmount = savingsGoal ? Number(savingsGoal.amount) : null;
 
+  console.log(JSON.stringify(savedHistory));
+
   return (
-    <div>
+    <div className="flex-col gap">
       <div className={styles.headingBlock}>
         <RangeSelector
           startDate={startDate}
@@ -180,8 +178,9 @@ export default async function Dashboard({
       <DashHeader
         totalSpent={totalSpent}
         totalEarned={totalEarned}
-        topCategory={topCategory}
+        topCategories={topCategories}
         savingsGoal={savingsGoalAmount ?? null}
+        savedHistory={savedHistory}
       />
       <TopCategories categories={topCategories} />
     </div>
