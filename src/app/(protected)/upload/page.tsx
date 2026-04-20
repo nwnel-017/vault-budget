@@ -1,171 +1,25 @@
-"use client";
+import db from "../../../lib/prisma";
+import { requireSession } from "@/lib/auth-helpers";
+import FileUpload from "./_components/FileUpload";
 
-import { normalizeFile, setUserPayPeriodBegin, uploadInput } from "./actions";
-import { useFormStatus } from "react-dom";
-import { useState } from "react";
-import FileConfig from "./_components/FileConfig";
-import IncomeSelect from "./_components/IncomeSelect";
-import type { IncomeSelectionTransaction } from "./actions";
+export default async function UploadPage() {
+  const sessionResult = await requireSession();
+  const userId = sessionResult.session?.user.id;
 
-const MAX_SERVER_ACTION_FILE_SIZE_BYTES = 1024 * 1024;
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button className="btn" type="submit" disabled={pending}>
-      {pending ? "Uploading..." : "Upload CSV"}
-    </button>
-  );
-}
-
-export default function FileUpload() {
-  const [file, setFile] = useState<File | null>(null);
-  const [showFileConfig, setShowFileConfig] = useState(false);
-  const [headers, setHeaders] = useState<string[]>([]);
-  const [showIncomeSelect, setShowIncomeSelect] = useState(false);
-  const [incomeTransactions, setIncomeTransactions] = useState<
-    IncomeSelectionTransaction[]
-  >([]);
-
-  function fileExceedsSizeLimit(selectedFile: File) {
-    return selectedFile.size > MAX_SERVER_ACTION_FILE_SIZE_BYTES;
+  if (!userId || sessionResult.error) {
+    return null;
   }
 
-  function change(event: React.ChangeEvent<HTMLInputElement>) {
-    const selectedFile = event.target.files?.[0] ?? null;
+  const fieldMap = await db.userColumnMappings.findUnique({
+    where: {
+      user_id: userId,
+    },
+    select: {
+      amount: true,
+      date_purchased: true,
+      merchant: true,
+    },
+  });
 
-    if (selectedFile && fileExceedsSizeLimit(selectedFile)) {
-      alert("File size must not exceed 1 MB.");
-      event.target.value = "";
-      setFile(null);
-      setShowFileConfig(false);
-      setShowIncomeSelect(false);
-      setHeaders([]);
-      setIncomeTransactions([]);
-      return;
-    }
-
-    setFile(selectedFile);
-  }
-
-  async function submit(e: React.SubmitEvent) {
-    e.preventDefault();
-    if (!file) {
-      alert("No file!");
-      return;
-    }
-
-    if (fileExceedsSizeLimit(file)) {
-      alert("File size must not exceed 1 MB.");
-      return;
-    }
-
-    const form = new FormData();
-    form.append("file", file);
-
-    const res = await normalizeFile(form);
-
-    if (!res.success) {
-      alert("Something went wrong!");
-    } else {
-      console.log(res?.headers);
-      setHeaders(res.headers);
-      setShowFileConfig(true);
-      setShowIncomeSelect(false);
-      setIncomeTransactions([]);
-    }
-  }
-
-  async function handleFileConfigComplete(selectedColumns: {
-    merchantField: string;
-    amountField: string;
-    dateField: string;
-  }) {
-    if (!file) {
-      alert("No file!");
-      return;
-    }
-
-    if (fileExceedsSizeLimit(file)) {
-      alert("File size must not exceed 1 MB.");
-      return;
-    }
-
-    const form = new FormData();
-    form.append("file", file);
-
-    const res = await uploadInput(
-      form,
-      selectedColumns.merchantField,
-      selectedColumns.amountField,
-      selectedColumns.dateField,
-    );
-
-    if (!res.success) {
-      alert(res.error ?? "Something went wrong!");
-      return;
-    }
-
-    setShowFileConfig(false);
-
-    if (res.firstTimeUser) {
-      setIncomeTransactions(res.transactions);
-      setShowIncomeSelect(true);
-      alert("Upload complete. Please select your primary income transaction.");
-      return;
-    }
-
-    alert("Upload complete.");
-  }
-
-  async function handleSetPayPeriod(periodBegin: string) {
-    const res = await setUserPayPeriodBegin(periodBegin);
-
-    if (!res.success) {
-      alert(res.error ?? "Something went wrong!");
-      return;
-    }
-
-    alert(
-      "Pay period start saved. Please go to the review page to begin categorizing your transactions",
-    );
-    setShowIncomeSelect(false);
-    setIncomeTransactions([]);
-  }
-
-  return (
-    <>
-      <FileConfig
-        active={showFileConfig}
-        headers={headers}
-        onComplete={handleFileConfigComplete}
-      />
-      <div className="file-upload-shell flex-col gap">
-        <h1>IMPORTANT:</h1>
-        <p className="max-width text-center">
-          For budget vault to track your spending accurately, please use
-          exclusive dates when retrieving the transaction spreadsheet from your
-          bank so that you do not have duplicate transactions.
-        </p>
-        <p className="max-width text-center">
-          This means that instead of choosing 11/1/2026 and 12/1/2026 for your
-          starting and ending dates, please use 11/1/2026 and 11/31/2026.
-        </p>
-        <form onSubmit={submit} className="file-upload-form">
-          <input
-            onChange={change}
-            type="file"
-            name="csvFile"
-            accept=".csv,text/csv"
-            required
-          />
-          <SubmitButton />
-        </form>
-        {showIncomeSelect ? (
-          <IncomeSelect onSelectPayPeriod={handleSetPayPeriod} />
-        ) : null}
-      </div>
-    </>
-  );
+  return <FileUpload fieldMap={fieldMap} />;
 }

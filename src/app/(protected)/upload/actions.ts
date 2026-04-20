@@ -146,6 +146,34 @@ export async function uploadInput(
     };
   }
 
+  try {
+    // save the column mappings for next time
+    await db.userColumnMappings.upsert({
+      where: {
+        user_id: userId,
+      },
+      create: {
+        user_id: userId,
+        amount: selectedColumns.amount,
+        date_purchased: selectedColumns.transactionDate,
+        merchant: selectedColumns.merchantType,
+      },
+      update: {
+        amount: selectedColumns.amount,
+        date_purchased: selectedColumns.transactionDate,
+        merchant: selectedColumns.merchantType,
+      },
+    });
+  } catch (err) {
+    console.log("failed to save column mappings: " + err);
+    return {
+      success: false,
+      error: "Internal Error",
+      message: null,
+      firstTimeUser: false,
+      transactions: [],
+    };
+  }
   // parse the file
   // add parsed rows to parsedRows array, keep track of skipped rows
   try {

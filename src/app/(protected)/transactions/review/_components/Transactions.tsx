@@ -1,7 +1,7 @@
 "use client";
 
 import { formatTransaction } from "@/utils/funds";
-import styles from "../page.module.css";
+import styles from "./Transactions.module.css";
 
 // TO DO - move to types/
 export type TransactionsProps = {
@@ -19,9 +19,15 @@ export type TransactionsProps = {
 
 export default function Transactions({ transactions }: TransactionsProps) {
   return (
-    <section className={styles.page}>
+    <section className={styles.section}>
       <div className={styles.header}>
-        <h1>Transactions</h1>
+        <div className={styles.headingBlock}>
+          <h1 className={styles.title}>Transactions</h1>
+          <p className={styles.subtitle}>
+            Review your recent activity and category coverage at a glance.
+          </p>
+        </div>
+        <span className={styles.countPill}>{transactions.length} entries</span>
       </div>
       <div className={styles.gridWrapper}>
         <div className={styles.gridHeader} role="row">
@@ -45,17 +51,24 @@ export default function Transactions({ transactions }: TransactionsProps) {
 
             return (
               <div className={styles.gridRow} key={transaction.id} role="row">
-                <span>
+                {/* Show a compact label on small screens */}
+                <span className={styles.mobileLabel}>Amount</span>
+                <span className={styles.valueCell}>
                   <span className={amountClassName}>
                     {formatTransaction(transaction.amount)}
                   </span>
                 </span>
-                <span>{transaction.merchant}</span>
-                <span>{formattedDate}</span>
-                <span>
-                  {transaction.category
-                    ? transaction.category.category_name
-                    : "No category"}
+                <span className={styles.mobileLabel}>Merchant</span>
+                <span className={styles.valueCell}>{transaction.merchant}</span>
+                <span className={styles.mobileLabel}>Date</span>
+                <span className={styles.valueCell}>{formattedDate}</span>
+                <span className={styles.mobileLabel}>Category</span>
+                <span className={styles.valueCell}>
+                  <span className={styles.categoryPill}>
+                    {transaction.category
+                      ? transaction.category.category_name
+                      : "No category"}
+                  </span>
                 </span>
               </div>
             );

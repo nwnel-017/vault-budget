@@ -1,4 +1,5 @@
 import db from "./prisma";
+import { getDatePreviousMonth, isValidDate } from "@/utils/date";
 
 type TransactionCategory = {
   id: string;
@@ -31,7 +32,6 @@ type SavingsHistoryPoint = {
   totalSaved: number;
 };
 
-// TO DO - review
 export function getDashboardSpendingSummary(
   transactions: DashboardTransaction[] | null | undefined,
 ) {
@@ -142,67 +142,97 @@ export function getDashboardSpendingSummary(
   }
 }
 
-// TO DO - review
-// do not use raw SQL
-// this isnt running the calculations correctly
 export async function getSavedHistoryLastThreeMonths(
   userId: string,
-  anchorDate: Date,
-) {
-  const currentMonthStart = new Date(anchorDate);
-  currentMonthStart.setDate(1);
-  currentMonthStart.setHours(0, 0, 0, 0);
-
-  const firstMonthStart = new Date(
-    currentMonthStart.getFullYear(),
-    currentMonthStart.getMonth() - 2,
-    1,
-  );
-  const nextMonthStart = new Date(
-    currentMonthStart.getFullYear(),
-    currentMonthStart.getMonth() + 1,
-    1,
-  );
-
-  const savingsRows = await db.$queryRaw<
-    {
-      month_start: Date;
-      total_saved: unknown;
-    }[]
-  >`
-    SELECT
-      date_trunc('month', date_purchased)::date AS month_start,
-      COALESCE(SUM(amount), 0) AS total_saved
-    FROM "transaction"
-    WHERE user_id = ${userId}
-      AND date_purchased >= ${firstMonthStart}
-      AND date_purchased < ${nextMonthStart}
-    GROUP BY month_start
-    ORDER BY month_start ASC
-  `;
-
-  const savingsByMonth = new Map<string, number>(
-    savingsRows.map((row) => [
-      `${row.month_start.getFullYear()}-${`${row.month_start.getMonth() + 1}`.padStart(2, "0")}`,
-      Number(row.total_saved),
-    ]),
-  );
-
-  const savingsHistory: SavingsHistoryPoint[] = [];
-
-  for (let monthOffset = 0; monthOffset < 3; monthOffset += 1) {
-    const monthStart = new Date(
-      firstMonthStart.getFullYear(),
-      firstMonthStart.getMonth() + monthOffset,
-      1,
-    );
-    const monthKey = `${monthStart.getFullYear()}-${`${monthStart.getMonth() + 1}`.padStart(2, "0")}`;
-
-    savingsHistory.push({
-      monthStart: monthStart.toISOString(),
-      totalSaved: savingsByMonth.get(monthKey) ?? 0,
-    });
+  currentStartDate: Date,
+  currentEndDate: Date,
+): Promise<SavingsHistoryPoint[]> {
+  if (!isValidDate(currentStartDate) || !isValidDate(currentEndDate)) {
+    return [];
   }
 
-  return savingsHistory;
+  // build the same rolling periods the dashboard uses
+  const previousStartDate = getDatePreviousMonth(currentStartDate);
+  const previousEndDate = getDatePreviousMonth(currentEndDate);
+  const oldestStartDate = previousStartDate
+    ? getDatePreviousMonth(previousStartDate)
+    : null;
+  const oldestEndDate = previousEndDate
+    ? getDatePreviousMonth(previousEndDate)
+    : null;
+
+  if (
+    !previousStartDate ||
+    !previousEndDate ||
+    !oldestStartDate ||
+    !oldestEndDate
+  ) {
+    return [];
+  }
+
+  const oldestStartDateAtMidnight = new Date(oldestStartDate);
+  oldestStartDateAtMidnight.setHours(0, 0, 0, 0);
+
+  const currentEndDateExclusive = new Date(currentEndDate);
+  currentEndDateExclusive.setDate(currentEndDateExclusive.getDate() + 1);
+  currentEndDateExclusive.setHours(0, 0, 0, 0);
+
+  let transactions;
+
+  try {
+    transactions = await db.transaction.findMany({
+      where: {
+        user_id: userId,
+        date_purchased: {
+          gte: oldestStartDateAtMidnight,
+          lt: currentEndDateExclusive,
+        },
+      },
+      select: {
+        amount: true,
+        date_purchased: true,
+      },
+    });
+  } catch (err) {
+    console.log("failed to fetch transactions: " + err);
+    return [];
+  }
+
+  const ranges = [
+    {
+      monthStart: oldestStartDate,
+      monthEnd: oldestEndDate,
+    },
+    {
+      monthStart: previousStartDate,
+      monthEnd: previousEndDate,
+    },
+    {
+      monthStart: currentStartDate,
+      monthEnd: currentEndDate,
+    },
+  ];
+
+  return ranges.map(({ monthStart, monthEnd }) => {
+    const totalSaved = transactions.reduce((total, transaction) => {
+      const transactionDate = new Date(transaction.date_purchased);
+
+      if (transactionDate < monthStart || transactionDate > monthEnd) {
+        return total;
+      }
+
+      const amount = Number(transaction.amount);
+
+      if (!amount || Number.isNaN(amount)) {
+        return total;
+      }
+
+      return total + amount;
+    }, 0);
+
+    return {
+      monthStart: monthStart.toISOString(),
+      totalSaved,
+    };
+  });
 }

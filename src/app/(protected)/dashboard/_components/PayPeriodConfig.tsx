@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./IncomeSelect.module.css";
+import styles from "./PayPeriodConfig.module.css";
 
 type SelectPayPeriodResult = {
   success: boolean;
   error: string | null;
 };
 
-export default function IncomeSelect({
+export default function PayPeriodConfig({
   onSelectPayPeriod,
 }: {
   onSelectPayPeriod: (periodBegin: string) => Promise<SelectPayPeriodResult>;
@@ -64,13 +64,13 @@ export default function IncomeSelect({
             onChange={(event) => setPeriodBegin(event.target.value)}
             required
           >
-          <option value="">Select a day</option>
-          {dayOptions.map((day) => (
-            <option key={day} value={day}>
-              {day}
-            </option>
-          ))}
-        </select>
+            <option value="">Select a day</option>
+            {dayOptions.map((day) => (
+              <option key={day} value={day}>
+                {day}
+              </option>
+            ))}
+          </select>
           <button className={styles.submitButton} type="submit">
             Save Pay Period
           </button>

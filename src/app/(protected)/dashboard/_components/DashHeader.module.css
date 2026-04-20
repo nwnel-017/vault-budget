@@ -121,13 +121,11 @@
   width: 100%;
   justify-content: space-between;
   flex: 1;
-  /* border: 1px solid red; */
 }
 
 .savings {
   display: flex;
   flex-direction: column;
-  /* border: 1px solid red; */
 }
 
 .savingsAmount {
@@ -155,7 +153,6 @@
   height: 10rem;
   justify-content: space-evenly;
   transition: transform 0.3s ease;
-  /* border: 1px solid black; */
 }
 
 .shift0 {
@@ -210,22 +207,24 @@
   .headerStrip {
     transform: none;
     width: 100%;
+    justify-content: space-between;
   }
 
   .totalSavedCard {
-    width: 90%;
+    /* width: 90%; */
+    width: 100%;
   }
 
   .boxContainer {
-    min-width: 25%;
-    max-width: 25%;
-    /* border: 1px solid green; */
+    min-width: 23%;
+    max-width: 23%;
   }
 
   .categoryBox {
     min-height: 9rem;
     max-height: 9rem;
-    width: 90%;
+    /* width: 90%; */
+    width: 100%;
   }
 
   .controls {

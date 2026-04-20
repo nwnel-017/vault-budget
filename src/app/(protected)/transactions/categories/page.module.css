@@ -8,6 +8,7 @@
 .header {
   display: flex;
   align-items: center;
+  color: var(--background);
   justify-content: space-between;
   gap: 1rem;
 }
@@ -92,7 +93,7 @@
 .addCategoryButton {
   border: 1px solid #1f1f1f;
   border-radius: 999px;
-  background-color: transparent;
+  background-color: var(--background);
   padding: 0.55rem 0.95rem;
   font: inherit;
   cursor: pointer;

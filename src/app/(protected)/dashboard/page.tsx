@@ -4,6 +4,7 @@ import {
   getDashboardSpendingSummary,
   getSavedHistoryLastThreeMonths,
 } from "@/lib/dashboard-calculations";
+import { setUserPayPeriodBegin } from "../upload/actions";
 import {
   formatDateInputValue,
   formatSelectedDateLabel,
@@ -14,13 +15,14 @@ import {
 import TopCategories from "./_components/TopCategories";
 import DashHeader from "./_components/DashHeader";
 import RangeSelector from "./_components/RangeSelector";
+import PayPeriodConfig from "./_components/PayPeriodConfig";
 import styles from "./page.module.css";
 
 function getSearchParamValue(value: string | string[] | undefined) {
   return typeof value === "string" ? value : null;
 }
 
-// Review logic
+// TO DO - Review logic
 export default async function Dashboard({
   searchParams,
 }: {
@@ -40,6 +42,14 @@ export default async function Dashboard({
   let endDateString: string | null = null;
   let startDate: Date | null = null;
   let endDate: Date | null = null;
+  const userPayPeriod = await db.userPayPeriod.findUnique({
+    where: {
+      user_id: userId,
+    },
+    select: {
+      pay_period_start_day: true,
+    },
+  });
 
   // get interval from search params
   startDateString = getSearchParamValue(resolvedSearchParams.start);
@@ -51,14 +61,6 @@ export default async function Dashboard({
         user_id: userId,
       },
       orderBy: { date_purchased: "desc" },
-    });
-    const userPayPeriod = await db.userPayPeriod.findUnique({
-      where: {
-        user_id: userId,
-      },
-      select: {
-        pay_period_start_day: true,
-      },
     });
 
     if (!latestTransaction) {
@@ -98,55 +100,30 @@ export default async function Dashboard({
 
   // all transactions and their corresponding categories
   let transactions;
-  if (startDateString && endDateString) {
-    transactions = await db.transaction.findMany({
-      where: {
-        date_purchased: {
-          gte: startDate,
-          lt: endDateExclusive,
-        },
-        user_id: userId,
+  transactions = await db.transaction.findMany({
+    where: {
+      date_purchased: {
+        gte: startDate,
+        lt: endDateExclusive,
       },
-      include: {
-        category: {
-          include: {
-            goals: {
-              select: {
-                amount: true,
-              },
-              take: 1,
+      user_id: userId,
+    },
+    include: {
+      category: {
+        include: {
+          goals: {
+            select: {
+              amount: true,
             },
+            take: 1,
           },
         },
       },
-      orderBy: {
-        date_purchased: "desc",
-      },
-    });
-  } else {
-    // no start and end date values were given
-    // we will retrieve transactions for the 1st to 31st of the last month of data
-    transactions = await db.transaction.findMany({
-      where: {
-        user_id: userId,
-      },
-      include: {
-        category: {
-          include: {
-            goals: {
-              select: {
-                amount: true,
-              },
-              take: 1,
-            },
-          },
-        },
-      },
-      orderBy: {
-        date_purchased: "desc",
-      },
-    });
-  }
+    },
+    orderBy: {
+      date_purchased: "desc",
+    },
+  });
 
   const { topCategories, totalSpent, totalEarned } =
     getDashboardSpendingSummary(transactions);
@@ -160,14 +137,15 @@ export default async function Dashboard({
         amount: true,
       },
     }),
-    getSavedHistoryLastThreeMonths(userId, endDate),
+    getSavedHistoryLastThreeMonths(userId, startDate, endDate),
   ]);
   const savingsGoalAmount = savingsGoal ? Number(savingsGoal.amount) : null;
 
-  console.log(JSON.stringify(savedHistory));
-
   return (
     <div className="flex-col gap col-center">
+      {!userPayPeriod?.pay_period_start_day ? (
+        <PayPeriodConfig onSelectPayPeriod={setUserPayPeriodBegin} />
+      ) : null}
       <div className={styles.headingBlock}>
         <RangeSelector
           startDate={startDate}
