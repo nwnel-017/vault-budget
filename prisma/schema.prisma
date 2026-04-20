@@ -27,6 +27,7 @@ model User {
   transaction_rules TransactionRule[]
   savings_goal      SavingsGoal?
   pay_period        UserPayPeriod?
+  column_mappings   UserColumnMappings?
 
   @@unique([email])
   @@map("user")
@@ -43,6 +44,21 @@ model UserPayPeriod {
   @@unique([user_id])
   @@index([id])
   @@map("user_pay_period")
+}
+
+model UserColumnMappings {
+  id             String   @id @default(cuid())
+  user_id        String
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  merchant       String
+  amount         String
+  date_purchased String
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@unique([user_id])
+  @@index([user_id])
+  @@map("user_column_mappings")
 }
 
 model Session {

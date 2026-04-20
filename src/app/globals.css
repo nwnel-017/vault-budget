@@ -1,6 +1,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --accent: #2563eb;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -63,6 +64,14 @@ a {
 .flex-col {
   display: flex;
   flex-direction: column;
+}
+
+.col-center {
+  align-items: center;
+}
+
+.margin-auto {
+  margin: 0 auto;
 }
 
 .space-between {

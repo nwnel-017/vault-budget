@@ -167,7 +167,7 @@ export default async function Dashboard({
   console.log(JSON.stringify(savedHistory));
 
   return (
-    <div className="flex-col gap">
+    <div className="flex-col gap col-center">
       <div className={styles.headingBlock}>
         <RangeSelector
           startDate={startDate}

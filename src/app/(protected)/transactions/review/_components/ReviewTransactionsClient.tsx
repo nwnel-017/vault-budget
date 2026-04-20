@@ -98,7 +98,6 @@ export default function ReviewTransactionsClient({
                   <span>{formattedDate}</span>
                   <span>
                     {transaction.category ? (
-                      // transaction.category.category_name
                       <button
                         className={styles.changeCategoryButton}
                         type="button"

@@ -15,6 +15,8 @@ import {
 } from "chart.js";
 import { Line, Pie } from "react-chartjs-2";
 import type { ChartOptions, TooltipItem } from "chart.js";
+import ArrowDown from "@/app/components/ui/ArrowDown";
+import ArrowUp from "@/app/components/ui/ArrowUp";
 
 ChartJS.register(
   ArcElement,
@@ -184,7 +186,7 @@ export default function DashHeader({
               >
                 {`${goalDifference >= 0 ? "+" : "-"}${formatFunds(
                   Math.abs(goalDifference),
-                )} ${goalDifference >= 0 ? "above" : "below"} goal`}
+                )} ${goalDifference >= 0 ? "above" : "under"} goal`}
               </span>
             ) : null}
           </div>
@@ -199,11 +201,43 @@ export default function DashHeader({
     },
     {
       id: "total-earned",
-      content: `Total earned: ${formatFunds(totalEarned)}`,
+      content: (
+        <div className={styles.totalSavedCard}>
+          <div className={styles.savingsDetail}>
+            <div className={styles.savingsAmount}>
+              <span className={styles.totalSavedLabel}>Total earned:</span>
+              <span
+                className={`${styles.totalSavedAmount} ${styles.amount} ${styles.aboveGoal}`}
+              >
+                <span className={styles.funds}>
+                  <ArrowUp />
+                  {formatFunds(totalEarned)}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      ),
     },
     {
       id: "total-spent",
-      content: `Total spent: ${formatFunds(totalSpent)}`,
+      content: (
+        <div className={styles.totalSavedCard}>
+          <div className={styles.savingsDetail}>
+            <div className={styles.savingsAmount}>
+              <span className={styles.totalSavedLabel}>Total spent:</span>
+              <span
+                className={`${styles.totalSavedAmount} ${styles.amount} ${styles.belowGoal}`}
+              >
+                <span className={styles.funds}>
+                  <ArrowDown />
+                  {formatFunds(totalSpent)}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      ),
     },
     {
       id: "category-breakdown",
@@ -249,7 +283,6 @@ export default function DashHeader({
         </div>
       </div>
       <div className={styles.controls}>
-        {/* these dots let the user jump to a specific panel */}
         {cards.map((card, index) => (
           <button
             key={card.id}

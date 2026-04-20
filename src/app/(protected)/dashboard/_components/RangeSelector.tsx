@@ -3,10 +3,6 @@ import {
   formatDateInputValue,
   getDateNextMonth,
   getDatePreviousMonth,
-  getFirstDayLastMonth,
-  getFirstDayNextMonth,
-  getLastDayLastMonth,
-  getLastDayNextMonth,
 } from "@/utils/date";
 
 type RangeSelectorProps = {
@@ -45,23 +41,29 @@ export default function RangeSelector({
   return (
     <div className={styles.rangeCard}>
       <div className={styles.selector}>
-        <div>
+        <div className={styles.buttonWrap}>
           <form action="/dashboard" method="get">
             <input type="hidden" name="start" value={previousMonthStart} />
             <input type="hidden" name="end" value={previousMonthEnd} />
             <button className={styles.button} type="submit">
-              --
+              <span className={styles.buttonArrow} aria-hidden="true">
+                &#8249;
+              </span>
+              <span className={styles.buttonText}>Previous</span>
             </button>
           </form>
         </div>
-        <h3>{selectedLabel}</h3>
+        <h3 className={styles.label}>{selectedLabel}</h3>
 
-        <div>
+        <div className={styles.buttonWrap}>
           <form action="/dashboard" method="get">
             <input type="hidden" name="start" value={nextMonthStart} />
             <input type="hidden" name="end" value={nextMonthEnd} />
             <button className={styles.button} type="submit">
-              --
+              <span className={styles.buttonText}>Next</span>
+              <span className={styles.buttonArrow} aria-hidden="true">
+                &#8250;
+              </span>
             </button>
           </form>
         </div>

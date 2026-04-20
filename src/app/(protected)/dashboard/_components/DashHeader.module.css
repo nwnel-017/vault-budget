@@ -4,11 +4,8 @@
   justify-content: center;
   margin: 0 auto;
   gap: 1rem;
-  /* padding: 1rem; */
-  overflow-x: hidden;
-  overflow-y: visible;
   width: 100dvw;
-  background-color: var(--accent);
+  /* background-color: var(--accent); */
   /* border: 1px solid red; */
 }
 
@@ -16,6 +13,7 @@
   width: 100%;
   overflow-x: hidden;
   overflow-y: visible;
+  /* border: 1px solid blue; */
 }
 
 .boxContainer {
@@ -98,7 +96,8 @@
 }
 
 .aboveGoal {
-  color: #15803d;
+  /* color: #15803d; */
+  color: #10b981;
 }
 
 .belowGoal {
@@ -112,6 +111,7 @@
 }
 
 .totalSavedAmount {
+  display: flex;
   font-size: 1.4rem;
   font-weight: 700;
 }
@@ -120,6 +120,7 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
+  flex: 1;
   /* border: 1px solid red; */
 }
 
@@ -127,6 +128,25 @@
   display: flex;
   flex-direction: column;
   /* border: 1px solid red; */
+}
+
+.savingsAmount {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.amount {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.funds {
+  display: flex;
+  align-items: end;
 }
 
 .headerStrip {
@@ -180,20 +200,32 @@
 
 @media (min-width: 1024px) {
   .carouselViewport {
-    overflow: visible;
+    overflow-x: visible;
+  }
+
+  .header {
+    width: 60dvw;
   }
 
   .headerStrip {
     transform: none;
+    width: 100%;
+  }
+
+  .totalSavedCard {
+    width: 90%;
   }
 
   .boxContainer {
     min-width: 25%;
+    max-width: 25%;
+    /* border: 1px solid green; */
   }
 
   .categoryBox {
     min-height: 9rem;
     max-height: 9rem;
+    width: 90%;
   }
 
   .controls {
