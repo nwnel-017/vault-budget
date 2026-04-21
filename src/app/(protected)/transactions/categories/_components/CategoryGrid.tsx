@@ -72,7 +72,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
   return (
     <>
       <div className={styles.header}>
-        <h1>Transaction Categories</h1>
+        <h1>My Spending Categories</h1>
         <button
           className={styles.addCategoryButton}
           type="button"

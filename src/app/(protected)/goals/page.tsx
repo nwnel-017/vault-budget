@@ -48,7 +48,7 @@ export default async function SavingsGoals() {
   });
 
   return (
-    <div className="page flex-col">
+    <div className="page flex-col full-width">
       <SpendingGoal currentGoal={savingsGoal?.amount.toString() ?? null} />
       <CategoryGoals categories={categoryGoals} />
     </div>

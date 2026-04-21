@@ -88,6 +88,12 @@ a {
 
 .max-width {
   max-width: 100%;
+  margin: 0 auto;
+}
+
+.full-width {
+  width: 90%;
+  margin: 0 auto;
 }
 
 .text-center {
@@ -147,5 +153,9 @@ a {
 @media (min-width: 1024px) {
   .max-width {
     max-width: 50%;
+  }
+
+  .full-width {
+    width: 35dvw;
   }
 }

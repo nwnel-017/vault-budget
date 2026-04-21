@@ -1,5 +1,6 @@
 .wrapper {
-  width: 90%;
+  /* width: min(90%, 72rem); */
+  width: 100%;
   padding-top: 2rem;
 }
 
@@ -41,13 +42,13 @@
 }
 
 @media (min-width: 768px) {
-  .wrapper {
+  /* .wrapper {
     width: 50%;
-  }
+  } */
 }
 
 @media (min-width: 1024) {
-  .wrapper {
+  /* .wrapper {
     width: 40%;
-  }
+  } */
 }

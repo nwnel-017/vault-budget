@@ -1,5 +1,6 @@
 .wrapper {
-  width: min(92%, 72rem);
+  /* width: min(90%, 72rem); */
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -10,6 +11,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  color: var(--background);
 }
 
 .title {
@@ -19,13 +21,14 @@
 
 .description {
   font-size: 1rem;
-  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+  /* color: color-mix(in srgb, var(--foreground) 70%, transparent); */
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  width: 100%;
 }
 
 .card {

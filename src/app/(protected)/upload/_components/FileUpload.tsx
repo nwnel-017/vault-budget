@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import { useState } from "react";
 import FileConfig from "./FileConfig";
 import FieldMapping from "./FieldMapping";
+import { FileUploadIcon } from "@/components/ui/icons/FileUpload";
 import styles from "./FileUpload.module.css";
 
 const MAX_SERVER_ACTION_FILE_SIZE_BYTES = 1024 * 1024;
@@ -196,10 +197,16 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
           </div>
 
           <form onSubmit={submit} className={styles.form}>
-            <label className={styles.fileLabel} htmlFor="csv-file">
-              Choose your CSV file
-            </label>
-            {/* Keep the native picker so the upload flow stays reliable */}
+            <div className={styles.iconContainer}>
+              <div className="flex-col col-center gap">
+                <label className={styles.fileLabel} htmlFor="csv-file">
+                  Choose your CSV file
+                </label>
+                <label className={styles.fileTrigger} htmlFor="csv-file">
+                  <FileUploadIcon />
+                </label>
+              </div>
+            </div>
             <input
               className={styles.fileInput}
               id="csv-file"
@@ -210,8 +217,12 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
               required
             />
             <p className={styles.helperText}>Maximum file size: 1 MB.</p>
-            {file ? <span className={styles.filePill}>{file.name}</span> : null}
-            <SubmitButton />
+            {file ? (
+              <>
+                <span className={styles.filePill}>{file.name}</span>
+                <SubmitButton />
+              </>
+            ) : null}
           </form>
         </div>
       </section>
