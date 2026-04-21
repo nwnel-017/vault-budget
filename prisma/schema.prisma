@@ -12,6 +12,16 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AccountTier {
+  FREE
+  PREMIUM
+}
+
 model User {
   id                String            @id
   name              String
@@ -20,6 +30,8 @@ model User {
   image             String?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
+  role              UserRole          @default(USER)
+  accountTier       AccountTier       @default(FREE)
   sessions          Session[]
   accounts          Account[]
   transactions      Transaction[]
@@ -45,7 +57,7 @@ model UserPayPeriod {
   @@index([id])
   @@map("user_pay_period")
 }
-
+  
 model UserColumnMappings {
   id             String   @id @default(cuid())
   user_id        String

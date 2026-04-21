@@ -1,7 +1,6 @@
 import "server-only";
 
 // TO DO - reevaluate structure
-// should we have server functions here and not in server actions?
 
 import { revalidatePath } from "next/cache";
 import db from "@/lib/prisma";
@@ -48,6 +47,51 @@ export async function associateTranToCategory(
     validatedCategoryId,
     transaction,
   );
+}
+
+export async function changeTransactionCategory(
+  userId: string,
+  transactionId: string,
+  newCategoryId: string,
+) {
+  const validationResult = await validateCategoryTransaction(
+    userId,
+    transactionId,
+    newCategoryId,
+  );
+
+  if (!validationResult.success) {
+    return validationResult;
+  }
+
+  const { validatedCategoryId, validatedTransactionId } = validationResult;
+
+  try {
+    await db.transaction.update({
+      where: {
+        id: validatedTransactionId,
+      },
+      data: {
+        category_id: validatedCategoryId,
+        transaction_rule_id: null,
+      },
+    });
+
+    revalidatePath("/transactions/review");
+
+    return {
+      success: true,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unable to update transaction category.",
+    };
+  }
 }
 
 // TO DO - make sure matches is incremented in transaction_rule when new transactions are categorized

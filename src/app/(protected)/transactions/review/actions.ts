@@ -1,8 +1,12 @@
 "use server";
 
 import { requireSession } from "@/lib/auth-helpers";
+import { hasReachedFreeTierTransactionLimit } from "@/lib/free-tier-limit";
 import db from "@/lib/prisma";
-import { associateTranToCategory } from "@/lib/transaction-rules";
+import {
+  associateTranToCategory,
+  changeTransactionCategory,
+} from "@/lib/transaction-rules";
 
 // lets the user delete all their transactions
 export async function resetUserTransactions() {
@@ -41,7 +45,6 @@ export async function categorizeTransaction(
   transactionId: string,
   categoryId: string,
 ) {
-  // validate session
   const sessionResult = await requireSession();
 
   if (sessionResult.error) {
@@ -58,6 +61,12 @@ export async function categorizeTransaction(
       success: false,
       error: "Missing user id in session",
     };
+  }
+
+  const freeTierReached = await hasReachedFreeTierTransactionLimit(userId);
+
+  if (freeTierReached) {
+    return changeTransactionCategory(userId, transactionId, categoryId);
   }
 
   return associateTranToCategory(userId, transactionId, categoryId);

@@ -4,6 +4,7 @@ import { Readable } from "node:stream";
 import csv from "csv-parser";
 import { requireSession } from "@/lib/auth-helpers";
 import { matchTransactionCategory } from "@/lib/category-rules";
+import { hasReachedFreeTierTransactionLimit } from "@/lib/free-tier-limit";
 import { parseValidTransactionRow } from "@/lib/csv-helpers";
 import db from "@/lib/prisma";
 import {
@@ -111,6 +112,9 @@ export async function uploadInput(
       transactions: [],
     };
   }
+
+  const freeTierLimitReached =
+    await hasReachedFreeTierTransactionLimit(userId);
 
   // validate the file
   const fileResult = validateCsvFile(form);
@@ -234,6 +238,17 @@ export async function uploadInput(
     // TO DO - when a transaction rule is used - we increment matches
     const createdTransactions = await db.transaction.createManyAndReturn({
       data: parsedRows.map((row) => {
+        if (freeTierLimitReached) {
+          return {
+            merchant: row.merchantType,
+            amount: row.amount,
+            date_purchased: row.transactionDate,
+            user_id: userId,
+            category_id: null,
+            transaction_rule_id: null,
+          };
+        }
+
         const matchedRule = matchTransactionCategory(
           row.merchantType,
           sortedUserTransactionRules,

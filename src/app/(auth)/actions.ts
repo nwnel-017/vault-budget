@@ -3,7 +3,28 @@
 import { auth } from "../../lib/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { success } from "better-auth";
+
+function getAuthErrorCode(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return null;
+  }
+
+  if ("code" in error && typeof error.code === "string") {
+    return error.code;
+  }
+
+  if (
+    "body" in error &&
+    error.body &&
+    typeof error.body === "object" &&
+    "code" in error.body &&
+    typeof error.body.code === "string"
+  ) {
+    return error.body.code;
+  }
+
+  return null;
+}
 
 export async function login(email: string, password: string) {
   if (!email || !password) {
@@ -11,12 +32,25 @@ export async function login(email: string, password: string) {
   }
 
   try {
-    const result = await auth.api.signInEmail({
-      body: { email, password },
+    await auth.api.signInEmail({
+      body: {
+        email,
+        password,
+        callbackURL: "/dashboard",
+      },
     });
     return { success: true, message: "Login successful" };
   } catch (error) {
     console.error("Login error:", error);
+
+    if (getAuthErrorCode(error) === "EMAIL_NOT_VERIFIED") {
+      return {
+        success: false,
+        message:
+          "Please verify your email address. A new verification link was sent.",
+      };
+    }
+
     return {
       success: false,
       message: "Login failed. Please check your credentials and try again.",
@@ -30,17 +64,20 @@ export async function signup(email: string, password: string, name: string) {
   }
 
   try {
-    const result = await auth.api.signUpEmail({
-      body: { email, password, name },
+    await auth.api.signUpEmail({
+      body: {
+        email,
+        password,
+        name,
+        callbackURL: "/dashboard",
+      },
     });
 
-    return { success: true, message: "Signup successful" };
-
-    // if (result.error) {
-    //   throw new Error(result.error.message);
-    // }
-
-    // On successful signup, redirect to login or home
+    return {
+      success: true,
+      message:
+        "Signup successful. Check your email to verify your account before logging in.",
+    };
   } catch (error) {
     console.error("Signup error:", error);
     return { success: false, message: "Signup failed. Please try again." };
