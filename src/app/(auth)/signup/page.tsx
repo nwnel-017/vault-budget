@@ -1,24 +1,28 @@
 import Link from "next/link";
-import { signup } from "../actions";
 import SignupForm from "../_components/signup-form";
+import styles from "../_components/AuthPage.module.css";
 
 export default function Signup() {
-  async function login(e: React.SubmitEvent) {}
-
   return (
-    <div>
-      <div className="flex-center">
-        <h1>Signup</h1>
-      </div>
-      <SignupForm />
-      <div className="space-between gap">
-        <Link href="login" className="link-btn">
-          Login
-        </Link>
-        <Link href="/" className="link-btn">
-          Home
-        </Link>
-      </div>
-    </div>
+    <main className={styles.page}>
+      <section className={styles.panel}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Signup</h1>
+          <p className={styles.description}>
+            Create your account to start tracking transactions and savings
+            goals.
+          </p>
+        </div>
+        <SignupForm />
+        <div className={styles.links}>
+          <Link href="/login" className={styles.link}>
+            Already have an account?
+          </Link>
+          <Link href="/" className={styles.link}>
+            Home
+          </Link>
+        </div>
+      </section>
+    </main>
   );
 }

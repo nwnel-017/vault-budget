@@ -1,22 +1,28 @@
 import Link from "next/link";
 import LoginForm from "../_components/login-form";
-import { login } from "../actions";
+import styles from "../_components/AuthPage.module.css";
 
-export default function Login({ login }: { login: any }) {
+export default function Login() {
   return (
-    <div>
-      <div className="flex-center">
-        <h1>Login</h1>
-      </div>
-      <LoginForm />
-      <div className="space-between gap">
-        <Link href="signup" className="link-btn">
-          Signup
-        </Link>
-        <Link href="/" className="link-btn">
-          Home
-        </Link>
-      </div>
-    </div>
+    <main className={styles.page}>
+      <section className={styles.panel}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Login</h1>
+          <p className={styles.description}>
+            Sign in to review spending, upload transactions, and manage your
+            budget.
+          </p>
+        </div>
+        <LoginForm />
+        <div className={styles.links}>
+          <Link href="/signup" className={styles.link}>
+            Create account
+          </Link>
+          <Link href="/" className={styles.link}>
+            Home
+          </Link>
+        </div>
+      </section>
+    </main>
   );
 }
