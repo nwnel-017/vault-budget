@@ -16,13 +16,13 @@ import TopCategories from "./_components/TopCategories";
 import DashHeader from "./_components/DashHeader";
 import RangeSelector from "./_components/RangeSelector";
 import PayPeriodConfig from "./_components/PayPeriodConfig";
+import WelcomePanel from "./_components/WelcomePanel";
 import styles from "./page.module.css";
 
 function getSearchParamValue(value: string | string[] | undefined) {
   return typeof value === "string" ? value : null;
 }
 
-// TO DO - Review logic
 export default async function Dashboard({
   searchParams,
 }: {
@@ -42,13 +42,8 @@ export default async function Dashboard({
   let endDateString: string | null = null;
   let startDate: Date | null = null;
   let endDate: Date | null = null;
-  const firstTimeUser = getSearchParamValue(
-    resolvedSearchParams.firstTimeUser,
-  );
-
-  if (firstTimeUser) {
-    console.log("firstTimeUser", firstTimeUser);
-  }
+  const firstTimeUser = getSearchParamValue(resolvedSearchParams.firstTimeUser);
+  // const showWelcomePanel = firstTimeUser === "true";
 
   const userPayPeriod = await db.userPayPeriod.findUnique({
     where: {
@@ -58,6 +53,10 @@ export default async function Dashboard({
       pay_period_start_day: true,
     },
   });
+
+  if (!userPayPeriod) {
+    return <PayPeriodConfig onSelectPayPeriod={setUserPayPeriodBegin} />;
+  }
 
   // get interval from search params
   startDateString = getSearchParamValue(resolvedSearchParams.start);
@@ -72,7 +71,7 @@ export default async function Dashboard({
     });
 
     if (!latestTransaction) {
-      return null;
+      return <WelcomePanel />;
     }
 
     const defaultRange = getDefaultDateRange(
@@ -168,7 +167,7 @@ export default async function Dashboard({
         savingsGoal={savingsGoalAmount ?? null}
         savedHistory={savedHistory}
       />
-      <TopCategories categories={topCategories} />
+      <TopCategories categories={topCategories} />)
     </div>
   );
 }

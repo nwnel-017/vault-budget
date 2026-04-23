@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChooseCategory } from "./ChooseCategory";
-import { categorizeTransaction } from "../actions";
+import { categorizeTransaction, deleteTransaction } from "../actions";
 import { formatTransaction } from "@/utils/funds";
 import styles from "../page.module.css";
 
-// TO DO: change this
-// we dont want hardcoded database types
 type ReviewTransactionsClientProps = {
   categories: {
     id: string;
     category_name: string;
   }[];
+  currentPage: number;
+  totalPages: number;
+  totalTransactions: number;
   transactions: {
     id: string;
     amount: string;
@@ -25,16 +27,53 @@ type ReviewTransactionsClientProps = {
   }[];
 };
 
+type TransactionFilter = "all" | "categorized" | "uncategorized";
+
 // takes in categories and transactions
+// TO DO - review logic
 export default function ReviewTransactionsClient({
+  activeFilter,
   categories,
+  currentPage,
+  totalPages,
+  totalTransactions,
   transactions,
-}: ReviewTransactionsClientProps) {
+}: ReviewTransactionsClientProps & {
+  activeFilter: TransactionFilter;
+}) {
   const [chooseCategoryOptions, setChooseCategoryOptions] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState("");
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  function updateTransactionView(filter: TransactionFilter, page: number) {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (filter === "all") {
+      params.delete("tab");
+    } else {
+      params.set("tab", filter);
+    }
+
+    if (page <= 1) {
+      params.delete("page");
+    } else {
+      params.set("page", page.toString());
+    }
+
+    const nextQuery = params.toString();
+    const nextUrl = nextQuery ? `${pathname}?${nextQuery}` : pathname;
+
+    router.push(nextUrl);
+  }
 
   async function addTransactionCategory(categoryId: string) {
-    if (!selectedTransaction || !categoryId) alert("No transaction selected");
+    if (!selectedTransaction || !categoryId) {
+      alert("No transaction selected");
+      return;
+    }
+
     const response = await categorizeTransaction(
       selectedTransaction,
       categoryId,
@@ -43,8 +82,11 @@ export default function ReviewTransactionsClient({
     if (!response?.success) {
       alert(response?.error || "Something went wrong!");
     } else {
+      router.refresh();
       alert("Updated transaction category");
     }
+
+    setSelectedTransaction("");
     setChooseCategoryOptions(false);
   }
 
@@ -53,6 +95,21 @@ export default function ReviewTransactionsClient({
 
     setSelectedTransaction(id);
     setChooseCategoryOptions(true);
+  }
+
+  async function removeTransaction(id: string) {
+    if (!id) {
+      return;
+    }
+
+    const response = await deleteTransaction(id);
+
+    if (!response.success) {
+      alert(response.error ?? "Unable to delete transaction.");
+      return;
+    }
+
+    router.refresh();
   }
 
   return (
@@ -64,17 +121,62 @@ export default function ReviewTransactionsClient({
         closeChooseCategory={() => setChooseCategoryOptions(false)}
       />
       <section className={styles.page}>
-        <div className={styles.header}>
-          <h1>Review Transactions</h1>
-        </div>
         <div className={styles.gridWrapper}>
+          <div className={styles.gridTopBar}>
+            <div className={styles.header}>
+              <h1>Review Transactions</h1>
+            </div>
+            <div
+              className={styles.filterTabs}
+              role="tablist"
+              aria-label="Filter transactions"
+            >
+              <button
+                className={`${styles.filterTab} ${
+                  activeFilter === "all" ? styles.activeFilterTab : ""
+                }`}
+                type="button"
+                role="tab"
+                aria-selected={activeFilter === "all"}
+                onClick={() => updateTransactionView("all", 1)}
+              >
+                All
+              </button>
+              <button
+                className={`${styles.filterTab} ${
+                  activeFilter === "categorized" ? styles.activeFilterTab : ""
+                }`}
+                type="button"
+                role="tab"
+                aria-selected={activeFilter === "categorized"}
+                onClick={() => updateTransactionView("categorized", 1)}
+              >
+                Categorized
+              </button>
+              <button
+                className={`${styles.filterTab} ${
+                  activeFilter === "uncategorized" ? styles.activeFilterTab : ""
+                }`}
+                type="button"
+                role="tab"
+                aria-selected={activeFilter === "uncategorized"}
+                onClick={() => updateTransactionView("uncategorized", 1)}
+              >
+                Uncategorized
+              </button>
+            </div>
+          </div>
           <div className={styles.gridHeader} role="row">
             <span>Amount</span>
             <span>Merchant</span>
             <span>Date</span>
             <span>Category</span>
+            <span className={styles.actionHeader}>Action</span>
           </div>
           <div className={styles.gridBody}>
+            {transactions.length === 0 ? (
+              <div className={styles.emptyState}>No transactions found.</div>
+            ) : null}
             {transactions.map((transaction) => {
               const formattedDate = new Intl.DateTimeFormat("en-US", {
                 month: "short",
@@ -89,17 +191,21 @@ export default function ReviewTransactionsClient({
 
               return (
                 <div className={styles.gridRow} key={transaction.id} role="row">
-                  <span>
+                  <span className={styles.amountCell}>
                     <span className={amountClassName}>
                       {formatTransaction(transaction.amount)}
                     </span>
                   </span>
-                  <span>{transaction.merchant}</span>
-                  <span>{formattedDate}</span>
-                  <span>
+                  <span className={styles.merchantCell}>
+                    <span className={styles.merchantName}>
+                      {transaction.merchant}
+                    </span>
+                  </span>
+                  <span className={styles.dateCell}>{formattedDate}</span>
+                  <span className={styles.categoryCell}>
                     {transaction.category ? (
                       <button
-                        className={styles.changeCategoryButton}
+                        className={`${styles.categoryButton} ${styles.changeCategoryButton}`}
                         type="button"
                         onClick={() => selectTransaction(transaction.id)}
                       >
@@ -107,18 +213,60 @@ export default function ReviewTransactionsClient({
                       </button>
                     ) : (
                       <button
-                        className={styles.addCategoryButton}
+                        className={`${styles.categoryButton} ${styles.addCategoryButton}`}
                         type="button"
                         onClick={() => selectTransaction(transaction.id)}
                       >
-                        Add Category
+                        Uncategorized
                       </button>
                     )}
+                  </span>
+                  <span className={styles.actionCell}>
+                    <button
+                      className={styles.deleteRowButton}
+                      type="button"
+                      onClick={() => removeTransaction(transaction.id)}
+                    >
+                      Delete
+                    </button>
                   </span>
                 </div>
               );
             })}
           </div>
+          {totalTransactions > 0 ? (
+            <div className={styles.gridFooter}>
+              <p className={styles.resultsText}>
+                Showing page {currentPage} of {totalPages} for{" "}
+                {totalTransactions} transactions
+              </p>
+              <div className={styles.pagination}>
+                <button
+                  className={styles.paginationButton}
+                  type="button"
+                  onClick={() =>
+                    updateTransactionView(activeFilter, currentPage - 1)
+                  }
+                  disabled={currentPage <= 1}
+                >
+                  Previous
+                </button>
+                <p className={styles.paginationText}>
+                  Page {currentPage} of {totalPages}
+                </p>
+                <button
+                  className={styles.paginationButton}
+                  type="button"
+                  onClick={() =>
+                    updateTransactionView(activeFilter, currentPage + 1)
+                  }
+                  disabled={currentPage >= totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </section>
     </div>

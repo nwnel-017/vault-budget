@@ -3,6 +3,7 @@ import db from "@/lib/prisma";
 import { requireSession } from "@/lib/auth-helpers";
 import CategoryGoals from "./_components/CategoryGoals";
 import SpendingGoal from "./_components/SpendingGoal";
+import styles from "./page.module.css";
 
 // TO DO - review logic and improve
 export default async function SavingsGoals() {
@@ -48,9 +49,11 @@ export default async function SavingsGoals() {
   });
 
   return (
-    <div className="page flex-col full-width">
-      <SpendingGoal currentGoal={savingsGoal?.amount.toString() ?? null} />
-      <CategoryGoals categories={categoryGoals} />
+    <div className={styles.page}>
+      <section className={styles.panel}>
+        <SpendingGoal currentGoal={savingsGoal?.amount.toString() ?? null} />
+        <CategoryGoals categories={categoryGoals} />
+      </section>
     </div>
   );
 }

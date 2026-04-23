@@ -56,7 +56,6 @@ export default function PayPeriodConfig({
           <label className={styles.label} htmlFor="pay-period-day">
             Day of the month
           </label>
-          {/* Keep the select simple so the user can save fast */}
           <select
             className={styles.select}
             id="pay-period-day"

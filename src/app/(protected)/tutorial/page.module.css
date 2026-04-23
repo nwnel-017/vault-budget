@@ -1,0 +1,120 @@
+.page {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.panel {
+  width: min(100%, 44rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  border-radius: 1.5rem;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow:
+    0 1rem 2rem -1rem rgba(15, 23, 42, 0.25),
+    0 2rem 4rem -2rem rgba(15, 23, 42, 0.35);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.description {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 0.0625rem solid #cbd5e1;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.stepLabel {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+
+.sectionText {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.tips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tipsTitle {
+  font-size: 1.1rem;
+}
+
+.tipList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding-left: 1rem;
+  color: #475569;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.linkButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.75rem;
+  border: 0.0625rem solid #1d4ed8;
+  border-radius: 999rem;
+  padding: 0.75rem 1.1rem;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.linkButton:hover {
+  background: rgba(29, 78, 216, 0.08);
+}
+
+@media (min-width: 48rem) {
+  .panel {
+    padding: 2.25rem;
+  }
+}

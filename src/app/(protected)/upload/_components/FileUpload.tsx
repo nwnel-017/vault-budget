@@ -191,8 +191,8 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
               duplicate transactions.
             </p>
             <p className={styles.noticeText}>
-              Example: instead of exporting `11/1/2026` through `12/1/2026`,
-              export `11/1/2026` through `11/31/2026`.
+              Example: instead of exporting 11/1/2026 through 12/1/2026, export
+              11/1/2026 through 11/31/2026.
             </p>
           </div>
 

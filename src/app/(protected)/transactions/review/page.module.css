@@ -1,9 +1,17 @@
+.pageLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(100%, 86rem);
+  margin: 0 auto;
+  padding: 2rem 2.25rem;
+}
+
 .page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  width: 80vw;
+  gap: 1rem;
+  width: 100%;
 }
 
 .header {
@@ -12,30 +20,74 @@
   justify-content: space-between;
 }
 
+.header h1 {
+  margin: 0;
+  color: #12203a;
+  font-size: 2.2rem;
+  line-height: 1.1;
+}
+
+.filterTabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.filterTab {
+  border: 1px solid #d9e0ef;
+  border-radius: 999px;
+  background-color: #ffffff;
+  padding: 0.7rem 1.15rem;
+  font: inherit;
+  color: #44506a;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.activeFilterTab {
+  border-color: #2f64e0;
+  background-color: #2f64e0;
+  color: #ffffff;
+}
+
+.gridTopBar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.6rem 1.8rem 1.2rem;
+  border-bottom: 1px solid #e7ecf6;
+}
+
 .gridWrapper {
-  border: 1px solid #d9d9d9;
-  border-radius: 12px;
+  border: 1px solid #dfe5f2;
+  border-radius: 1.2rem;
   overflow: hidden;
   background-color: #ffffff;
+  box-shadow: 0 1rem 2.5rem rgba(20, 42, 87, 0.08);
 }
 
 .gridHeader,
 .gridRow {
   display: grid;
   grid-template-columns:
-    minmax(8rem, 1fr) minmax(12rem, 1.4fr) minmax(10rem, 1fr)
-    minmax(10rem, 1fr);
+    minmax(8rem, 0.95fr) minmax(14rem, 1.7fr) minmax(9rem, 0.9fr)
+    minmax(10rem, 1fr) minmax(7rem, 0.7fr);
   gap: 1rem;
   align-items: center;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.8rem;
 }
 
 .gridHeader {
-  background-color: #f5f5f5;
-  font-size: 0.875rem;
+  border-bottom: 1px solid #e7ecf6;
+  background-color: #ffffff;
+  font-size: 0.82rem;
   font-weight: 600;
+  color: #51607d;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .gridBody {
@@ -45,7 +97,84 @@
 }
 
 .gridRow {
-  border-top: 1px solid #ececec;
+  border-top: 1px solid #edf1f7;
+  min-height: 4.8rem;
+}
+
+.emptyState {
+  padding: 1.5rem 1.8rem;
+  color: #5c6882;
+}
+
+.amountCell,
+.dateCell,
+.categoryCell,
+.actionCell {
+  color: #26324b;
+}
+
+.actionHeader,
+.actionCell {
+  justify-self: end;
+}
+
+.merchantCell {
+  display: flex;
+  align-items: center;
+}
+
+.merchantName {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  color: #1e2942;
+}
+
+.gridFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid #e7ecf6;
+  padding: 1.2rem 1.8rem;
+  background-color: #ffffff;
+}
+
+.resultsText {
+  margin: 0;
+  color: #59657e;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.paginationButton {
+  border: 1px solid #d7deec;
+  border-radius: 0.7rem;
+  background-color: #ffffff;
+  min-width: 6.5rem;
+  padding: 0.7rem 1rem;
+  font: inherit;
+  color: #33415e;
+  cursor: pointer;
+}
+
+.paginationButton:disabled {
+  border-color: #e5eaf4;
+  background-color: #f8faff;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.paginationText {
+  margin: 0;
+  color: #5c6882;
 }
 
 .gridRow span {
@@ -57,53 +186,66 @@
 .negativeAmount {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  padding: 0.35rem 0.75rem;
-  /* color: #ffffff; */
-  /* color: #f19898; */
-  font-weight: 600;
+  justify-content: flex-start;
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .positiveAmount {
-  /* background-color: #2f9e44; */
-  color: #10b981;
+  color: #15925e;
 }
 
 .negativeAmount {
-  /* background-color: #f19898; */
-  color: #b91c1c;
+  color: #1f2940;
+}
+
+.categoryButton {
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
 }
 
 .addCategoryButton {
-  border: 1px solid #1f1f1f;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background-color: transparent;
-  padding: 0.45rem 0.9rem;
-  font: inherit;
-  cursor: pointer;
+  background-color: #eef1f6;
+  color: #55627b;
 }
 
 .changeCategoryButton {
-  border: none;
+  border: 1px solid transparent;
+  background-color: #e7f5ea;
+  color: #2f8b57;
+}
+
+.addCategoryButton:hover {
+  background-color: #e5eaf2;
+}
+
+.deleteRowButton {
+  border: 1px solid #f0d7d7;
   border-radius: 999px;
-  /* background-color: rgb(62, 186, 105); */
-  color: rgb(62, 186, 105);
-  padding: 0.45rem 0.9rem;
+  background-color: #fff5f5;
+  color: #b42318;
+  padding: 0.5rem 0.9rem;
   font: inherit;
   cursor: pointer;
 }
 
-.addCategoryButton:hover {
-  background-color: #1f1f1f;
-  color: #ffffff;
+.deleteRowButton:hover {
+  background-color: #fdecec;
 }
 
 @media (max-width: 720px) {
-  .page {
+  .pageLayout {
+    width: 100%;
     padding: 1rem;
-    width: auto;
-    margin-left: 0;
+  }
+
+  .page {
+    width: 100%;
   }
 
   .gridHeader {
@@ -113,5 +255,32 @@
   .gridRow {
     grid-template-columns: 1fr;
     gap: 0.5rem;
+  }
+
+  .gridHeader,
+  .gridRow,
+  .gridFooter {
+    padding: 1rem;
+  }
+
+  .gridTopBar {
+    padding: 1rem;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .paginationButton {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gridTopBar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }

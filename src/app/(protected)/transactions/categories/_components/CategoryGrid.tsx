@@ -71,47 +71,6 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
 
   return (
     <>
-      <div className={styles.header}>
-        <h1>My Spending Categories</h1>
-        <button
-          className={styles.addCategoryButton}
-          type="button"
-          onClick={() => setIsFormOpen((current) => !current)}
-        >
-          Add Category
-        </button>
-      </div>
-
-      {isFormOpen ? (
-        <form onSubmit={(e) => submit(e)} className={styles.categoryForm}>
-          <label className={styles.formLabel}>Category Name</label>
-          <div className={styles.formRow}>
-            <input
-              className={styles.categoryInput}
-              id="categoryName"
-              name="categoryName"
-              placeholder="Enter category name"
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              disabled={isPending}
-            />
-            <button
-              className={styles.submitCategoryButton}
-              disabled={isPending}
-              type="submit"
-            >
-              Submit
-            </button>
-          </div>
-          {errorMsg ? (
-            <p className={styles.formMessage} role="alert">
-              {errorMsg}
-            </p>
-          ) : null}
-        </form>
-      ) : null}
-
       {selectedCategory ? (
         <CategoryDetails
           category={selectedCategory}
@@ -126,6 +85,49 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
       ) : null}
 
       <div className={styles.gridWrapper}>
+        <div className={styles.gridTopBar}>
+          <div className={styles.header}>
+            <h1>My Spending Categories</h1>
+            <button
+              className={styles.addCategoryButton}
+              type="button"
+              onClick={() => setIsFormOpen((current) => !current)}
+            >
+              Add Category
+            </button>
+          </div>
+
+          {isFormOpen ? (
+            <form onSubmit={(e) => submit(e)} className={styles.categoryForm}>
+              <label className={styles.formLabel}>Category Name</label>
+              <div className={styles.formRow}>
+                <input
+                  className={styles.categoryInput}
+                  id="categoryName"
+                  name="categoryName"
+                  placeholder="Enter category name"
+                  type="text"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  disabled={isPending}
+                />
+                <button
+                  className={styles.submitCategoryButton}
+                  disabled={isPending}
+                  type="submit"
+                >
+                  Submit
+                </button>
+              </div>
+              {errorMsg ? (
+                <p className={styles.formMessage} role="alert">
+                  {errorMsg}
+                </p>
+              ) : null}
+            </form>
+          ) : null}
+        </div>
+
         <div className={styles.categoryGrid}>
           {categories.map((category) => {
             return (

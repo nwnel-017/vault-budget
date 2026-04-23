@@ -11,6 +11,7 @@ type RangeSelectorProps = {
   selectedLabel: string;
 };
 
+// TO DO - looks off on medium screen sizes - fix
 export default function RangeSelector({
   startDate,
   endDate,

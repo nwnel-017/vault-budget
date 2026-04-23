@@ -1,0 +1,100 @@
+.page {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  /* background:
+    radial-gradient(circle at 18% 82%, rgba(191, 219, 254, 0.92), transparent 32%),
+    radial-gradient(circle at 40% 62%, rgba(147, 197, 253, 0.55), transparent 28%),
+    radial-gradient(circle at 70% 34%, rgba(59, 130, 246, 0.26), transparent 24%),
+    linear-gradient(45deg, #93c5fd 0%, #1e3a8a 100%); */
+}
+
+.panel {
+  width: min(100%, 32rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  border-radius: 1.5rem;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow:
+    0 1rem 2rem -1rem rgba(15, 23, 42, 0.25),
+    0 2rem 4rem -2rem rgba(15, 23, 42, 0.35);
+}
+
+.title {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.sectionCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 0.0625rem solid #cbd5e1;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.sectionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.sectionDescription {
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: #475569;
+}
+
+.actionLink {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.5rem;
+  border: 0.0625rem solid #1d4ed8;
+  border-radius: 999rem;
+  padding: 0.65rem 1rem;
+  color: #1d4ed8;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.actionLink:hover {
+  background: rgba(29, 78, 216, 0.08);
+}
+
+@media (max-width: 40rem) {
+  .sectionCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actionLink {
+    width: 100%;
+  }
+}
+
+@media (min-width: 48rem) {
+  .panel {
+    padding: 2.25rem;
+  }
+}

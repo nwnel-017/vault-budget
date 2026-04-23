@@ -3,30 +3,10 @@
 import { useState } from "react";
 import { formatFunds } from "@/utils/funds";
 import styles from "./DashHeader.module.css";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Filler,
-} from "chart.js";
-import { Line, Pie } from "react-chartjs-2";
-import type { ChartOptions, TooltipItem } from "chart.js";
 import ArrowDown from "@/app/components/ui/ArrowDown";
 import ArrowUp from "@/app/components/ui/ArrowUp";
-
-ChartJS.register(
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Filler,
-);
+import CategorySpendingChart from "./CategorySpendingChart";
+import SavedHistoryChart from "./SavedHistoryChart";
 
 type CategorySpending = {
   id: string;
@@ -39,11 +19,7 @@ type SavedHistory = {
   totalSaved: number;
 };
 
-// TO DO - fix css
-// total saved card should be same size as the others
-// content inside total saved should fit nicely
-
-// TO DO - this is going to need a rewrite
+// TO DO - looks off on medium screen sizes - fix
 export default function DashHeader({
   totalSpent,
   totalEarned,
@@ -59,112 +35,6 @@ export default function DashHeader({
 }) {
   const totalSaved = totalEarned + totalSpent;
   const goalDifference = savingsGoal === null ? null : totalSaved - savingsGoal;
-
-  const recentSavedHistory = savedHistory.slice(-3);
-  const pieColors = [
-    "#e34e4e",
-    "#f97316",
-    "#f59e0b",
-    "#84cc16",
-    "#10b981",
-    "#14b8a6",
-    "#06b6d4",
-    "#3b82f6",
-    "#6366f1",
-    "#8b5cf6",
-    "#ec4899",
-    "#f43f5e",
-  ];
-  const categoryChartColors = topCategories.map((category, index) =>
-    category.categoryName === "Uncategorized"
-      ? "#9ca3af"
-      : pieColors[index % pieColors.length],
-  );
-
-  // TO DO - move these charts to separate components
-  const savedHistoryChartData = {
-    labels: recentSavedHistory.map((entry) =>
-      new Date(entry.monthStart).toLocaleDateString("en-US", {
-        month: "short",
-      }),
-    ),
-    datasets: [
-      {
-        data: recentSavedHistory.map((entry) => entry.totalSaved),
-        borderColor: "#2cb3d1",
-        backgroundColor: "rgba(15, 118, 110, 0.15)",
-        fill: true,
-        pointRadius: 0.25,
-        pointHoverRadius: 0.35,
-      },
-    ],
-  };
-
-  const savedHistoryChartOptions: ChartOptions<"line"> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        callbacks: {
-          label(tooltipItem: TooltipItem<"line">) {
-            return formatFunds(tooltipItem.parsed.y ?? 0);
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
-        },
-        border: {
-          display: false,
-        },
-      },
-      y: {
-        display: false,
-        grid: {
-          display: false,
-        },
-        border: {
-          display: false,
-        },
-      },
-    },
-  };
-
-  const categoryChartData = {
-    labels: topCategories.map((category) => category.categoryName),
-    datasets: [
-      {
-        data: topCategories.map((category) => category.totalSpent),
-        backgroundColor: categoryChartColors,
-        borderColor: "var(--background)",
-        borderWidth: 2,
-      },
-    ],
-  };
-
-  const categoryChartOptions: ChartOptions<"pie"> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        callbacks: {
-          label(tooltipItem: TooltipItem<"pie">) {
-            const label = tooltipItem.label ?? "Category";
-            return `${label}: ${formatFunds(tooltipItem.parsed ?? 0)}`;
-          },
-        },
-      },
-    },
-  };
 
   const cards = [
     {
@@ -191,10 +61,7 @@ export default function DashHeader({
             ) : null}
           </div>
           <div className={styles.totalSavedChart}>
-            <Line
-              data={savedHistoryChartData}
-              options={savedHistoryChartOptions}
-            />
+            <SavedHistoryChart savedHistory={savedHistory} />
           </div>
         </div>
       ),
@@ -246,7 +113,7 @@ export default function DashHeader({
           <div className={styles.pieCard}>
             <span className={styles.pieTitle}>Category Spending</span>
             <div className={styles.pieChart}>
-              <Pie data={categoryChartData} options={categoryChartOptions} />
+              <CategorySpendingChart topCategories={topCategories} />
             </div>
           </div>
         ) : (
@@ -259,22 +126,18 @@ export default function DashHeader({
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const shiftClasses = [
+    styles.shift0,
+    styles.shift1,
+    styles.shift2,
+    styles.shift3,
+  ];
+  const activeShiftClass = shiftClasses[activeIndex] ?? styles.shift0;
 
-  // TO DO - fix this slop
   return (
     <div className={styles.header}>
       <div className={styles.carouselViewport}>
-        <div
-          className={`${styles.headerStrip} ${
-            activeIndex === 0
-              ? styles.shift0
-              : activeIndex === 1
-                ? styles.shift1
-                : activeIndex === 2
-                  ? styles.shift2
-                  : styles.shift3
-          }`}
-        >
+        <div className={`${styles.headerStrip} ${activeShiftClass}`}>
           {cards.map((card) => (
             <div className={styles.boxContainer} key={card.id}>
               <div className={styles.categoryBox}>{card.content}</div>

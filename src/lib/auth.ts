@@ -20,6 +20,11 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
   },
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
   emailVerification: {
     // Send the first verification email right after sign up.
     sendOnSignUp: true,

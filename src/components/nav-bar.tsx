@@ -18,6 +18,11 @@ export default function NavBar() {
             </Link>
           </li>
           <li>
+            <Link href="/tutorial" className={styles.navItem}>
+              Instructions
+            </Link>
+          </li>
+          <li>
             <Link href="/upload" className={styles.navItem}>
               Add a Spreadsheet
             </Link>

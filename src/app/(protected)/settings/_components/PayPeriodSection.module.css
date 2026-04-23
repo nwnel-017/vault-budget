@@ -1,0 +1,145 @@
+.triggerButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.5rem;
+  border: 0.0625rem solid #1d4ed8;
+  border-radius: 999rem;
+  padding: 0.65rem 1rem;
+  background: #ffffff;
+  color: #1d4ed8;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.triggerButton:hover {
+  background: rgba(29, 78, 216, 0.08);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100dvw;
+  min-height: 100dvh;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.modal {
+  width: min(100%, 30rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow:
+    0 1rem 2rem -1rem rgba(15, 23, 42, 0.25),
+    0 2rem 4rem -2rem rgba(15, 23, 42, 0.35);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.15;
+}
+
+.description {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.currentValue {
+  margin: 0;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.select {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 0.0625rem solid #cbd5e1;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+  color: inherit;
+  font: inherit;
+}
+
+.select:focus {
+  outline: 0.125rem solid rgba(29, 78, 216, 0.2);
+  outline-offset: 0.12rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.secondaryButton,
+.primaryButton {
+  min-height: 2.9rem;
+  border-radius: 999rem;
+  padding: 0.7rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondaryButton {
+  border: 0.0625rem solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.primaryButton {
+  border: none;
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.secondaryButton:disabled,
+.primaryButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  margin: 0;
+  color: #b42318;
+}
+
+@media (max-width: 40rem) {
+  .triggerButton {
+    width: 100%;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}

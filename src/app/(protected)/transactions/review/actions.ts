@@ -40,6 +40,52 @@ export async function resetUserTransactions() {
   };
 }
 
+export async function deleteTransaction(transactionId: string) {
+  const sessionResult = await requireSession();
+
+  if (sessionResult.error) {
+    return {
+      success: false,
+      error: sessionResult.error,
+    };
+  }
+
+  const userId = sessionResult.session?.user.id;
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Missing user id in session",
+    };
+  }
+
+  if (!transactionId) {
+    return {
+      success: false,
+      error: "Missing transaction id",
+    };
+  }
+
+  const deletedTransaction = await db.transaction.deleteMany({
+    where: {
+      id: transactionId,
+      user_id: userId,
+    },
+  });
+
+  if (deletedTransaction.count === 0) {
+    return {
+      success: false,
+      error: "Transaction not found",
+    };
+  }
+
+  return {
+    success: true,
+    error: null,
+  };
+}
+
 // function to generate a category rule for a transaction based on the merchant name
 export async function categorizeTransaction(
   transactionId: string,

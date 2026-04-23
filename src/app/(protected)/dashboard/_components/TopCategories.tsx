@@ -13,8 +13,6 @@ type TopCategoriesProps = {
   }[];
 };
 
-// TO DO - review html and css
-// change goal difference message to be more intuitive for the user
 export default function TopCategories({ categories }: TopCategoriesProps) {
   return (
     <section className={styles.section}>

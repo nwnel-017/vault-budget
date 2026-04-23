@@ -1,6 +1,7 @@
 "use client";
 
 import { resetUserTransactions } from "../actions";
+import styles from "./DeleteTransactions.module.css";
 
 export default function DeleteTransactions() {
   async function resetTransactions() {
@@ -13,10 +14,17 @@ export default function DeleteTransactions() {
     alert("Success");
   }
   return (
-    <div>
-      <button onClick={resetTransactions}>
+    <section className={styles.wrapper}>
+      <div className={styles.panel}>
+        <h2 className={styles.title}>Remove stored transactions</h2>
+        <p className={styles.description}>
+          Clear all saved transactions from your account if you want to start
+          over with a fresh upload.
+        </p>
+        <button className={styles.button} type="button" onClick={resetTransactions}>
         Remove your stored transactions
-      </button>
-    </div>
+        </button>
+      </div>
+    </section>
   );
 }
