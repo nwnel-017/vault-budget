@@ -10,7 +10,7 @@ export default function NavBar() {
 
   const navItems = [
     { href: "/dashboard", label: "Home" },
-    { href: "/tutorial", label: "Instructions" },
+    { href: "/tutorial", label: "Help" },
     { href: "/upload", label: "Add a Spreadsheet" },
     { href: "/transactions/review", label: "Review Transactions" },
     { href: "/transactions/categories", label: "Categories" },

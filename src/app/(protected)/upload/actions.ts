@@ -4,7 +4,6 @@ import { Readable } from "node:stream";
 import csv from "csv-parser";
 import { requireSession } from "@/lib/auth-helpers";
 import { matchTransactionCategory } from "@/lib/category-rules";
-import { hasReachedFreeTierTransactionLimit } from "@/lib/free-tier-limit";
 import { parseValidTransactionRow } from "@/lib/csv-helpers";
 import db from "@/lib/prisma";
 import {
@@ -12,6 +11,10 @@ import {
   sanitizeHeader,
   validateCsvFile,
 } from "@/utils/transactions";
+
+const FREE_TIER_TRANSACTION_LIMIT = 150;
+
+// TO DO - refactor and move into separate functions / files
 
 // TO DO - move these to types
 export type SelectedUploadColumns = {
@@ -113,9 +116,6 @@ export async function uploadInput(
     };
   }
 
-  const freeTierLimitReached =
-    await hasReachedFreeTierTransactionLimit(userId);
-
   // validate the file
   const fileResult = validateCsvFile(form);
 
@@ -151,6 +151,7 @@ export async function uploadInput(
   }
 
   try {
+    // TO DO - check if columns are different from stored columns first
     // save the column mappings for next time
     await db.userColumnMappings.upsert({
       where: {
@@ -195,6 +196,7 @@ export async function uploadInput(
     const parsedRows: ParsedTransactionRow[] = [];
     let skippedRows = 0;
 
+    // created batch of parsed rows
     await new Promise<void>((resolve, reject) => {
       Readable.from(fileBuffer)
         .pipe(
@@ -216,6 +218,26 @@ export async function uploadInput(
         .on("error", reject);
     });
 
+    const user = await db.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        accountTier: true,
+        role: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error("USER_NOT_FOUND");
+    }
+
+    // const existingTransactionCount = await db.transaction.count({
+    //   where: {
+    //     user_id: userId,
+    //   },
+    // });
+
     // find transaction rules for the user
     const userTransactionRules = await db.transactionRule.findMany({
       where: {
@@ -231,45 +253,60 @@ export async function uploadInput(
       .filter((rule) => rule.pattern)
       .sort((a, b) => b.pattern.length - a.pattern.length);
 
-    // insert parsed transactions
-    // for each row - we call matchTransactionCategory to find a category match
-    // if no category match is found - category = null
+    const { createdTransactions, blockedByFreeTierLimit } =
+      await db.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT id FROM "user" WHERE id = ${userId} FOR UPDATE`;
 
-    // TO DO - when a transaction rule is used - we increment matches
-    const createdTransactions = await db.transaction.createManyAndReturn({
-      data: parsedRows.map((row) => {
-        if (freeTierLimitReached) {
-          return {
-            merchant: row.merchantType,
-            amount: row.amount,
-            date_purchased: row.transactionDate,
+        const existingTransactionCount = await tx.transaction.count({
+          where: {
             user_id: userId,
-            category_id: null,
-            transaction_rule_id: null,
-          };
-        }
+          },
+        });
 
-        const matchedRule = matchTransactionCategory(
-          row.merchantType,
-          sortedUserTransactionRules,
-        );
+        let runningTransactionCount = existingTransactionCount;
+        let blockedTransactionCount = 0;
+
+        const createdRows = await tx.transaction.createManyAndReturn({
+          data: parsedRows.map((row) => {
+            let matchedRule = null;
+
+            if (
+              user.role === "ADMIN" ||
+              user.accountTier !== "FREE" ||
+              runningTransactionCount < FREE_TIER_TRANSACTION_LIMIT
+            ) {
+              matchedRule = matchTransactionCategory(
+                row.merchantType,
+                sortedUserTransactionRules,
+              );
+            } else {
+              blockedTransactionCount += 1;
+            }
+
+            runningTransactionCount += 1;
+
+            return {
+              merchant: row.merchantType,
+              amount: row.amount,
+              date_purchased: row.transactionDate,
+              user_id: userId,
+              category_id: matchedRule?.category_id ?? null,
+              transaction_rule_id: matchedRule?.id ?? null,
+            };
+          }),
+          select: {
+            id: true,
+            amount: true,
+            merchant: true,
+            date_purchased: true,
+          },
+        });
 
         return {
-          merchant: row.merchantType,
-          amount: row.amount,
-          date_purchased: row.transactionDate,
-          user_id: userId,
-          category_id: matchedRule?.category_id ?? null,
-          transaction_rule_id: matchedRule?.id ?? null,
+          createdTransactions: createdRows,
+          blockedByFreeTierLimit: blockedTransactionCount,
         };
-      }),
-      select: {
-        id: true,
-        amount: true,
-        merchant: true,
-        date_purchased: true,
-      },
-    });
+      });
 
     const incomeSelectionTransactions = createdTransactions.map(
       (transaction) => ({
@@ -283,7 +320,10 @@ export async function uploadInput(
     return {
       success: true,
       error: null,
-      message: `Parsed ${parsedRows.length} transaction rows successfully. Skipped ${skippedRows} invalid rows.`,
+      message:
+        blockedByFreeTierLimit > 0
+          ? `Uploaded ${createdTransactions.length} transaction rows successfully. Skipped ${skippedRows} invalid rows. ${blockedByFreeTierLimit} uploaded rows were saved without automatic categorization because your free plan has reached the ${FREE_TIER_TRANSACTION_LIMIT} transaction limit.`
+          : `Parsed ${createdTransactions.length} transaction rows successfully. Skipped ${skippedRows} invalid rows.`,
       firstTimeUser: !existingPayPeriod,
       transactions: !existingPayPeriod ? incomeSelectionTransactions : [],
     };

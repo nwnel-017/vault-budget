@@ -50,7 +50,6 @@ export default function RangeSelector({
               <span className={styles.buttonArrow} aria-hidden="true">
                 &#8249;
               </span>
-              <span className={styles.buttonText}>Previous</span>
             </button>
           </form>
         </div>
@@ -61,7 +60,6 @@ export default function RangeSelector({
             <input type="hidden" name="start" value={nextMonthStart} />
             <input type="hidden" name="end" value={nextMonthEnd} />
             <button className={styles.button} type="submit">
-              <span className={styles.buttonText}>Next</span>
               <span className={styles.buttonArrow} aria-hidden="true">
                 &#8250;
               </span>
@@ -69,33 +67,6 @@ export default function RangeSelector({
           </form>
         </div>
       </div>
-      {/* <form className={styles.selector} action="/dashboard" method="get">
-        <label className={styles.field}>
-          <span>Start date</span>
-          <input
-            className={styles.input}
-            type="date"
-            name="start"
-            defaultValue={formatDateInputValue(startDate)}
-            max={formatDateInputValue(endDate)}
-            required
-          />
-        </label>
-        <label className={styles.field}>
-          <span>End date</span>
-          <input
-            className={styles.input}
-            type="date"
-            name="end"
-            defaultValue={formatDateInputValue(endDate)}
-            min={formatDateInputValue(startDate)}
-            required
-          />
-        </label>
-        <button className={styles.button} type="submit">
-          Apply range
-        </button>
-      </form> */}
     </div>
   );
 }

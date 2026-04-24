@@ -1,6 +1,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import Link from "next/link";
+import { AppLogo } from "@/components/ui/icons/AppLogo";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           Signup
         </Link>
       </div>
+      <AppLogo />
     </div>
   );
 }

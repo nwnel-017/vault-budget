@@ -31,7 +31,6 @@
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  min-width: 5.25rem;
   padding: 0.65rem 0.85rem;
   border: 1px solid color-mix(in srgb, white 32%, transparent);
   border-radius: 999rem;
@@ -76,6 +75,7 @@
 
 .buttonText {
   letter-spacing: 0.01em;
+  display: none;
 }
 
 .label {
@@ -98,10 +98,6 @@
   .button {
     min-width: 0;
     padding: 0.65rem 0.7rem;
-  }
-
-  .buttonText {
-    display: none;
   }
 
   .buttonArrow {
