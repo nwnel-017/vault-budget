@@ -167,7 +167,7 @@ export default async function Dashboard({
         savingsGoal={savingsGoalAmount ?? null}
         savedHistory={savedHistory}
       />
-      <TopCategories categories={topCategories} />)
+      <TopCategories categories={topCategories} />
     </div>
   );
 }

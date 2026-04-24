@@ -11,8 +11,10 @@ const initialState: DeleteAccountState = {
 };
 
 export default function ConfirmDelete({
+  feedback,
   onCancel,
 }: {
+  feedback: string;
   onCancel: () => void;
 }) {
   const [state, formAction, pending] = useActionState(
@@ -40,6 +42,8 @@ export default function ConfirmDelete({
         </div>
 
         <form className={styles.form} action={formAction}>
+          <input name="feedback" type="hidden" value={feedback} />
+
           <label className={styles.label} htmlFor="delete-account-password">
             Password
           </label>
@@ -67,7 +71,6 @@ export default function ConfirmDelete({
             >
               Cancel
             </button>
-            {/* Keep this button explicit because the action is permanent. */}
             <Button
               className={styles.deleteConfirmButton}
               fullWidth

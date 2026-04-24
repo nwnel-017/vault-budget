@@ -1,0 +1,124 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100dvw;
+  min-height: 100dvh;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.62);
+}
+
+.modal {
+  width: min(100%, 31rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow:
+    0 1rem 2rem -1rem rgba(15, 23, 42, 0.28),
+    0 2rem 4rem -2rem rgba(15, 23, 42, 0.42);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b91c1c;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.15;
+}
+
+.feedbackSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.textarea {
+  min-height: 8rem;
+  width: 100%;
+  resize: vertical;
+  border: 0.0625rem solid #cbd5e1;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  font: inherit;
+  line-height: 1.5;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.textarea:focus-visible {
+  outline: 0.15rem solid rgba(15, 23, 42, 0.18);
+  outline-offset: 0.12rem;
+}
+
+.counter {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cancelButton {
+  width: 100%;
+  min-height: 2.75rem;
+  border: 0.0625rem solid #cbd5e1;
+  border-radius: 999rem;
+  padding: 0.75rem 1.25rem;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background: #f8fafc;
+}
+
+.cancelButton:focus-visible {
+  outline: 0.15rem solid rgba(15, 23, 42, 0.18);
+  outline-offset: 0.12rem;
+}
+
+@media (min-width: 40rem) {
+  .modal {
+    padding: 1.85rem;
+  }
+}

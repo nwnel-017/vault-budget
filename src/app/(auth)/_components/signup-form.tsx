@@ -3,15 +3,16 @@
 import { signup } from "../actions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { FormEvent } from "react";
 import Button from "@/app/components/ui/Button";
 import styles from "./AuthForm.module.css";
 
 export default function SignupForm() {
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  async function submit(e: FormEvent<HTMLFormElement>) {
+  async function submit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
@@ -19,13 +20,17 @@ export default function SignupForm() {
     const password = formData.get("password") as string;
     const name = formData.get("name") as string;
 
+    setIsLoading(true);
+
     const res = await signup(email, password, name);
 
     if (!res.success) {
       setError(res.message);
     } else {
-      router.push("/login");
+      setSuccessMsg(res.message);
     }
+
+    setIsLoading(false);
   }
 
   return (
@@ -49,9 +54,10 @@ export default function SignupForm() {
         required
       />
       <Button fullWidth type="submit">
-        Signup
+        {isLoading ? "Signing up..." : "Signup"}
       </Button>
       {error ? <p className={styles.error}>{error}</p> : null}
+      {successMsg ? <p className={styles.success}>{successMsg}</p> : null}
     </form>
   );
 }

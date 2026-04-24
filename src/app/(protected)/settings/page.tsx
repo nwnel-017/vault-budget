@@ -5,6 +5,36 @@ import { requireSession } from "@/lib/auth-helpers";
 import styles from "./page.module.css";
 import PayPeriodSection from "./_components/PayPeriodSection";
 
+function getPayPeriodLabel(day: number | null | undefined) {
+  if (
+    !day ||
+    !Number.isInteger(day) ||
+    day === undefined ||
+    day < 1 ||
+    day > 31
+  ) {
+    return "Not set";
+  }
+
+  // Keep 11, 12, and 13 on "th" because they do not use the usual suffix rule.
+  const remainder = day % 100;
+
+  if (remainder >= 11 && remainder <= 13) {
+    return `${day}th`;
+  }
+
+  switch (day % 10) {
+    case 1:
+      return `${day}st`;
+    case 2:
+      return `${day}nd`;
+    case 3:
+      return `${day}rd`;
+    default:
+      return `${day}th`;
+  }
+}
+
 export default async function Settings() {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
@@ -32,8 +62,9 @@ export default async function Settings() {
             <div className={styles.sectionContent}>
               <h2 className={styles.sectionTitle}>Pay Period Start</h2>
               <p className={styles.sectionDescription}>
-                Current day: {userPayPeriod?.pay_period_start_day ?? "Not set"}.
-                Review or update the day your monthly pay period begins.
+                First paycheck is received on the{" "}
+                {getPayPeriodLabel(userPayPeriod?.pay_period_start_day)} day of
+                the month.
               </p>
             </div>
             <PayPeriodSection

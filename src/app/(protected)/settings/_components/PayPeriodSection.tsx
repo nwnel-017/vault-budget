@@ -23,7 +23,9 @@ export default function PayPeriodSection({
 
   function openModal() {
     // Reset the form to the saved value each time the popup opens.
-    setSelectedDay(currentPayPeriodStartDay ? currentPayPeriodStartDay.toString() : "1");
+    setSelectedDay(
+      currentPayPeriodStartDay ? currentPayPeriodStartDay.toString() : "1",
+    );
     setErrorMessage("");
     setIsOpen(true);
   }
@@ -55,7 +57,11 @@ export default function PayPeriodSection({
 
   return (
     <>
-      <button className={styles.triggerButton} type="button" onClick={openModal}>
+      <button
+        className={styles.triggerButton}
+        type="button"
+        onClick={openModal}
+      >
         Change
       </button>
 
@@ -73,7 +79,17 @@ export default function PayPeriodSection({
                 Pay Period Start Day
               </h2>
               <p className={styles.description}>
-                Choose the first day of the month your pay period should begin.
+                Choose the day of the month you usually receive your first
+                paycheck. This is optional to add.
+              </p>
+              <p className={styles.description}>
+                This value will be used to help us track your expenses more
+                accurately. The day entered will be used as the start date of
+                all calculations.
+              </p>
+              <p className={styles.description}>
+                Note: If no value is entered, Budget Vault will use the 1st day
+                of the month by default.
               </p>
               <p className={styles.currentValue}>
                 Current day: {currentPayPeriodStartDay ?? "Not set"}

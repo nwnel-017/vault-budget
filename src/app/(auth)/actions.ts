@@ -76,7 +76,7 @@ export async function signup(email: string, password: string, name: string) {
     return {
       success: true,
       message:
-        "Signup successful. Check your email to verify your account before logging in.",
+        "Signup successful! Check your email to verify your account before logging in.",
     };
   } catch (error) {
     console.error("Signup error:", error);

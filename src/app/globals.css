@@ -2,7 +2,10 @@
   --background: #ffffff;
   --foreground: #171717;
   --text-color: #171717;
-  --accent: #2563eb;
+  /* --accent: #2563eb; */
+  --accent: #3860b8;
+  --error: #b42318;
+  --success: #10b981;
   /* --accent: linear-gradient(
     135deg,
     #93c5fd 0%,

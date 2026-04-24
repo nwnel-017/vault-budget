@@ -218,3 +218,15 @@ model TransactionRule {
     @@index([pattern])
     @@map("transaction_rule")
 }
+
+model UserCancelReason {
+  id             String  @id @default(cuid())
+  user_id        String
+  user_email     String
+  reason         String
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  @@index([user_id])
+  @@map("user_cancel_reason")
+}
