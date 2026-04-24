@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { requireSession } from "@/lib/auth-helpers";
+import { sanitizeTextInput } from "@/utils/transactions";
 import db from "@/lib/prisma";
 
 export type DeleteAccountState = {
@@ -26,13 +27,17 @@ export async function deleteAccount(
   }
 
   const password = formData.get("password");
-  const feedbackValue = formData.get("feedback");
-  const feedback =
-    typeof feedbackValue === "string" ? feedbackValue.trim() : "";
+  const feedback = formData.get("feedback");
 
   if (typeof password !== "string" || !password) {
     return {
       error: "Enter your password to delete your account.",
+    };
+  }
+
+  if (typeof feedback !== "string" || !feedback) {
+    return {
+      error: null,
     };
   }
 

@@ -11,9 +11,9 @@ export default function WelcomePanel() {
         role="dialog"
       >
         <div className={styles.header}>
-          <span className={styles.eyebrow}>Welcome to Budget Vault</span>
+          <span className={styles.eyebrow}>Welcome</span>
           <h1 className={styles.title} id="welcome-panel-title">
-            Welcome to Budget Vault
+            Thanks for joining Budget Vault!
           </h1>
         </div>
         <p className={styles.description}>

@@ -19,9 +19,9 @@ export default function TutorialPage() {
             <span className={styles.stepLabel}>Step 1</span>
             <h2 className={styles.sectionTitle}>Upload your transactions</h2>
             <p className={styles.sectionText}>
-              Go to Upload and import a spreadsheet from your bank.
+              To Go to Upload and import a spreadsheet from your bank.
             </p>
-            <Link className={styles.linkButton} href="/upload">
+            <Link className={styles.linkButton} href="/tutorial/csv-export">
               How do I get a spreadsheet from my bank?
             </Link>
           </article>
@@ -33,7 +33,8 @@ export default function TutorialPage() {
             </h2>
             <p className={styles.sectionText}>
               After upload, review your transactions and assign categories where
-              needed. This keeps your spending organized and helps the app apply
+              needed. To add a category, visit the categories page and add them
+              there. This keeps your spending organized and helps the app apply
               better category matches in the future.
             </p>
           </article>
@@ -54,9 +55,11 @@ export default function TutorialPage() {
               Set savings and category goals
             </h2>
             <p className={styles.sectionText}>
-              Visit Goals to set a monthly savings target and optional spending
-              goals for each category. This gives you a simple way to compare
-              your actual spending against the limits you want to follow.
+              View the savings goals page to set your goals for each month. You
+              can set goals of how much you want to spend for each category, or
+              for the total savings you want to have each month. This gives you
+              a simple way to compare your actual spending against the limits
+              you want to follow.
             </p>
           </article>
         </div>

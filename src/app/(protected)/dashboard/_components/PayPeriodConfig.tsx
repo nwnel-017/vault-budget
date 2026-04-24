@@ -43,7 +43,7 @@ export default function PayPeriodConfig({
         role="dialog"
       >
         <div className={styles.header}>
-          <span className={styles.eyebrow}>Dashboard setup</span>
+          <span className={styles.eyebrow}>Budget Vault setup</span>
           <h1 className={styles.title} id="income-select-title">
             Select the day you usually get your first paycheck
           </h1>
