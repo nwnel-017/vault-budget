@@ -3,12 +3,18 @@
 import { normalizeFile, uploadInput } from "../actions";
 import { useFormStatus } from "react-dom";
 import { useState } from "react";
+import { APP_NAME } from "@/lib/app-name";
+import { toastError, toastSuccess } from "@/lib/toast";
 import FileConfig from "./FileConfig";
 import FieldMapping from "./FieldMapping";
 import { FileUploadIcon } from "@/components/ui/icons/FileUpload";
 import styles from "./FileUpload.module.css";
 
 const MAX_SERVER_ACTION_FILE_SIZE_BYTES = 1024 * 1024;
+const FILE_SIZE_ERROR_MESSAGE = "File size must not exceed 1 MB.";
+const FILE_REQUIRED_ERROR_MESSAGE = "No file!";
+const GENERIC_ERROR_MESSAGE = "Something went wrong!";
+const UPLOAD_SUCCESS_MESSAGE = "Upload complete.";
 
 type FieldMap = {
   amount: string;
@@ -40,7 +46,7 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     const selectedFile = event.target.files?.[0] ?? null;
 
     if (selectedFile && fileExceedsSizeLimit(selectedFile)) {
-      alert("File size must not exceed 1 MB.");
+      toastError(FILE_SIZE_ERROR_MESSAGE);
       event.target.value = "";
       setFile(null);
       setShowFileConfig(false);
@@ -54,13 +60,15 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
 
   async function submit(e: React.SubmitEvent) {
     e.preventDefault();
+
+    // stop early when the file is missing
     if (!file) {
-      alert("No file!");
+      toastError(FILE_REQUIRED_ERROR_MESSAGE);
       return;
     }
 
     if (fileExceedsSizeLimit(file)) {
-      alert("File size must not exceed 1 MB.");
+      toastError(FILE_SIZE_ERROR_MESSAGE);
       return;
     }
 
@@ -76,7 +84,7 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     const res = await normalizeFile(form);
 
     if (!res.success) {
-      alert("Something went wrong!");
+      toastError(GENERIC_ERROR_MESSAGE);
     } else {
       console.log(res?.headers);
       setHeaders(res.headers);
@@ -90,12 +98,12 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     dateField: string;
   }) {
     if (!file) {
-      alert("No file!");
+      toastError(FILE_REQUIRED_ERROR_MESSAGE);
       return;
     }
 
     if (fileExceedsSizeLimit(file)) {
-      alert("File size must not exceed 1 MB.");
+      toastError(FILE_SIZE_ERROR_MESSAGE);
       return;
     }
 
@@ -110,22 +118,22 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     );
 
     if (!res.success) {
-      alert(res.error ?? "Something went wrong!");
+      toastError(res.error ?? GENERIC_ERROR_MESSAGE);
       return;
     }
 
     setShowFileConfig(false);
-    alert("Upload complete.");
+    toastSuccess(UPLOAD_SUCCESS_MESSAGE);
   }
 
   async function uploadWithSavedMappings() {
     if (!file || !fieldMap) {
-      alert("No file!");
+      toastError(FILE_REQUIRED_ERROR_MESSAGE);
       return;
     }
 
     if (fileExceedsSizeLimit(file)) {
-      alert("File size must not exceed 1 MB.");
+      toastError(FILE_SIZE_ERROR_MESSAGE);
       return;
     }
 
@@ -140,12 +148,12 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     );
 
     if (!res.success) {
-      alert(res.error ?? "Something went wrong!");
+      toastError(res.error ?? GENERIC_ERROR_MESSAGE);
       return;
     }
 
     setShowFieldMapping(false);
-    alert("Upload complete.");
+    toastSuccess(UPLOAD_SUCCESS_MESSAGE);
   }
 
   function reviewMappingsManually() {
@@ -178,7 +186,7 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
             <span className={styles.eyebrow}>Upload</span>
             <h1 className={styles.title}>Import a transaction spreadsheet</h1>
             <p className={styles.description}>
-              Upload your CSV file and Budget Vault will guide you through the
+              Upload your CSV file and {APP_NAME} will guide you through the
               remaining setup.
             </p>
           </div>

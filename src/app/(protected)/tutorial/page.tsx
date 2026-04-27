@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP_NAME } from "@/lib/app-name";
 import styles from "./page.module.css";
 
 export default function TutorialPage() {
@@ -6,9 +7,9 @@ export default function TutorialPage() {
     <main className={styles.page}>
       <section className={styles.panel}>
         <div className={styles.header}>
-          <h1 className={styles.title}>How to Use Budget Vault</h1>
+          <h1 className={styles.title}>How to Use {APP_NAME}</h1>
           <p className={styles.description}>
-            Budget Vault helps you upload transactions, organize them into
+            {APP_NAME} helps you upload transactions, organize them into
             categories, review your spending, and set goals for how you want to
             manage your money each month.
           </p>

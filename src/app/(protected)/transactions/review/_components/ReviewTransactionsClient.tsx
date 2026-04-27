@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toastError, toastSuccess } from "@/lib/toast";
 import { ChooseCategory } from "./ChooseCategory";
 import { categorizeTransaction, deleteTransaction } from "../actions";
 import { formatTransaction } from "@/utils/funds";
@@ -70,7 +71,7 @@ export default function ReviewTransactionsClient({
 
   async function addTransactionCategory(categoryId: string) {
     if (!selectedTransaction || !categoryId) {
-      alert("No transaction selected");
+      toastError("No transaction selected");
       return;
     }
 
@@ -80,10 +81,10 @@ export default function ReviewTransactionsClient({
     );
 
     if (!response?.success) {
-      alert(response?.error || "Something went wrong!");
+      toastError(response?.error || "Something went wrong!");
     } else {
       router.refresh();
-      alert("Updated transaction category");
+      toastSuccess("Updated transaction category.");
     }
 
     setSelectedTransaction("");
@@ -105,11 +106,12 @@ export default function ReviewTransactionsClient({
     const response = await deleteTransaction(id);
 
     if (!response.success) {
-      alert(response.error ?? "Unable to delete transaction.");
+      toastError(response.error ?? "Unable to delete transaction.");
       return;
     }
 
     router.refresh();
+    toastSuccess("Transaction deleted.");
   }
 
   return (

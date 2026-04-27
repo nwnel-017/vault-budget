@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { APP_NAME } from "@/lib/app-name";
 import styles from "./WelcomePanel.module.css";
 
 export default function WelcomePanel() {
@@ -13,11 +14,11 @@ export default function WelcomePanel() {
         <div className={styles.header}>
           <span className={styles.eyebrow}>Welcome</span>
           <h1 className={styles.title} id="welcome-panel-title">
-            Thanks for joining Budget Vault!
+            Thanks for joining {APP_NAME}!
           </h1>
         </div>
         <p className={styles.description}>
-          Budget Vault helps you review spending, organize transactions by
+          {APP_NAME} helps you review spending, organize transactions by
           category, and track how much you save during each pay period.
         </p>
         <p className={styles.description}>

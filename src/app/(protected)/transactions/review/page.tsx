@@ -1,7 +1,10 @@
 import type { Prisma } from "@/app/generated/prisma/client";
+import { redirect } from "next/navigation";
+import { requireSession } from "@/lib/auth-helpers";
 import db from "../../../../lib/prisma";
 import ReviewTransactionsClient from "./_components/ReviewTransactionsClient";
 import DeleteTransactions from "./_components/DeleteTransactions";
+import WelcomePanel from "./_components/WelcomePanel";
 import styles from "./page.module.css";
 
 type ReviewSearchParams = Promise<{
@@ -44,6 +47,14 @@ export default async function ReviewTransactions({
 }: {
   searchParams: ReviewSearchParams;
 }) {
+  // make sure only signed-in users can review transactions
+  const sessionResult = await requireSession();
+  const userId = sessionResult.session?.user.id;
+
+  if (sessionResult.error || !userId) {
+    redirect("/login");
+  }
+
   const resolvedSearchParams = await searchParams;
   const activeFilter = normalizeFilter(
     getSearchParamValue(resolvedSearchParams.tab),
@@ -53,7 +64,9 @@ export default async function ReviewTransactions({
   );
 
   // Build one shared filter so the count and page query stay aligned.
-  const where: Prisma.TransactionWhereInput = {};
+  const where: Prisma.TransactionWhereInput = {
+    user_id: userId,
+  };
 
   if (activeFilter === "categorized") {
     where.category_id = {
@@ -65,12 +78,28 @@ export default async function ReviewTransactions({
     where.category_id = null;
   }
 
-  const [totalTransactions, categories] = await Promise.all([
-    db.transaction.count({
-      where,
-    }),
-    db.category.findMany(),
-  ]);
+  const [totalTransactions, categorizedTransactionCount, categories] =
+    await Promise.all([
+      db.transaction.count({
+        where,
+      }),
+      db.transaction.count({
+        where: {
+          user_id: userId,
+          category_id: {
+            not: null,
+          },
+        },
+      }),
+      db.category.findMany({
+        where: {
+          user_id: userId,
+        },
+        orderBy: {
+          category_name: "asc",
+        },
+      }),
+    ]);
 
   const totalPages =
     totalTransactions > 0 ? Math.ceil(totalTransactions / PAGE_SIZE) : 1;
@@ -89,6 +118,7 @@ export default async function ReviewTransactions({
 
   return (
     <div className={styles.pageLayout}>
+      <WelcomePanel active={categorizedTransactionCount === 0} />
       <DeleteTransactions />
       <ReviewTransactionsClient
         activeFilter={activeFilter}

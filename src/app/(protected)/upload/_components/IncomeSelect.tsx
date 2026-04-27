@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { APP_NAME } from "@/lib/app-name";
+import { toastError, toastSuccess } from "@/lib/toast";
 import styles from "./IncomeSelect.module.css";
 
 type SelectPayPeriodResult = {
@@ -20,18 +22,18 @@ export default function IncomeSelect({
     event.preventDefault();
 
     if (!periodBegin) {
-      alert("Please select a day.");
+      toastError("Please select a day.");
       return;
     }
 
     const result = await onSelectPayPeriod(periodBegin);
 
     if (!result.success) {
-      alert(result.error ?? "Something went wrong!");
+      toastError(result.error ?? "Something went wrong!");
       return;
     }
 
-    alert("Pay period start saved.");
+    toastSuccess("Pay period start saved.");
   }
 
   return (
@@ -48,7 +50,7 @@ export default function IncomeSelect({
             Select the day you usually get your first paycheck
           </h1>
           <p className={styles.description}>
-            This helps Budget Vault calculate your pay period correctly. You can
+            This helps {APP_NAME} calculate your pay period correctly. You can
             change this later in your settings.
           </p>
         </div>
@@ -64,13 +66,13 @@ export default function IncomeSelect({
             onChange={(event) => setPeriodBegin(event.target.value)}
             required
           >
-          <option value="">Select a day</option>
-          {dayOptions.map((day) => (
-            <option key={day} value={day}>
-              {day}
-            </option>
-          ))}
-        </select>
+            <option value="">Select a day</option>
+            {dayOptions.map((day) => (
+              <option key={day} value={day}>
+                {day}
+              </option>
+            ))}
+          </select>
           <button className={styles.submitButton} type="submit">
             Save Pay Period
           </button>

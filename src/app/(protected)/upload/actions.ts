@@ -12,7 +12,8 @@ import {
   validateCsvFile,
 } from "@/utils/transactions";
 
-const FREE_TIER_TRANSACTION_LIMIT = 150;
+const FREE_TIER_TRANSACTION_LIMIT =
+  Number(process.env.FREE_TIER_TRANSACTION_LIMIT) || 300;
 
 // TO DO - refactor and move into separate functions / files
 

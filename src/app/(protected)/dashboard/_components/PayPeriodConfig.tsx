@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { APP_NAME } from "@/lib/app-name";
+import { toastError, toastSuccess } from "@/lib/toast";
 import styles from "./PayPeriodConfig.module.css";
 
 type SelectPayPeriodResult = {
@@ -20,18 +22,18 @@ export default function PayPeriodConfig({
     event.preventDefault();
 
     if (!periodBegin) {
-      alert("Please select a day.");
+      toastError("Please select a day.");
       return;
     }
 
     const result = await onSelectPayPeriod(periodBegin);
 
     if (!result.success) {
-      alert(result.error ?? "Something went wrong!");
+      toastError(result.error ?? "Something went wrong!");
       return;
     }
 
-    alert("Pay period start saved.");
+    toastSuccess("Pay period start saved.");
   }
 
   return (
@@ -43,12 +45,12 @@ export default function PayPeriodConfig({
         role="dialog"
       >
         <div className={styles.header}>
-          <span className={styles.eyebrow}>Budget Vault setup</span>
+          <span className={styles.eyebrow}>{APP_NAME} setup</span>
           <h1 className={styles.title} id="income-select-title">
             Select the day you usually get your first paycheck
           </h1>
           <p className={styles.description}>
-            This helps Budget Vault calculate your pay period correctly. You can
+            This helps {APP_NAME} calculate your pay period correctly. You can
             change this later in your settings.
           </p>
         </div>

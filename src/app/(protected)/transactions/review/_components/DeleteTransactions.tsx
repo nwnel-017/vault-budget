@@ -1,5 +1,6 @@
 "use client";
 
+import { toastError, toastSuccess } from "@/lib/toast";
 import { resetUserTransactions } from "../actions";
 import styles from "./DeleteTransactions.module.css";
 
@@ -8,11 +9,13 @@ export default function DeleteTransactions() {
     const res = await resetUserTransactions();
 
     if (!res.success) {
-      alert("Something went wrong!");
+      toastError(res.error ?? "Something went wrong!");
       return;
     }
-    alert("Success");
+
+    toastSuccess("Transactions deleted.");
   }
+
   return (
     <section className={styles.wrapper}>
       <div className={styles.panel}>
@@ -21,8 +24,12 @@ export default function DeleteTransactions() {
           Clear all saved transactions from your account if you want to start
           over with a fresh upload.
         </p>
-        <button className={styles.button} type="button" onClick={resetTransactions}>
-        Remove your stored transactions
+        <button
+          className={styles.button}
+          type="button"
+          onClick={resetTransactions}
+        >
+          Remove your stored transactions
         </button>
       </div>
     </section>

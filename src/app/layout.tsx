@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import ToastProvider from "@/components/ToastProvider";
 import "./globals.css";
 import { auth } from "../lib/auth";
 import { headers } from "next/headers";
@@ -32,6 +33,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        <ToastProvider />
         <div className="page">{children}</div>
       </body>
     </html>

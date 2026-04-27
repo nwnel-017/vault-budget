@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setUserPayPeriodBegin } from "@/app/(protected)/upload/actions";
+import { APP_NAME } from "@/lib/app-name";
 import styles from "./PayPeriodSection.module.css";
 
 type PayPeriodSectionProps = {
@@ -88,7 +89,7 @@ export default function PayPeriodSection({
                 all calculations.
               </p>
               <p className={styles.description}>
-                Note: If no value is entered, Budget Vault will use the 1st day
+                Note: If no value is entered, {APP_NAME} will use the 1st day
                 of the month by default.
               </p>
               <p className={styles.currentValue}>
