@@ -16,7 +16,6 @@ export default function NavBar() {
     { href: "/transactions/categories", label: "Categories" },
     { href: "/goals", label: "Savings Goals" },
     { href: "/settings", label: "Settings" },
-    { href: "/logout", label: "Logout" },
   ];
 
   function isActive(href: string) {
@@ -42,44 +41,13 @@ export default function NavBar() {
               </Link>
             </li>
           ))}
-          {/* <li>
-            <Link href="/dashboard" className={styles.navItem}>
-              Home
-            </Link>
-          </li>
           <li>
-            <Link href="/tutorial" className={styles.navItem}>
-              Instructions
-            </Link>
+            <form action={logout}>
+              <button type="submit" className={styles.navItem}>
+                Logout
+              </button>
+            </form>
           </li>
-          <li>
-            <Link href="/upload" className={styles.navItem}>
-              Add a Spreadsheet
-            </Link>
-          </li>
-          <li>
-            <Link href="/transactions/review" className={styles.navItem}>
-              Review Transactions
-            </Link>
-          </li>
-          <li>
-            <Link href="/transactions/categories" className={styles.navItem}>
-              Categories
-            </Link>
-          </li>
-          <li>
-            <Link href="/goals" className={styles.navItem}>
-              Savings Goals
-            </Link>
-          </li>
-          <li>
-            <Link href="/settings" className={styles.navItem}>
-              Settings
-            </Link>
-          </li>
-          <li onClick={logout} className={styles.navItem}>
-            Logout
-          </li> */}
         </ul>
       </nav>
     </>

@@ -20,7 +20,8 @@ export default function TutorialPage() {
             <span className={styles.stepLabel}>Step 1</span>
             <h2 className={styles.sectionTitle}>Upload your transactions</h2>
             <p className={styles.sectionText}>
-              To Go to Upload and import a spreadsheet from your bank.
+              Go to the add a spreadsheet page and upload a CSV file exported
+              from your bank.
             </p>
             <Link className={styles.linkButton} href="/tutorial/csv-export">
               How do I get a spreadsheet from my bank?

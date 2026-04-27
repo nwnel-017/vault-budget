@@ -1,6 +1,7 @@
 "use client";
 
 import { normalizeFile, uploadInput } from "../actions";
+import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { useState } from "react";
 import { APP_NAME } from "@/lib/app-name";
@@ -37,6 +38,7 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
   const [showFileConfig, setShowFileConfig] = useState(false);
   const [showFieldMapping, setShowFieldMapping] = useState(false);
   const [headers, setHeaders] = useState<string[]>([]);
+  const router = useRouter();
 
   function fileExceedsSizeLimit(selectedFile: File) {
     return selectedFile.size > MAX_SERVER_ACTION_FILE_SIZE_BYTES;
@@ -123,7 +125,8 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     }
 
     setShowFileConfig(false);
-    toastSuccess(UPLOAD_SUCCESS_MESSAGE);
+    toastSuccess(res.message ?? UPLOAD_SUCCESS_MESSAGE);
+    router.push("/transactions/review");
   }
 
   async function uploadWithSavedMappings() {
@@ -154,6 +157,7 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
 
     setShowFieldMapping(false);
     toastSuccess(UPLOAD_SUCCESS_MESSAGE);
+    router.push("/transactions/review");
   }
 
   function reviewMappingsManually() {

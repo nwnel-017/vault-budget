@@ -36,6 +36,12 @@ export default function WelcomePanel({ active }: { active: boolean }) {
           that preference so it can auto-categorize similar transactions in the
           future.
         </p>
+        <p className={styles.description}>
+          <strong>Note:</strong> It is recommended that you review your
+          transactions here before uploading more. This way, {APP_NAME} can
+          learn your preferences and auto-categorize more of your transactions
+          in the future.
+        </p>
         <button
           className={styles.closeButton}
           type="button"
