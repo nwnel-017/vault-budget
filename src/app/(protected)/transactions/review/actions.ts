@@ -106,14 +106,36 @@ export async function categorizeTransaction(
     return {
       success: false,
       error: "Missing user id in session",
+      showFreeTrialNotice: false,
     };
   }
 
-  const freeTierReached = await hasReachedFreeTierTransactionLimit(userId);
+  // checks if this will be the user's first categorized transaction
+  const categorizedTransactionCount = await db.transaction.count({
+    where: {
+      user_id: userId,
+      category_id: {
+        not: null,
+      },
+    },
+  });
 
-  if (freeTierReached) {
-    return changeTransactionCategory(userId, transactionId, categoryId);
+  const freeTierReached = await hasReachedFreeTierTransactionLimit(userId);
+  const showFreeTrialNotice = categorizedTransactionCount === 0;
+
+  const result = freeTierReached
+    ? await changeTransactionCategory(userId, transactionId, categoryId)
+    : await associateTranToCategory(userId, transactionId, categoryId);
+
+  if (!result.success) {
+    return {
+      ...result,
+      showFreeTrialNotice: false,
+    };
   }
 
-  return associateTranToCategory(userId, transactionId, categoryId);
+  return {
+    ...result,
+    showFreeTrialNotice,
+  };
 }

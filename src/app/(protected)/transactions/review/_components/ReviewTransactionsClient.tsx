@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { ChooseCategory } from "./ChooseCategory";
+import FreeTrialNotice from "./FreeTrialNotice";
 import { categorizeTransaction, deleteTransaction } from "../actions";
 import { formatTransaction } from "@/utils/funds";
 import styles from "../page.module.css";
@@ -43,6 +44,7 @@ export default function ReviewTransactionsClient({
   activeFilter: TransactionFilter;
 }) {
   const [chooseCategoryOptions, setChooseCategoryOptions] = useState(false);
+  const [showFreeTrialNotice, setShowFreeTrialNotice] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState("");
   const pathname = usePathname();
   const router = useRouter();
@@ -83,6 +85,8 @@ export default function ReviewTransactionsClient({
     if (!response?.success) {
       toastError(response?.error || "Something went wrong!");
     } else {
+      // shows the free trial notice only after the first successful categorization
+      setShowFreeTrialNotice(response.showFreeTrialNotice === true);
       router.refresh();
       toastSuccess("Updated transaction category.");
     }
@@ -116,6 +120,7 @@ export default function ReviewTransactionsClient({
 
   return (
     <div>
+      <FreeTrialNotice active={showFreeTrialNotice} />
       <ChooseCategory
         active={chooseCategoryOptions}
         categories={categories}
