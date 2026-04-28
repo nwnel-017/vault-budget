@@ -45,8 +45,8 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/settings/upgrade/success`,
-      cancel_url: `${baseUrl}/settings/upgrade/failed`,
+      success_url: `${baseUrl}/payments/success`,
+      cancel_url: `${baseUrl}/payments/fail`,
       metadata: {
         userId: session.user.id,
       },

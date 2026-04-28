@@ -66,7 +66,8 @@
 }
 
 .navItem:hover {
-  background: #d1d7db;
+  /* background: #d1d7db; */
+  background: var(--theme-gray);
 }
 
 .navItem:focus-visible {

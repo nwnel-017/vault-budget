@@ -59,14 +59,15 @@ export async function cancelPremiumMembership(
     },
     select: {
       stripe_subscription_id: true,
-      current_period_end: true,
+      access_expires_at: true,
       cancel_at_period_end: true,
     },
   });
 
-  if (!billing?.stripe_subscription_id) {
+  if (!billing || !billing?.stripe_subscription_id) {
     return {
-      error: "No active Stripe subscription was found for this account.",
+      error:
+        "No active Stripe subscription was found for this account. Please contact support.",
       success: null,
     };
   }
@@ -74,17 +75,16 @@ export async function cancelPremiumMembership(
   if (billing.cancel_at_period_end) {
     return {
       error: null,
-      success: billing.current_period_end
+      success: billing.access_expires_at
         ? `Premium is already scheduled to cancel on ${formatMembershipEndDate(
-            billing.current_period_end,
+            billing.access_expires_at,
           )}.`
         : "Premium is already scheduled to cancel at the end of the billing period.",
     };
   }
-
-  const stripe = new Stripe(stripeSecretKey);
-
   try {
+    const stripe = new Stripe(stripeSecretKey);
+
     const subscription = await stripe.subscriptions.update(
       billing.stripe_subscription_id,
       {
@@ -104,8 +104,7 @@ export async function cancelPremiumMembership(
       data: {
         subscription_status: subscription.status,
         access_expires_at: currentPeriodEndDate,
-        current_period_end: currentPeriodEndDate,
-        cancel_at_period_end: subscription.cancel_at_period_end,
+        cancel_at_period_end: subscription.cancel_at_period_end, // boolean - true if the subscription is set to cancel at the end of the period
       },
     });
 
@@ -118,6 +117,7 @@ export async function cancelPremiumMembership(
         : "Premium will stay active until the end of the current billing period.",
     };
   } catch (error) {
+    console.log("Error canceling subscription:", error);
     return {
       error:
         error instanceof Error
@@ -149,12 +149,6 @@ export async function deleteAccount(
       error: "Enter your password to delete your account.",
     };
   }
-
-  // if (typeof feedback !== "string" || !feedback) {
-  //   return {
-  //     error: null,
-  //   };
-  // }
 
   if (typeof feedback === "string" && feedback.length > MAX_FEEDBACK_LENGTH) {
     return {

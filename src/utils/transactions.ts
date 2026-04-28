@@ -16,7 +16,6 @@ export function sanitizeTextInput(value: unknown): string {
   return String(value ?? "")
     .normalize("NFKC")
     .replace(/[\u0000-\u001F\u007F]/g, "")
-    .replace(/[^a-zA-Z0-9\s-]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }

@@ -20,16 +20,20 @@ export async function hasReachedFreeTierTransactionLimit(userId: string) {
     },
   });
 
+  if (!user) {
+    return true;
+  }
+
+  if (user.role === "ADMIN" || user.accountTier !== "FREE") {
+    return false;
+  }
+
   // Let canceled premium users keep access until their saved end date passes.
   if (
     user?.accountTier === "FREE" &&
     user.billing?.access_expires_at &&
     user.billing.access_expires_at > new Date()
   ) {
-    return false;
-  }
-
-  if (!user || user.role === "ADMIN" || user.accountTier !== "FREE") {
     return false;
   }
 

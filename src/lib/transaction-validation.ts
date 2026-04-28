@@ -43,8 +43,8 @@ export async function validateCategoryTransaction(
     };
   }
 
-  const validatedCategoryId = sanitizeTextInput(categoryId);
-  const validatedTransactionId = sanitizeTextInput(transactionId);
+  const validatedCategoryId = categoryId;
+  const validatedTransactionId = transactionId;
 
   if (!validatedCategoryId || !validatedTransactionId) {
     return {

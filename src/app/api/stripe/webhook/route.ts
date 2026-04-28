@@ -4,7 +4,7 @@ import db from "@/lib/prisma";
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// TO DO - change this code later - do not recall updateSubscriptionStatus on every action
+// TO DO - refactor
 
 function getDateFromUnixTimestamp(value: number | null) {
   if (!value) {
@@ -22,9 +22,14 @@ function getSubscriptionPeriodEnd(subscription: Stripe.Subscription) {
   return subscription.items.data[0]?.current_period_end ?? null;
 }
 
-async function getUser(subscription: Stripe.Subscription) {
-  const stripeCustomerId =
-    typeof subscription.customer === "string" ? subscription.customer : null;
+function getStripeCustomerId(subscription: Stripe.Subscription) {
+  return typeof subscription.customer === "string"
+    ? subscription.customer
+    : null;
+}
+
+async function getUserId(subscription: Stripe.Subscription) {
+  const stripeCustomerId = getStripeCustomerId(subscription);
 
   const billing = await db.userBilling.findFirst({
     where: {
@@ -46,10 +51,7 @@ async function getUser(subscription: Stripe.Subscription) {
     },
   });
 
-  return {
-    userId: billing?.user_id ?? null,
-    stripeCustomerId,
-  };
+  return billing?.user_id ?? null;
 }
 
 async function updateSubscriptionStatus(
@@ -58,10 +60,10 @@ async function updateSubscriptionStatus(
     userId?: string;
   },
 ) {
-  const resolvedUser = await getUser(subscription);
-  const userId = options?.userId ?? resolvedUser.userId;
+  const stripeCustomerId = getStripeCustomerId(subscription);
+  const resolvedUserId = options?.userId ?? (await getUserId(subscription));
 
-  if (!userId) {
+  if (!resolvedUserId) {
     throw new Error("Unable to find a user for this Stripe subscription.");
   }
 
@@ -70,40 +72,48 @@ async function updateSubscriptionStatus(
   );
   const shouldUseFreeTier =
     subscription.status === "canceled" || subscription.status === "unpaid";
+  try {
+    await db.$transaction(async (tx) => {
+      await tx.userBilling.upsert({
+        where: {
+          user_id: resolvedUserId,
+        },
+        create: {
+          user_id: resolvedUserId,
+          stripe_customer_id: stripeCustomerId,
+          stripe_subscription_id: subscription.id,
+          stripe_price_id: getSubscriptionPriceId(subscription),
+          subscription_status: subscription.status,
+          access_expires_at: currentPeriodEndDate,
+          cancel_at_period_end: subscription.cancel_at_period_end,
+        },
+        update: {
+          stripe_customer_id: stripeCustomerId,
+          stripe_subscription_id: subscription.id,
+          stripe_price_id: getSubscriptionPriceId(subscription),
+          subscription_status: subscription.status,
+          access_expires_at: currentPeriodEndDate,
+          cancel_at_period_end: subscription.cancel_at_period_end,
+        },
+      });
 
-  await db.userBilling.upsert({
-    where: {
-      user_id: userId,
-    },
-    create: {
-      user_id: userId,
-      stripe_customer_id: resolvedUser.stripeCustomerId,
-      stripe_subscription_id: subscription.id,
-      stripe_price_id: getSubscriptionPriceId(subscription),
-      subscription_status: subscription.status,
-      current_period_end: currentPeriodEndDate,
-      access_expires_at: currentPeriodEndDate,
-      cancel_at_period_end: subscription.cancel_at_period_end,
-    },
-    update: {
-      stripe_customer_id: resolvedUser.stripeCustomerId,
-      stripe_subscription_id: subscription.id,
-      stripe_price_id: getSubscriptionPriceId(subscription),
-      subscription_status: subscription.status,
-      current_period_end: currentPeriodEndDate,
-      access_expires_at: currentPeriodEndDate,
-      cancel_at_period_end: subscription.cancel_at_period_end,
-    },
-  });
-
-  await db.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      accountTier: shouldUseFreeTier ? "FREE" : "PREMIUM",
-    },
-  });
+      await tx.user.update({
+        where: {
+          id: resolvedUserId,
+        },
+        data: {
+          accountTier: shouldUseFreeTier ? "FREE" : "PREMIUM",
+        },
+      });
+    });
+  } catch (error) {
+    console.error("Error updating subscription status in database:", error);
+    // return Response.json(
+    //   { error: "Failed to update subscription status" },
+    //   { status: 500 },
+    // );
+    throw new Error("Failed to update subscription status in database.");
+  }
 }
 
 async function upgradeUserToPremium(session: Stripe.Checkout.Session) {
@@ -119,14 +129,20 @@ async function upgradeUserToPremium(session: Stripe.Checkout.Session) {
   if (!stripeSubscriptionId) {
     throw new Error("Missing subscription id in checkout session.");
   }
+  try {
+    const stripe = new Stripe(stripeSecretKey!);
+    const subscription =
+      await stripe.subscriptions.retrieve(stripeSubscriptionId);
 
-  const stripe = new Stripe(stripeSecretKey!);
-  const subscription =
-    await stripe.subscriptions.retrieve(stripeSubscriptionId);
-
-  await updateSubscriptionStatus(subscription, {
-    userId,
-  });
+    await updateSubscriptionStatus(subscription, {
+      userId,
+    });
+  } catch (error) {
+    console.error("Error upgrading user to premium:", error);
+    throw new Error(
+      "Failed to upgrade user to premium after checkout. Please contact support if the issue persists.",
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -153,17 +169,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const stripe = new Stripe(stripeSecretKey);
-  const payload = await request.text();
   let event: Stripe.Event;
-
   try {
+    const stripe = new Stripe(stripeSecretKey);
+    const payload = await request.text();
+
     event = stripe.webhooks.constructEvent(
       payload,
       signature,
       stripeWebhookSecret,
     );
   } catch (error) {
+    console.log("Stripe webhook signature verification failed:", error);
     return Response.json(
       {
         error:
@@ -180,9 +197,8 @@ export async function POST(request: Request) {
       case "checkout.session.completed":
         await upgradeUserToPremium(event.data.object);
         break;
+      case "customer.subscription.created":
       case "customer.subscription.updated":
-        await updateSubscriptionStatus(event.data.object);
-        break;
       case "customer.subscription.deleted":
         await updateSubscriptionStatus(event.data.object);
         break;
@@ -190,6 +206,7 @@ export async function POST(request: Request) {
         break;
     }
   } catch (error) {
+    console.error("Error handling Stripe webhook event:", error);
     return Response.json(
       {
         error:

@@ -26,6 +26,7 @@
   border: 0.0625rem solid color-mix(in srgb, var(--foreground) 12%, transparent);
   border-radius: 0.9rem;
   background-color: color-mix(in srgb, #cbd5e1 72%, white 28%);
+  /* background: var(--theme-gray); */
   color: var(--text-color);
   font: inherit;
   font-size: 0.95rem;

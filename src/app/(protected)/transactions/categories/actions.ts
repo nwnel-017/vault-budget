@@ -33,7 +33,7 @@ export async function createCategory(category: string) {
     return {
       success: false,
       error:
-        "Category name contains invalid characters. Use only letters, numbers, spaces, and hyphens.",
+        "Category name contains invalid characters.",
     };
   }
 
