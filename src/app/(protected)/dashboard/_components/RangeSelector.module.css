@@ -26,6 +26,10 @@
   justify-content: flex-end;
 }
 
+.dropdownWrap {
+  width: 100%;
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -68,6 +72,13 @@
   transform: translateY(0.05rem);
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
+  transform: none;
+}
+
 .buttonArrow {
   font-size: 1.1rem;
   line-height: 1;
@@ -76,16 +87,6 @@
 .buttonText {
   letter-spacing: 0.01em;
   display: none;
-}
-
-.label {
-  margin: 0;
-  color: var(--text-color);
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.2;
-  text-align: center;
-  text-wrap: balance;
 }
 
 @media (min-width: 768px) {
@@ -103,10 +104,6 @@
   .buttonArrow {
     font-size: 1.2rem;
   }
-
-  .label {
-    font-size: 0.9rem;
-  }
 }
 
 @media (min-width: 1024px) {
@@ -121,9 +118,5 @@
   .button {
     min-width: 6.25rem;
     padding: 0.75rem 1rem;
-  }
-
-  .label {
-    font-size: 1.05rem;
   }
 }

@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 import Button from "@/app/components/ui/Button";
-import type { DeleteAccountState } from "../actions";
-import { deleteAccount } from "../actions";
+import type { DeleteAccountState } from "../../membership/actions";
+import { deleteAccount } from "../../membership/actions";
 import styles from "./ConfirmDelete.module.css";
 
 const initialState: DeleteAccountState = {

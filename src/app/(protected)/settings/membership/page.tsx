@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import db from "@/lib/prisma";
 import { requireSession } from "@/lib/auth-helpers";
 import Button from "@/app/components/ui/Button";
-import DeleteAccountSection from "./_components/DeleteAccountSection";
+import DeleteAccountSection from "../account/_components/DeleteAccountSection";
+import CancelMembershipForm from "./_components/CancelMembershipForm";
 import styles from "./page.module.css";
 
 function getPlan(accountTier: "FREE" | "PREMIUM") {
@@ -65,17 +66,7 @@ export default async function MembershipPage() {
         <div className={styles.actions}>
           {isPremium ? (
             <>
-              <button
-                className={styles.placeholderButton}
-                disabled
-                type="button"
-              >
-                Cancel Premium Membership
-              </button>
-              <p className={styles.note}>
-                Cancellation UI is waiting on Stripe subscription data to be
-                stored in the app before it can be wired up safely.
-              </p>
+              <CancelMembershipForm />
             </>
           ) : (
             <>

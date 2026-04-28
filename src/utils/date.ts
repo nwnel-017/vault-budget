@@ -133,6 +133,52 @@ export function getDefaultDateRange(
   return { startDate, endDate };
 }
 
+export type DateRangeOption = {
+  label: string;
+  start: string;
+  end: string;
+};
+
+export function getDateRanges(
+  latestTransactionDate: Date,
+  payPeriodStartDay?: number | null,
+): DateRangeOption[] {
+  if (!isValidDate(latestTransactionDate)) {
+    return [];
+  }
+
+  const latestRange = getDefaultDateRange(
+    latestTransactionDate,
+    payPeriodStartDay,
+  );
+
+  if (!latestRange.startDate || !latestRange.endDate) {
+    return [];
+  }
+
+  const dateRanges: DateRangeOption[] = [];
+  let currentStartDate: Date | null = latestRange.startDate;
+  let currentEndDate: Date | null = latestRange.endDate;
+
+  // Build the last 12 available intervals for the dropdown.
+  for (let index = 0; index < 12; index += 1) {
+    if (!currentStartDate || !currentEndDate) {
+      break;
+    }
+
+    dateRanges.push({
+      label: formatSelectedDateLabel(currentStartDate, currentEndDate),
+      start: formatDateInputValue(currentStartDate),
+      end: formatDateInputValue(currentEndDate),
+    });
+
+    currentStartDate = getDatePreviousMonth(currentStartDate);
+    currentEndDate = getDatePreviousMonth(currentEndDate);
+  }
+
+  return dateRanges;
+}
+
 export function getDatePreviousMonth(date: Date) {
   if (!isValidDate(date)) {
     return null;
@@ -250,6 +296,60 @@ export function getDateNextMonth(date: Date) {
   }
 
   return nextMonthDate;
+}
+
+export function getPreviousRange(startDate: Date) {
+  if (!isValidDate(startDate)) {
+    return { startDate: null, endDate: null };
+  }
+
+  const previousEndDate = new Date(startDate);
+  previousEndDate.setDate(previousEndDate.getDate() - 1);
+
+  if (!isValidDate(previousEndDate)) {
+    return { startDate: null, endDate: null };
+  }
+
+  const previousStartDate = getDatePreviousMonth(startDate);
+
+  if (!previousStartDate) {
+    return { startDate: null, endDate: null };
+  }
+
+  return {
+    startDate: previousStartDate,
+    endDate: previousEndDate,
+  };
+}
+
+export function getNextRange(endDate: Date) {
+  if (!isValidDate(endDate)) {
+    return { startDate: null, endDate: null };
+  }
+
+  const nextStartDate = new Date(endDate);
+  nextStartDate.setDate(nextStartDate.getDate() + 1);
+
+  if (!isValidDate(nextStartDate)) {
+    return { startDate: null, endDate: null };
+  }
+
+  const nextStartMonth = nextStartDate.getMonth();
+  const nextStartYear = nextStartDate.getFullYear();
+  const nextEndDate = new Date(
+    nextStartYear,
+    nextStartMonth + 1,
+    nextStartDate.getDate() - 1,
+  );
+
+  if (!isValidDate(nextEndDate)) {
+    return { startDate: null, endDate: null };
+  }
+
+  return {
+    startDate: nextStartDate,
+    endDate: nextEndDate,
+  };
 }
 
 export function getSelectedDateRange(

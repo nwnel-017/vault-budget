@@ -76,12 +76,13 @@ export default async function Settings() {
 
           <div className={styles.sectionCard}>
             <div className={styles.sectionContent}>
-              <h2 className={styles.sectionTitle}>Change password</h2>
+              <h2 className={styles.sectionTitle}>Account settings</h2>
               <p className={styles.sectionDescription}>
-                Update your password to keep your account secure.
+                Review your email, update your password, or delete your
+                account.
               </p>
             </div>
-            <Link className={styles.actionLink} href="/settings">
+            <Link className={styles.actionLink} href="/settings/account">
               Manage
             </Link>
           </div>

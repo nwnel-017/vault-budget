@@ -2,16 +2,131 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import Stripe from "stripe";
 import { auth } from "@/lib/auth";
 import { requireSession } from "@/lib/auth-helpers";
-import { sanitizeTextInput } from "@/utils/transactions";
 import db from "@/lib/prisma";
 
 export type DeleteAccountState = {
   error: string | null;
 };
 
+export type CancelMembershipState = {
+  error: string | null;
+  success: string | null;
+};
+
 const MAX_FEEDBACK_LENGTH = 500;
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+function formatMembershipEndDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function getSubscriptionPeriodEnd(subscription: Stripe.Subscription) {
+  return subscription.items.data[0]?.current_period_end ?? null;
+}
+
+export async function cancelPremiumMembership(
+  currentState: CancelMembershipState,
+): Promise<CancelMembershipState> {
+  void currentState;
+
+  if (!stripeSecretKey) {
+    return {
+      error: "Stripe is not configured yet.",
+      success: null,
+    };
+  }
+
+  const sessionResult = await requireSession();
+  const userId = sessionResult.session?.user.id;
+
+  if (sessionResult.error || !userId) {
+    return {
+      error: "You must be logged in to manage membership.",
+      success: null,
+    };
+  }
+
+  const billing = await db.userBilling.findUnique({
+    where: {
+      user_id: userId,
+    },
+    select: {
+      stripe_subscription_id: true,
+      current_period_end: true,
+      cancel_at_period_end: true,
+    },
+  });
+
+  if (!billing?.stripe_subscription_id) {
+    return {
+      error: "No active Stripe subscription was found for this account.",
+      success: null,
+    };
+  }
+
+  if (billing.cancel_at_period_end) {
+    return {
+      error: null,
+      success: billing.current_period_end
+        ? `Premium is already scheduled to cancel on ${formatMembershipEndDate(
+            billing.current_period_end,
+          )}.`
+        : "Premium is already scheduled to cancel at the end of the billing period.",
+    };
+  }
+
+  const stripe = new Stripe(stripeSecretKey);
+
+  try {
+    const subscription = await stripe.subscriptions.update(
+      billing.stripe_subscription_id,
+      {
+        cancel_at_period_end: true,
+      },
+    );
+
+    const subscriptionPeriodEnd = getSubscriptionPeriodEnd(subscription);
+    const currentPeriodEndDate = subscriptionPeriodEnd
+      ? new Date(subscriptionPeriodEnd * 1000)
+      : null;
+
+    await db.userBilling.update({
+      where: {
+        user_id: userId,
+      },
+      data: {
+        subscription_status: subscription.status,
+        access_expires_at: currentPeriodEndDate,
+        current_period_end: currentPeriodEndDate,
+        cancel_at_period_end: subscription.cancel_at_period_end,
+      },
+    });
+
+    return {
+      error: null,
+      success: currentPeriodEndDate
+        ? `Premium will stay active until ${formatMembershipEndDate(
+            currentPeriodEndDate,
+          )}.`
+        : "Premium will stay active until the end of the current billing period.",
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unable to cancel premium membership right now.",
+      success: null,
+    };
+  }
+}
 
 export async function deleteAccount(
   _currentState: DeleteAccountState,
@@ -35,13 +150,13 @@ export async function deleteAccount(
     };
   }
 
-  if (typeof feedback !== "string" || !feedback) {
-    return {
-      error: null,
-    };
-  }
+  // if (typeof feedback !== "string" || !feedback) {
+  //   return {
+  //     error: null,
+  //   };
+  // }
 
-  if (feedback.length > MAX_FEEDBACK_LENGTH) {
+  if (typeof feedback === "string" && feedback.length > MAX_FEEDBACK_LENGTH) {
     return {
       error: "Feedback must be 500 characters or fewer.",
     };
@@ -60,7 +175,7 @@ export async function deleteAccount(
     };
   }
 
-  if (feedback) {
+  if (typeof feedback === "string" && feedback) {
     try {
       // Keep feedback storage separate so the deleted account is not restored by an insert error.
       await db.userCancelReason.create({

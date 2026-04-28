@@ -6,11 +6,13 @@ import {
 } from "@/lib/dashboard-calculations";
 import { setUserPayPeriodBegin } from "../upload/actions";
 import {
+  getDateRanges,
   formatDateInputValue,
   formatSelectedDateLabel,
   getEndDateExclusive,
   getSelectedDateRange,
   getDefaultDateRange,
+  type DateRangeOption,
 } from "@/utils/date";
 import TopCategories from "./_components/TopCategories";
 import DashHeader from "./_components/DashHeader";
@@ -42,8 +44,8 @@ export default async function Dashboard({
   let endDateString: string | null = null;
   let startDate: Date | null = null;
   let endDate: Date | null = null;
-  const firstTimeUser = getSearchParamValue(resolvedSearchParams.firstTimeUser);
-  // const showWelcomePanel = firstTimeUser === "true";
+  let dateRanges: DateRangeOption[] = [];
+  // const firstTimeUser = getSearchParamValue(resolvedSearchParams.firstTimeUser);
 
   const userPayPeriod = await db.userPayPeriod.findUnique({
     where: {
@@ -58,18 +60,18 @@ export default async function Dashboard({
     return <PayPeriodConfig onSelectPayPeriod={setUserPayPeriodBegin} />;
   }
 
+  const latestTransaction = await db.transaction.findFirst({
+    where: {
+      user_id: userId,
+    },
+    orderBy: { date_purchased: "desc" },
+  });
+
   // get interval from search params
   startDateString = getSearchParamValue(resolvedSearchParams.start);
   endDateString = getSearchParamValue(resolvedSearchParams.end);
 
   if (!startDateString || !endDateString) {
-    const latestTransaction = await db.transaction.findFirst({
-      where: {
-        user_id: userId,
-      },
-      orderBy: { date_purchased: "desc" },
-    });
-
     if (!latestTransaction) {
       return <WelcomePanel />;
     }
@@ -98,6 +100,15 @@ export default async function Dashboard({
     return null;
   }
 
+  if (!latestTransaction) {
+    return <WelcomePanel />;
+  }
+
+  dateRanges = getDateRanges(
+    latestTransaction.date_purchased,
+    userPayPeriod.pay_period_start_day,
+  );
+
   const endDateExclusive = getEndDateExclusive(endDate);
   const selectedLabel = formatSelectedDateLabel(startDate, endDate);
 
@@ -106,8 +117,7 @@ export default async function Dashboard({
   }
 
   // all transactions and their corresponding categories
-  let transactions;
-  transactions = await db.transaction.findMany({
+  const transactions = await db.transaction.findMany({
     where: {
       date_purchased: {
         gte: startDate,
@@ -158,6 +168,7 @@ export default async function Dashboard({
           startDate={startDate}
           endDate={endDate}
           selectedLabel={selectedLabel}
+          dateRanges={dateRanges}
         />
       </div>
       <DashHeader
