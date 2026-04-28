@@ -24,6 +24,7 @@ export async function changePassword(
 
   const currentPassword = formData.get("currentPassword");
   const newPassword = formData.get("newPassword");
+  const confirmNewPassword = formData.get("confirmNewPassword");
 
   if (typeof currentPassword !== "string" || !currentPassword) {
     return {
@@ -35,6 +36,18 @@ export async function changePassword(
   if (typeof newPassword !== "string" || !newPassword) {
     return {
       error: "Enter a new password.",
+      success: null,
+    };
+  }
+
+  // Stop here if the user typed two different new passwords.
+  if (
+    typeof confirmNewPassword !== "string" ||
+    !confirmNewPassword ||
+    newPassword !== confirmNewPassword
+  ) {
+    return {
+      error: "Passwords do not match.",
       success: null,
     };
   }

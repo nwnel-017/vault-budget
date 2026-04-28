@@ -17,11 +17,12 @@ export default function FileConfig({
   }) => void;
 }) {
   const steps = [
-    { key: "merchantField", label: "merchant type" },
-    { key: "amountField", label: "transaction amount" },
-    { key: "dateField", label: "date of transaction" },
+    { key: "merchantField", label: "Transaction Description" },
+    { key: "amountField", label: "Transaction Amount" },
+    { key: "dateField", label: "Date of Transaction" },
   ] as const;
 
+  const [showOverview, setShowOverview] = useState(true);
   const [curStep, setCurStep] = useState(0);
   const [availableHeaders, setAvailableHeaders] = useState<string[]>(headers);
   const [selectedColumns, setSelectedColumns] = useState({
@@ -31,7 +32,14 @@ export default function FileConfig({
   });
 
   useEffect(() => {
+    setShowOverview(true);
+    setCurStep(0);
     setAvailableHeaders(headers);
+    setSelectedColumns({
+      merchantField: "",
+      amountField: "",
+      dateField: "",
+    });
   }, [headers]);
 
   if (!active) {
@@ -59,7 +67,14 @@ export default function FileConfig({
     setAvailableHeaders(availableHeaders.filter((h) => h !== header));
 
     if (curStep === steps.length - 1) {
+      setShowOverview(true);
       setCurStep(0);
+      setAvailableHeaders(headers);
+      setSelectedColumns({
+        merchantField: "",
+        amountField: "",
+        dateField: "",
+      });
       onComplete(nextSelectedColumns);
       return;
     }
@@ -70,19 +85,49 @@ export default function FileConfig({
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h1>Please choose a column for: {steps[curStep]?.label}</h1>
-        <div className={styles.headerGrid}>
-          {availableHeaders.map((h) => (
+        {showOverview ? (
+          <>
+            <h1 className={styles.title}>Before you upload</h1>
+            <p className={styles.text}>
+              Look at the spreadsheet you uploaded and find the columns that
+              match the transaction description, amount, and effective date.
+            </p>
+            <p className={styles.text}>
+              In the next step, you will choose each matching column one at a
+              time.
+            </p>
+            <p className={styles.text}>
+              {process.env.NEXT_PUBLIC_APP_NAME} will remember your choices for
+              next time, so if your spreadsheet has the same format in the
+              future, you can skip this step.
+            </p>
             <button
-              key={h}
               type="button"
-              className={styles.headerItem}
-              onClick={() => selectItem(h)}
+              className={styles.continueButton}
+              onClick={() => setShowOverview(false)}
             >
-              {h}
+              Continue
             </button>
-          ))}
-        </div>
+          </>
+        ) : (
+          <>
+            <h1 className={styles.title}>
+              Please choose a column for: {steps[curStep]?.label}
+            </h1>
+            <div className={styles.headerGrid}>
+              {availableHeaders.map((h) => (
+                <button
+                  key={h}
+                  type="button"
+                  className={styles.headerItem}
+                  onClick={() => selectItem(h)}
+                >
+                  {h}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

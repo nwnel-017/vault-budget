@@ -45,7 +45,6 @@ export default async function Dashboard({
   let startDate: Date | null = null;
   let endDate: Date | null = null;
   let dateRanges: DateRangeOption[] = [];
-  // const firstTimeUser = getSearchParamValue(resolvedSearchParams.firstTimeUser);
 
   const userPayPeriod = await db.userPayPeriod.findUnique({
     where: {

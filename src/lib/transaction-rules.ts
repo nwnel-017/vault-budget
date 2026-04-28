@@ -341,3 +341,21 @@ export async function addNewTransactionCategory(
     };
   }
 }
+
+export async function cleanupTransactions(
+  userId: string,
+  latestTransactionDate: Date,
+) {
+  const cutoffDate = new Date(latestTransactionDate);
+  cutoffDate.setFullYear(cutoffDate.getFullYear() - 1);
+
+  // Remove older history so only the rolling one-year window remains.
+  await db.transaction.deleteMany({
+    where: {
+      user_id: userId,
+      date_purchased: {
+        lt: cutoffDate,
+      },
+    },
+  });
+}

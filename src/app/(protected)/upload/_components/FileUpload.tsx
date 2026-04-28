@@ -129,6 +129,21 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     router.push("/transactions/review");
   }
 
+  async function loadHeadersForFile(selectedFile: File) {
+    const form = new FormData();
+    form.append("file", selectedFile);
+
+    const res = await normalizeFile(form);
+
+    if (!res.success) {
+      toastError(GENERIC_ERROR_MESSAGE);
+      return false;
+    }
+
+    setHeaders(res.headers);
+    return true;
+  }
+
   async function uploadWithSavedMappings() {
     if (!file || !fieldMap) {
       toastError(FILE_REQUIRED_ERROR_MESSAGE);
@@ -160,7 +175,24 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     router.push("/transactions/review");
   }
 
-  function reviewMappingsManually() {
+  async function reviewMappingsManually() {
+    if (!file) {
+      toastError(FILE_REQUIRED_ERROR_MESSAGE);
+      return;
+    }
+
+    if (fileExceedsSizeLimit(file)) {
+      toastError(FILE_SIZE_ERROR_MESSAGE);
+      return;
+    }
+
+    // Load the headers first so the manual mapping step has choices to show.
+    const headersLoaded = await loadHeadersForFile(file);
+
+    if (!headersLoaded) {
+      return;
+    }
+
     setShowFieldMapping(false);
     setShowFileConfig(true);
   }

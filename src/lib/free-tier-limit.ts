@@ -12,8 +12,22 @@ export async function hasReachedFreeTierTransactionLimit(userId: string) {
     select: {
       accountTier: true,
       role: true,
+      billing: {
+        select: {
+          access_expires_at: true,
+        },
+      },
     },
   });
+
+  // Let canceled premium users keep access until their saved end date passes.
+  if (
+    user?.accountTier === "FREE" &&
+    user.billing?.access_expires_at &&
+    user.billing.access_expires_at > new Date()
+  ) {
+    return false;
+  }
 
   if (!user || user.role === "ADMIN" || user.accountTier !== "FREE") {
     return false;

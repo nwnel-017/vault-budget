@@ -6,6 +6,7 @@ import { requireSession } from "@/lib/auth-helpers";
 import { matchTransactionCategory } from "@/lib/category-rules";
 import { parseValidTransactionRow } from "@/lib/csv-helpers";
 import db from "@/lib/prisma";
+import { cleanupTransactions } from "@/lib/transaction-rules";
 import {
   fileValidationErrorResult,
   sanitizeHeader,
@@ -233,12 +234,6 @@ export async function uploadInput(
       throw new Error("USER_NOT_FOUND");
     }
 
-    // const existingTransactionCount = await db.transaction.count({
-    //   where: {
-    //     user_id: userId,
-    //   },
-    // });
-
     // find transaction rules for the user
     const userTransactionRules = await db.transactionRule.findMany({
       where: {
@@ -317,6 +312,22 @@ export async function uploadInput(
         date_purchased: transaction.date_purchased.toISOString(),
       }),
     );
+
+    const latestTransactionDate = parsedRows.reduce<Date | null>(
+      (latestDate, row) => {
+        if (!latestDate || row.transactionDate > latestDate) {
+          return row.transactionDate;
+        }
+
+        return latestDate;
+      },
+      null,
+    );
+
+    if (latestTransactionDate) {
+      // Keep uploaded history trimmed to one year from the newest transaction.
+      await cleanupTransactions(userId, latestTransactionDate);
+    }
 
     return {
       success: true,

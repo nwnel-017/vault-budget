@@ -58,9 +58,22 @@ export async function login(email: string, password: string) {
   }
 }
 
-export async function signup(email: string, password: string, name: string) {
-  if (!email || !password || !name) {
+export async function signup(
+  email: string,
+  password: string,
+  confirmPassword: string,
+  name: string,
+) {
+  if (!email || !password || !confirmPassword || !name) {
     throw new Error("Email, password, and name are required");
+  }
+
+  // Stop the signup if the two password fields do not match.
+  if (password !== confirmPassword) {
+    return {
+      success: false,
+      message: "Passwords do not match.",
+    };
   }
 
   try {

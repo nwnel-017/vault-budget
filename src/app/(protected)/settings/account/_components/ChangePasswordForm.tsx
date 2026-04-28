@@ -42,6 +42,18 @@ export default function ChangePasswordForm() {
         required
       />
 
+      <label className={styles.label} htmlFor="confirm-new-password">
+        Reenter New Password
+      </label>
+      <input
+        className={styles.input}
+        id="confirm-new-password"
+        name="confirmNewPassword"
+        type="password"
+        autoComplete="new-password"
+        required
+      />
+
       {state.error ? (
         <p className={styles.error} role="alert">
           {state.error}

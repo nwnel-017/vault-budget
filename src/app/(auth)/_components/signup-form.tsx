@@ -18,11 +18,12 @@ export default function SignupForm() {
 
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
     const name = formData.get("name") as string;
 
     setIsLoading(true);
 
-    const res = await signup(email, password, name);
+    const res = await signup(email, password, confirmPassword, name);
 
     if (!res.success) {
       setError(res.message);
@@ -50,6 +51,16 @@ export default function SignupForm() {
         className={styles.input}
         id="password"
         name="password"
+        type="password"
+        required
+      />
+      <label className={styles.label} htmlFor="confirm-password">
+        Reenter Password
+      </label>
+      <input
+        className={styles.input}
+        id="confirm-password"
+        name="confirmPassword"
         type="password"
         required
       />
