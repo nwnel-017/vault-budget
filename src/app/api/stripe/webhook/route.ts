@@ -7,20 +7,6 @@ import {
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-async function handleWebhookEvent(stripe: Stripe, event: Stripe.Event) {
-  switch (event.type) {
-    case "checkout.session.completed":
-      await handleCheckoutSessionCompleted(stripe, event.data.object);
-      break;
-    case "customer.subscription.updated":
-    case "customer.subscription.deleted":
-      await updateSubscriptionStatus(event.data.object);
-      break;
-    default:
-      break;
-  }
-}
-
 export async function POST(request: Request) {
   if (!stripeSecretKey) {
     return Response.json(
@@ -83,4 +69,18 @@ export async function POST(request: Request) {
   }
 
   return Response.json({ received: true });
+}
+
+async function handleWebhookEvent(stripe: Stripe, event: Stripe.Event) {
+  switch (event.type) {
+    case "checkout.session.completed":
+      await handleCheckoutSessionCompleted(stripe, event.data.object);
+      break;
+    case "customer.subscription.updated":
+    case "customer.subscription.deleted":
+      await updateSubscriptionStatus(event.data.object);
+      break;
+    default:
+      break;
+  }
 }

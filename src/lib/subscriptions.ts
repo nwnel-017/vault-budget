@@ -56,6 +56,7 @@ async function getUserId(subscription: Stripe.Subscription) {
   return billing?.user_id ?? null;
 }
 
+// subscription.deleted -> the end of the final period for free tier was reached
 export async function updateSubscriptionStatus(
   subscription: Stripe.Subscription,
   options?: {
