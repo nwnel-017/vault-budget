@@ -127,11 +127,10 @@ export default async function Dashboard({
     include: {
       category: {
         include: {
-          goals: {
+          goal: {
             select: {
               amount: true,
             },
-            take: 1,
           },
         },
       },

@@ -46,6 +46,8 @@ export default function ReviewTransactionsClient({
   const [chooseCategoryOptions, setChooseCategoryOptions] = useState(false);
   const [showFreeTrialNotice, setShowFreeTrialNotice] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState("");
+  const [autoCategorizeSimilarTransactions, setAutoCategorizeSimilarTransactions]
+    = useState(true);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -77,9 +79,11 @@ export default function ReviewTransactionsClient({
       return;
     }
 
+    // This lets the user choose whether to create a future rule.
     const response = await categorizeTransaction(
       selectedTransaction,
       categoryId,
+      autoCategorizeSimilarTransactions,
     );
 
     if (!response?.success) {
@@ -92,6 +96,7 @@ export default function ReviewTransactionsClient({
     }
 
     setSelectedTransaction("");
+    setAutoCategorizeSimilarTransactions(true);
     setChooseCategoryOptions(false);
   }
 
@@ -99,6 +104,7 @@ export default function ReviewTransactionsClient({
     if (!id) return;
 
     setSelectedTransaction(id);
+    setAutoCategorizeSimilarTransactions(true);
     setChooseCategoryOptions(true);
   }
 
@@ -125,7 +131,14 @@ export default function ReviewTransactionsClient({
         active={chooseCategoryOptions}
         categories={categories}
         addTransactionCategory={addTransactionCategory}
-        closeChooseCategory={() => setChooseCategoryOptions(false)}
+        autoCategorizeSimilarTransactions={autoCategorizeSimilarTransactions}
+        setAutoCategorizeSimilarTransactions={
+          setAutoCategorizeSimilarTransactions
+        }
+        closeChooseCategory={() => {
+          setAutoCategorizeSimilarTransactions(true);
+          setChooseCategoryOptions(false);
+        }}
       />
       <section className={styles.page}>
         <div className={styles.gridWrapper}>

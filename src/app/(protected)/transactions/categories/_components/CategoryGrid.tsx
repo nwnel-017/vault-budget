@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import CategoryDetails from "./CategoryDetails";
-import { createCategory, deleteCategory } from "../actions";
+import { createCategory, deleteCategory, editCategoryName } from "../actions";
 import styles from "../page.module.css";
 
 type CategoryGridProps = {
@@ -23,6 +23,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
     id: string;
     category_name: string;
   } | null>(null);
+  const [editedCategoryName, setEditedCategoryName] = useState("");
 
   async function submit(e: React.SubmitEvent) {
     e.preventDefault();
@@ -69,16 +70,54 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
     setIsPending(false);
   }
 
+  async function updateCategoryName() {
+    if (!selectedCategory) {
+      return;
+    }
+
+    if (!editedCategoryName.trim()) {
+      setErrorMsg("No category entered");
+      return;
+    }
+
+    setErrorMsg("");
+    setIsPending(true);
+
+    try {
+      const response = await editCategoryName(
+        selectedCategory.id,
+        editedCategoryName,
+      );
+
+      if (!response.success) {
+        setErrorMsg(response.error ?? "Unable to update category.");
+        return;
+      }
+
+      // Keep the selected category details in sync after renaming.
+      setSelectedCategory({
+        ...selectedCategory,
+        category_name: editedCategoryName.trim(),
+      });
+    } finally {
+      setIsPending(false);
+    }
+  }
+
   return (
     <>
       {selectedCategory ? (
         <CategoryDetails
           category={selectedCategory}
           removeCategory={removeCategory}
+          updateCategoryName={updateCategoryName}
           closeDetails={() => {
             setErrorMsg("");
+            setEditedCategoryName("");
             setSelectedCategory(null);
           }}
+          editedCategoryName={editedCategoryName}
+          setEditedCategoryName={setEditedCategoryName}
           isPending={isPending}
           errorMsg={errorMsg}
         />
@@ -129,21 +168,26 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
         </div>
 
         <div className={styles.categoryGrid}>
-          {categories.map((category) => {
-            return (
-              <button
-                className={styles.categoryBubble}
-                key={category.id}
-                type="button"
-                onClick={() => {
-                  setErrorMsg("");
-                  setSelectedCategory(category);
-                }}
-              >
-                {category.category_name}
-              </button>
-            );
-          })}
+          {categories.length > 0 ? (
+            categories.map((category) => {
+              return (
+                <button
+                  className={styles.categoryBubble}
+                  key={category.id}
+                  type="button"
+                  onClick={() => {
+                    setErrorMsg("");
+                    setEditedCategoryName(category.category_name);
+                    setSelectedCategory(category);
+                  }}
+                >
+                  {category.category_name}
+                </button>
+              );
+            })
+          ) : (
+            <p>No categories found.</p>
+          )}
         </div>
       </div>
     </>

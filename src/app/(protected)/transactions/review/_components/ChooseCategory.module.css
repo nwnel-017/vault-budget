@@ -46,6 +46,20 @@
   background-color: #f3f4f6;
 }
 
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.checkboxRow input {
+  margin: 0.2rem 0 0;
+}
+
+.checkboxLabel {
+  line-height: 1.5;
+}
+
 .categoryGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

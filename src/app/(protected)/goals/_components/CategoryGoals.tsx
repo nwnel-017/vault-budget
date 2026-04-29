@@ -97,27 +97,36 @@ export default function CategoryGoals({ categories }: CategoryGoalsProps) {
         </div>
 
         <div className={styles.grid}>
-          {categories.map((category) => {
-            return (
-              <article className={styles.card} key={category.id}>
-                <div className={styles.content}>
-                  <h2 className={styles.categoryName}>
-                    {category.category_name}
-                  </h2>
-                  <p className={styles.goalText}>
-                    {formatSpendingGoal(category.spending_goal)}
-                  </p>
-                </div>
-                <button
-                  className={styles.goalButton}
-                  type="button"
-                  onClick={() => openGoalEditor(category)}
-                >
-                  Change goal
-                </button>
-              </article>
-            );
-          })}
+          {categories.length > 0 ? (
+            categories.map((category) => {
+              return (
+                <article className={styles.card} key={category.id}>
+                  <div className={styles.content}>
+                    <h2 className={styles.categoryName}>
+                      {category.category_name}
+                    </h2>
+                    <p className={styles.goalText}>
+                      {formatSpendingGoal(category.spending_goal)}
+                    </p>
+                  </div>
+                  <button
+                    className={styles.goalButton}
+                    type="button"
+                    onClick={() => openGoalEditor(category)}
+                  >
+                    Change goal
+                  </button>
+                </article>
+              );
+            })
+          ) : (
+            <>
+              <p>
+                No categories found. Please visit the categories page to add
+                your spending categories.
+              </p>
+            </>
+          )}
         </div>
       </section>
     </div>

@@ -9,6 +9,10 @@ type ChooseCategoryProps = {
     category_name: string;
   }[];
   addTransactionCategory: (categoryId: string) => void | Promise<void>;
+  autoCategorizeSimilarTransactions: boolean;
+  setAutoCategorizeSimilarTransactions: (
+    shouldAutoCategorize: boolean,
+  ) => void;
   closeChooseCategory?: () => void;
 };
 
@@ -17,6 +21,8 @@ export function ChooseCategory({
   active,
   categories,
   addTransactionCategory,
+  autoCategorizeSimilarTransactions,
+  setAutoCategorizeSimilarTransactions,
   closeChooseCategory,
 }: ChooseCategoryProps) {
   if (!active) {
@@ -46,6 +52,20 @@ export function ChooseCategory({
             </button>
           ) : null}
         </div>
+
+        <label className={styles.checkboxRow}>
+          <input
+            checked={autoCategorizeSimilarTransactions}
+            type="checkbox"
+            onChange={(event) => {
+              setAutoCategorizeSimilarTransactions(event.target.checked);
+            }}
+          />
+          <span className={styles.checkboxLabel}>
+            Automatically put similar transactions into this category in the
+            future
+          </span>
+        </label>
 
         <div className={styles.categoryGrid}>
           {categories.map((category) => {

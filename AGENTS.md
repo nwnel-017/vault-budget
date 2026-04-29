@@ -6,6 +6,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Coding Style
 
+- DO NOT manually edit add or remove migration files
+- when you make changes to schema - do not run migration scripts
 - Always ask for approval before applying changes
 - Only focus on the specific instruction you are given. Do not focus on other errors or other functionality when given a task.
 - Do not make a change unless you are specifically asked to.

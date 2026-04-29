@@ -4,9 +4,9 @@ import { getDatePreviousMonth, isValidDate } from "@/utils/date";
 type TransactionCategory = {
   id: string;
   category_name: string;
-  goals?: {
+  goal?: {
     amount: unknown;
-  }[];
+  } | null;
 };
 
 type DashboardTransaction = {
@@ -57,7 +57,7 @@ export function getDashboardSpendingSummary(
       const categoryId = transaction?.category?.id ?? uncategorizedCategoryId;
       const categoryName =
         transaction?.category?.category_name ?? uncategorizedCategoryName;
-      const goalAmount = transaction?.category?.goals?.[0]?.amount ?? null;
+      const goalAmount = transaction?.category?.goal?.amount ?? null;
 
       if (Number.isNaN(amount) || amount >= 0) {
         return categoryTotals;

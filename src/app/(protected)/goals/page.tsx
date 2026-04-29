@@ -19,12 +19,7 @@ export default async function SavingsGoals() {
       user_id: userId,
     },
     include: {
-      goals: {
-        orderBy: {
-          created_at: "desc",
-        },
-        take: 1,
-      },
+      goal: true,
     },
     orderBy: {
       category_name: "asc",
@@ -35,7 +30,7 @@ export default async function SavingsGoals() {
     return {
       id: category.id,
       category_name: category.category_name,
-      spending_goal: category.goals[0]?.amount.toString() ?? null,
+      spending_goal: category.goal?.amount.toString() ?? null,
     };
   });
 

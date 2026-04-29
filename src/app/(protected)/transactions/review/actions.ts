@@ -90,6 +90,7 @@ export async function deleteTransaction(transactionId: string) {
 export async function categorizeTransaction(
   transactionId: string,
   categoryId: string,
+  shouldCreateRule: boolean,
 ) {
   const sessionResult = await requireSession();
 
@@ -123,7 +124,10 @@ export async function categorizeTransaction(
   const freeTierReached = await hasReachedFreeTierTransactionLimit(userId);
   const showFreeTrialNotice = categorizedTransactionCount === 0;
 
-  const result = freeTierReached
+  // Free tier users cannot create a new rule after the limit is reached.
+  const shouldOnlyChangeCategory = freeTierReached || !shouldCreateRule;
+
+  const result = shouldOnlyChangeCategory
     ? await changeTransactionCategory(userId, transactionId, categoryId)
     : await associateTranToCategory(userId, transactionId, categoryId);
 

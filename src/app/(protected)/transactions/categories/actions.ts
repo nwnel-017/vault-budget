@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { Prisma } from "@/app/generated/prisma/client";
 import { requireSession } from "@/lib/auth-helpers";
 import db from "@/lib/prisma";
 import { sanitizeTextInput } from "@/utils/transactions";
@@ -32,8 +33,7 @@ export async function createCategory(category: string) {
   if (sanitizedCategory !== categoryName) {
     return {
       success: false,
-      error:
-        "Category name contains invalid characters.",
+      error: "Category name contains invalid characters.",
     };
   }
 
@@ -60,7 +60,17 @@ export async function createCategory(category: string) {
       success: true,
       error: null,
     };
-  } catch {
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return {
+        success: false,
+        error: "You already have a category with this name.",
+      };
+    }
+
     return {
       success: false,
       error: "Unable to create category.",
@@ -119,6 +129,103 @@ export async function deleteCategory(categoryId: string) {
     return {
       success: false,
       error: "Unable to delete category.",
+    };
+  }
+}
+
+export async function editCategoryName(
+  categoryId: string,
+  categoryName: string,
+) {
+  const sessionResult = await requireSession();
+  const userId = sessionResult?.session?.user.id;
+
+  if (sessionResult.error || !userId) {
+    return {
+      success: false,
+      error: sessionResult.error,
+    };
+  }
+
+  const validatedCategoryId = String(categoryId ?? "").trim();
+  const trimmedCategoryName = String(categoryName ?? "").trim();
+  const sanitizedCategoryName = sanitizeTextInput(trimmedCategoryName);
+
+  if (!validatedCategoryId) {
+    return {
+      success: false,
+      error: "Category id is required.",
+    };
+  }
+
+  if (!trimmedCategoryName) {
+    return {
+      success: false,
+      error: "Category name is required.",
+    };
+  }
+
+  if (!sanitizedCategoryName) {
+    return {
+      success: false,
+      error: "Invalid category name",
+    };
+  }
+
+  if (sanitizedCategoryName !== trimmedCategoryName) {
+    return {
+      success: false,
+      error: "Category name contains invalid characters.",
+    };
+  }
+
+  try {
+    const category = await db.category.findFirst({
+      where: {
+        id: validatedCategoryId,
+        user_id: userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!category) {
+      return {
+        success: false,
+        error: "Category not found.",
+      };
+    }
+
+    await db.category.update({
+      where: {
+        id: validatedCategoryId,
+      },
+      data: {
+        category_name: sanitizedCategoryName,
+      },
+    });
+
+    revalidatePath("/transactions/categories");
+
+    return {
+      success: true,
+      error: null,
+    };
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return {
+        success: false,
+        error: "You already have a category with this name.",
+      };
+    }
+
+    return {
+      success: false,
+      error: "Unable to update category name.",
     };
   }
 }

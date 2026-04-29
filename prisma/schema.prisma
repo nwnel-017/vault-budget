@@ -165,13 +165,15 @@ model Category {
     user_id           String
     user              User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
     category_name     String
+    active            Boolean           @default(true)
     transactions      Transaction[]
     transaction_rules TransactionRule[]
-    goals             CategoryGoal[]
+    goal              CategoryGoal?
     created_at        DateTime          @default(now())
     updated_at        DateTime          @updatedAt
 
     @@index([user_id])
+    @@unique([user_id, category_name])
     @@map("category")
 }
 
