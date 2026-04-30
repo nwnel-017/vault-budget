@@ -14,7 +14,7 @@
 }
 
 .label {
-  font-size: 1rem;
+  font-size: var(--body-font);
   font-weight: 600;
   color: #111827;
 }

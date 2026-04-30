@@ -54,7 +54,7 @@
   border-radius: 1rem;
   background: transparent;
   color: #0f172a;
-  font-size: 1rem;
+  font-size: var(--body-font);
   font-weight: 600;
   line-height: 1.4;
   cursor: pointer;

@@ -1,6 +1,7 @@
 .section {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 1rem;
   align-items: center;
   margin: 0 auto;
@@ -20,12 +21,13 @@
 
 .header h2 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--section-title-font);
 }
 
 .gridWrapper {
   display: grid;
   gap: 0.75rem;
+  width: 100%;
 }
 
 .gridHeader,
@@ -40,7 +42,7 @@
   padding-bottom: 0.75rem;
   border-bottom: 1px solid
     color-mix(in srgb, var(--foreground) 20%, transparent);
-  font-size: 0.875rem;
+  font-size: var(--meta-font);
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -68,7 +70,7 @@
 }
 
 .goalDifference {
-  font-size: 0.8rem;
+  font-size: var(--meta-font);
   font-weight: 600;
   line-height: 1.3;
 }

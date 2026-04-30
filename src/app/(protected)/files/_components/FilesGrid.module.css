@@ -37,7 +37,7 @@
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   background-color: #f8fafc;
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
 }
 

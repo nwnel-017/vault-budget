@@ -31,12 +31,12 @@
 }
 
 .title {
-  font-size: 2rem;
+  font-size: var(--title-font);
   line-height: 1.1;
 }
 
 .description {
-  font-size: 0.975rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
   color: #475569;
 }
@@ -52,19 +52,19 @@
 }
 
 .summaryLabel {
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
   color: #475569;
 }
 
 .planName {
-  font-size: 2rem;
+  font-size: var(--title-font);
   font-weight: 700;
   line-height: 1.1;
 }
 
 .planDetail {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   line-height: 1.4;
   color: #475569;
 }
@@ -92,7 +92,7 @@
 }
 
 .note {
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
   color: #475569;
 }

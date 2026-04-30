@@ -1,7 +1,7 @@
 .field {
   margin: 0 auto;
   /* display: block; */
-  max-width: 50%;
+  max-width: 70%;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -29,7 +29,8 @@
   /* background: var(--theme-gray); */
   color: var(--text-color);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
+  /* font-size: var(--small-font); */
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
@@ -64,12 +65,16 @@
 @media (min-width: 768px) {
   .select {
     min-height: 2.75rem;
-    font-size: 0.9rem;
+    font-size: var(--supporting-font);
   }
 }
 
 @media (min-width: 1024px) {
   .select {
-    font-size: 1rem;
+    font-size: var(--body-font);
+  }
+
+  .field {
+    max-width: 50%;
   }
 }

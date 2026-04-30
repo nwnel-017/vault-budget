@@ -157,7 +157,7 @@ export default async function Dashboard({
   const savingsGoalAmount = savingsGoal ? Number(savingsGoal.amount) : null;
 
   return (
-    <div className="flex-col gap col-center">
+    <div className="flex-col gap col-center max-width">
       {!userPayPeriod?.pay_period_start_day ? (
         <PayPeriodConfig onSelectPayPeriod={setUserPayPeriodBegin} />
       ) : null}

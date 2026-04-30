@@ -23,7 +23,7 @@
 .header h1 {
   margin: 0;
   color: #12203a;
-  font-size: 2.2rem;
+  font-size: var(--hero-title-font);
   line-height: 1.1;
 }
 
@@ -83,7 +83,7 @@
 .gridHeader {
   border-bottom: 1px solid #e7ecf6;
   background-color: #ffffff;
-  font-size: 0.82rem;
+  font-size: var(--meta-font);
   font-weight: 600;
   color: #51607d;
   text-transform: uppercase;
@@ -125,7 +125,7 @@
 
 .merchantName {
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: var(--subtitle-font);
   letter-spacing: 0.01em;
   color: #1e2942;
 }
@@ -187,7 +187,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 1.05rem;
+  font-size: var(--subtitle-font);
   font-weight: 700;
 }
 
@@ -203,7 +203,7 @@
   border-radius: 999px;
   padding: 0.45rem 0.9rem;
   font: inherit;
-  font-size: 0.92rem;
+  font-size: var(--supporting-font);
   cursor: pointer;
 }
 

@@ -24,7 +24,7 @@ export default function TutorialPage() {
               from your bank.
             </p>
             <Link className={styles.linkButton} href="/tutorial/csv-export">
-              How do I get a spreadsheet from my bank?
+              How do I get a spreadsheet?
             </Link>
           </article>
 

@@ -28,12 +28,12 @@
 }
 
 .title {
-  font-size: 2rem;
+  font-size: var(--title-font);
   line-height: 1.1;
 }
 
 .description {
-  font-size: 0.975rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
   color: #475569;
 }
@@ -55,18 +55,18 @@
 }
 
 .sectionTitle {
-  font-size: 1.05rem;
+  font-size: var(--subtitle-font);
   font-weight: 700;
 }
 
 .sectionDescription {
-  font-size: 0.92rem;
+  font-size: var(--supporting-font);
   line-height: 1.45;
   color: #475569;
 }
 
 .emailValue {
-  font-size: 1rem;
+  font-size: var(--body-font);
   font-weight: 600;
   line-height: 1.4;
   color: #0f172a;

@@ -53,7 +53,7 @@
 
 .title {
   margin: 0;
-  font-size: 1.45rem;
+  font-size: var(--section-title-font);
   line-height: 1.15;
 }
 
@@ -76,7 +76,7 @@
 }
 
 .label {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
 }
 

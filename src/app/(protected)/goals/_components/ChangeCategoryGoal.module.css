@@ -36,12 +36,12 @@
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: var(--section-title-font);
   line-height: 1.1;
 }
 
 .categoryName {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   color: color-mix(in srgb, var(--foreground) 72%, transparent);
 }
 
@@ -64,7 +64,7 @@
 }
 
 .label {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
 }
 
@@ -136,7 +136,7 @@
 }
 
 .errorMessage {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   color: #b91c1c;
 }
 

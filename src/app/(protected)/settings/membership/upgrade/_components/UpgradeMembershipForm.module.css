@@ -28,12 +28,12 @@
 }
 
 .title {
-  font-size: 2rem;
+  font-size: var(--title-font);
   line-height: 1.1;
 }
 
 .description {
-  font-size: 0.975rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
   color: #475569;
 }
@@ -55,31 +55,31 @@
 }
 
 .summaryLabel {
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
   color: #475569;
 }
 
 .price {
-  font-size: 2rem;
+  font-size: var(--title-font);
   font-weight: 700;
   line-height: 1.1;
 }
 
 .priceNote {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   line-height: 1.4;
   color: #475569;
 }
 
 .confirmText {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
   color: #1e293b;
 }
 
 .error {
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
   line-height: 1.4;
   color: #b91c1c;
 }

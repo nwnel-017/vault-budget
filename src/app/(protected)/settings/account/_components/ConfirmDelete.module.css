@@ -32,7 +32,7 @@
 }
 
 .eyebrow {
-  font-size: 0.78rem;
+  font-size: var(--meta-font);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -41,13 +41,13 @@
 
 .title {
   margin: 0;
-  font-size: 1.55rem;
+  font-size: var(--section-title-font);
   line-height: 1.15;
 }
 
 .description {
   margin: 0;
-  font-size: 0.96rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
   color: #475569;
 }
@@ -59,7 +59,7 @@
 }
 
 .label {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
 }
 
@@ -81,7 +81,7 @@
 
 .error {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
   line-height: 1.4;
   color: #b91c1c;
 }

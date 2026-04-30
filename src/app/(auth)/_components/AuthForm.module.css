@@ -6,7 +6,7 @@
 }
 
 .label {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
   color: #0f172a;
 }
@@ -29,13 +29,13 @@
 }
 
 .error {
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
   line-height: 1.4;
   color: var(--error);
 }
 
 .success {
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
   line-height: 1.4;
   color: var(--success);
 }

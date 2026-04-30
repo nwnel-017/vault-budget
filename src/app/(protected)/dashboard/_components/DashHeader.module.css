@@ -4,7 +4,8 @@
   justify-content: center;
   margin: 0 auto;
   gap: 1rem;
-  width: 100dvw;
+  /* width: 100dvw; */
+  width: 100%;
   /* background-color: var(--accent); */
   /* border: 1px solid red; */
 }
@@ -13,16 +14,18 @@
   width: 100%;
   overflow-x: hidden;
   overflow-y: visible;
-  /* border: 1px solid blue; */
 }
 
 .boxContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 100dvw;
+  /* min-width: 100dvw; */
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
   height: 100%;
-  /* border: 1px solid green; */
+  /* border: 1px solid yellow; */
 }
 
 .totalSavedChart {
@@ -42,12 +45,14 @@
   align-items: center;
   position: relative;
   height: 100%;
-  width: 90dvw;
-  border-radius: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
   padding: 1rem;
+  border-radius: 0.5rem;
+  /* padding: 1rem 0; */
   text-align: center;
   background-color: var(--background);
-  /* border: 1px solid grey; */
+  border: 1px solid grey;
   box-shadow:
     0 0.2rem 0.5rem color-mix(in srgb, var(--foreground) 10%, transparent),
     0 1rem 1.8rem -0.2rem color-mix(in srgb, var(--foreground) 18%, transparent);
@@ -59,6 +64,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  /* border: 2px solid black; */
   height: 100%;
   min-height: 0;
   gap: 0.25rem;
@@ -75,7 +81,7 @@
 }
 
 .pieTitle {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   text-align: left;
 }
 
@@ -84,12 +90,12 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  font-size: 0.9rem;
+  font-size: var(--supporting-font);
 }
 
 .goalDifference {
   max-width: 70%;
-  font-size: 0.75rem;
+  font-size: var(--meta-font);
   font-weight: 600;
   line-height: 1.3;
   text-align: right;
@@ -105,14 +111,14 @@
 }
 
 .totalSavedLabel {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   width: 100%;
   text-align: left;
 }
 
 .totalSavedAmount {
   display: flex;
-  font-size: 1.4rem;
+  font-size: var(--section-title-font);
   font-weight: 700;
 }
 
@@ -149,7 +155,9 @@
 
 .headerStrip {
   display: flex;
-  width: 100dvw;
+  /* width: 100dvw; */
+  /* position: absolute; */
+  width: 100%;
   height: 10rem;
   justify-content: space-evenly;
   transition: transform 0.3s ease;
@@ -184,7 +192,7 @@
   padding: 0;
   background-color: transparent;
   color: color-mix(in srgb, var(--foreground) 45%, transparent);
-  font-size: 1.75rem;
+  font-size: var(--title-font);
   font-weight: 400;
   line-height: 1;
   cursor: pointer;

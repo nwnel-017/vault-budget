@@ -28,12 +28,12 @@
 }
 
 .title {
-  font-size: 2rem;
+  font-size: var(--title-font);
   line-height: 1.1;
 }
 
 .description {
-  font-size: 0.98rem;
+  font-size: var(--supporting-font);
   line-height: 1.55;
   color: #475569;
 }
@@ -55,7 +55,7 @@
 }
 
 .stepLabel {
-  font-size: 0.82rem;
+  font-size: var(--meta-font);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -63,12 +63,12 @@
 }
 
 .sectionTitle {
-  font-size: 1.1rem;
+  font-size: var(--subtitle-font);
   line-height: 1.25;
 }
 
 .sectionText {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   line-height: 1.55;
   color: #475569;
 }
@@ -80,7 +80,7 @@
 }
 
 .tipsTitle {
-  font-size: 1.1rem;
+  font-size: var(--subtitle-font);
 }
 
 .tipList {
@@ -101,12 +101,13 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-height: 2.75rem;
+  min-height: 2.25rem;
   border: 0.0625rem solid #1d4ed8;
   border-radius: 999rem;
-  padding: 0.75rem 1.1rem;
+  padding: 0.55rem 0.85rem;
   color: #1d4ed8;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .linkButton:hover {
@@ -116,5 +117,21 @@
 @media (min-width: 48rem) {
   .panel {
     padding: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .linkButton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 2.75rem;
+    /* min-height: 1rem; */
+    border: 0.0625rem solid #1d4ed8;
+    border-radius: 999rem;
+    padding: 0.75rem 1.1rem;
+    color: #1d4ed8;
+    font-weight: 600;
+    /* font-size: var(--small-font); */
   }
 }

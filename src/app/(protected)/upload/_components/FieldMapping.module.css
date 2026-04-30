@@ -30,7 +30,7 @@
 }
 
 .eyebrow {
-  font-size: 0.78rem;
+  font-size: var(--meta-font);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -39,13 +39,13 @@
 
 .title {
   margin: 0;
-  font-size: 1.45rem;
+  font-size: var(--section-title-font);
   line-height: 1.15;
 }
 
 .description {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   line-height: 1.45;
   color: color-mix(in srgb, var(--foreground) 72%, transparent);
 }
@@ -67,7 +67,7 @@
   padding-bottom: 0.75rem;
   border-bottom: 0.0625rem solid
     color-mix(in srgb, var(--foreground) 18%, transparent);
-  font-size: 0.84rem;
+  font-size: var(--meta-font);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;

@@ -28,7 +28,7 @@
 }
 
 .eyebrow {
-  font-size: 0.78rem;
+  font-size: var(--meta-font);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -37,13 +37,13 @@
 
 .title {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: var(--title-font);
   line-height: 1.1;
 }
 
 .description {
   margin: 0;
-  font-size: 0.96rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
   color: color-mix(in srgb, var(--foreground) 74%, transparent);
 }
@@ -74,7 +74,7 @@
 }
 
 .noticeTitle {
-  font-size: 0.82rem;
+  font-size: var(--meta-font);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -82,7 +82,7 @@
 
 .noticeText {
   margin: 0;
-  font-size: 0.94rem;
+  font-size: var(--supporting-font);
   line-height: 1.5;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .fileLabel {
-  font-size: 0.95rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
 }
 
@@ -124,7 +124,7 @@
 
 .helperText {
   margin: 0;
-  font-size: 0.86rem;
+  font-size: var(--meta-font);
   color: color-mix(in srgb, var(--foreground) 68%, transparent);
 }
 
@@ -134,7 +134,7 @@
   padding: 0.4rem 0.8rem;
   border-radius: 999rem;
   background: color-mix(in srgb, var(--foreground) 8%, transparent);
-  font-size: 0.88rem;
+  font-size: var(--supporting-font);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
@@ -179,6 +179,6 @@
   }
 
   .title {
-    font-size: 1.85rem;
+  font-size: var(--title-font);
   }
 }

@@ -1,5 +1,5 @@
 .rangeCard {
-  width: 90%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -46,7 +46,7 @@
     color-mix(in srgb, var(--accent) 80%, black) 100%
   );
   color: white;
-  font-size: 0.85rem;
+  font-size: var(--meta-font);
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -80,7 +80,7 @@
 }
 
 .buttonArrow {
-  font-size: 1.1rem;
+  font-size: var(--subtitle-font);
   line-height: 1;
 }
 
@@ -102,15 +102,11 @@
   }
 
   .buttonArrow {
-    font-size: 1.2rem;
+    font-size: var(--subtitle-font);
   }
 }
 
 @media (min-width: 1024px) {
-  .rangeCard {
-    width: 100%;
-  }
-
   .selector {
     padding: 0.95rem 1.15rem;
   }
