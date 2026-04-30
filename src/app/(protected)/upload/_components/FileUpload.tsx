@@ -33,6 +33,7 @@ function SubmitButton() {
   );
 }
 
+// TO DO - review new flow with limit reached param
 export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
   const [file, setFile] = useState<File | null>(null);
   const [showFileConfig, setShowFileConfig] = useState(false);
@@ -117,6 +118,7 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
       selectedColumns.merchantField,
       selectedColumns.amountField,
       selectedColumns.dateField,
+      file.name,
     );
 
     if (!res.success) {
@@ -125,8 +127,12 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     }
 
     setShowFileConfig(false);
+    console.log(res);
     toastSuccess(res.message ?? UPLOAD_SUCCESS_MESSAGE);
-    router.push("/transactions/review");
+    const nextUrl = res.limitReached
+      ? "/transactions/review?freeTierLimitReached=true"
+      : "/transactions/review";
+    router.push(nextUrl);
   }
 
   async function loadHeadersForFile(selectedFile: File) {
@@ -163,6 +169,7 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
       fieldMap.merchant,
       fieldMap.amount,
       fieldMap.date_purchased,
+      file.name,
     );
 
     if (!res.success) {
@@ -171,8 +178,12 @@ export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
     }
 
     setShowFieldMapping(false);
-    toastSuccess(UPLOAD_SUCCESS_MESSAGE);
-    router.push("/transactions/review");
+    // Show the detailed success message returned by the server action.
+    toastSuccess(res.message ?? UPLOAD_SUCCESS_MESSAGE);
+    const nextUrl = res.limitReached
+      ? "/transactions/review?freeTierLimitReached=true"
+      : "/transactions/review";
+    router.push(nextUrl);
   }
 
   async function reviewMappingsManually() {

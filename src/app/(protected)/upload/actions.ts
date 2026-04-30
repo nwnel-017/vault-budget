@@ -12,6 +12,7 @@ import {
   sanitizeHeader,
   validateCsvFile,
 } from "@/utils/transactions";
+import { skip } from "node:test";
 
 const FREE_TIER_TRANSACTION_LIMIT =
   Number(process.env.FREE_TIER_TRANSACTION_LIMIT) || 300;
@@ -44,7 +45,24 @@ export type UploadInputResult = {
   message: string | null;
   firstTimeUser: boolean;
   transactions: IncomeSelectionTransaction[];
+  limitReached: boolean;
 };
+
+const DEFAULT_UPLOAD_FILE_NAME = "uploaded-file.csv";
+const MAX_UPLOAD_FILE_NAME_LENGTH = 255;
+
+function normalizeUploadFileName(fileName: string) {
+  const normalizedFileName = fileName
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .trim()
+    .replace(/\s+/g, " ");
+
+  if (!normalizedFileName) {
+    return DEFAULT_UPLOAD_FILE_NAME;
+  }
+
+  return normalizedFileName.slice(0, MAX_UPLOAD_FILE_NAME_LENGTH);
+}
 
 // function to validate file and return the normalized headers
 export async function normalizeFile(form: FormData) {
@@ -93,6 +111,7 @@ export async function uploadInput(
   merchantTypeColumn: string,
   amountColumn: string,
   transactionDateColumn: string,
+  fileName: string,
 ): Promise<UploadInputResult> {
   // validate session
   const sessionResult = await requireSession();
@@ -104,6 +123,7 @@ export async function uploadInput(
       message: null,
       firstTimeUser: false,
       transactions: [],
+      limitReached: false,
     };
   }
 
@@ -115,6 +135,7 @@ export async function uploadInput(
       message: null,
       firstTimeUser: false,
       transactions: [],
+      limitReached: false,
     };
   }
 
@@ -128,6 +149,7 @@ export async function uploadInput(
       message: null,
       firstTimeUser: false,
       transactions: [],
+      limitReached: false,
     };
   }
 
@@ -137,6 +159,7 @@ export async function uploadInput(
     amount: sanitizeHeader(amountColumn),
     transactionDate: sanitizeHeader(transactionDateColumn),
   };
+  const normalizedFileName = normalizeUploadFileName(fileName ?? "");
 
   if (
     !selectedColumns.merchantType ||
@@ -149,6 +172,7 @@ export async function uploadInput(
       message: null,
       firstTimeUser: false,
       transactions: [],
+      limitReached: false,
     };
   }
 
@@ -179,6 +203,7 @@ export async function uploadInput(
       message: null,
       firstTimeUser: false,
       transactions: [],
+      limitReached: false,
     };
   }
   // parse the file
@@ -220,6 +245,38 @@ export async function uploadInput(
         .on("error", reject);
     });
 
+    const earliestTransactionDate = parsedRows.reduce<Date | null>(
+      (earliestDate, row) => {
+        if (!earliestDate || row.transactionDate < earliestDate) {
+          return row.transactionDate;
+        }
+
+        return earliestDate;
+      },
+      null,
+    );
+    const latestTransactionDate = parsedRows.reduce<Date | null>(
+      (latestDate, row) => {
+        if (!latestDate || row.transactionDate > latestDate) {
+          return row.transactionDate;
+        }
+
+        return latestDate;
+      },
+      null,
+    );
+
+    if (!earliestTransactionDate || !latestTransactionDate) {
+      return {
+        success: false,
+        error: "No valid transactions were found in the uploaded file.",
+        message: null,
+        firstTimeUser: false,
+        transactions: [],
+        limitReached: false,
+      };
+    }
+
     const user = await db.user.findUnique({
       where: {
         id: userId,
@@ -231,7 +288,14 @@ export async function uploadInput(
     });
 
     if (!user) {
-      throw new Error("USER_NOT_FOUND");
+      return {
+        success: false,
+        error: "User not found",
+        message: null,
+        firstTimeUser: false,
+        transactions: [],
+        limitReached: false,
+      };
     }
 
     // find transaction rules for the user
@@ -252,6 +316,19 @@ export async function uploadInput(
     const { createdTransactions, blockedByFreeTierLimit } =
       await db.$transaction(async (tx) => {
         await tx.$queryRaw`SELECT id FROM "user" WHERE id = ${userId} FOR UPDATE`;
+
+        // Save one upload record so all inserted transactions point to it.
+        const fileUpload = await tx.userFileUpload.create({
+          data: {
+            user_id: userId,
+            file_name: normalizedFileName,
+            start_date: earliestTransactionDate,
+            end_date: latestTransactionDate,
+          },
+          select: {
+            id: true,
+          },
+        });
 
         const existingTransactionCount = await tx.transaction.count({
           where: {
@@ -282,6 +359,7 @@ export async function uploadInput(
             runningTransactionCount += 1;
 
             return {
+              file_upload_id: fileUpload.id,
               merchant: row.merchantType,
               amount: row.amount,
               date_purchased: row.transactionDate,
@@ -313,31 +391,23 @@ export async function uploadInput(
       }),
     );
 
-    const latestTransactionDate = parsedRows.reduce<Date | null>(
-      (latestDate, row) => {
-        if (!latestDate || row.transactionDate > latestDate) {
-          return row.transactionDate;
-        }
-
-        return latestDate;
-      },
-      null,
-    );
-
     if (latestTransactionDate) {
       // Keep uploaded history trimmed to one year from the newest transaction.
       await cleanupTransactions(userId, latestTransactionDate);
     }
 
+    const freeTierLimitReached = blockedByFreeTierLimit > 0;
+
     return {
       success: true,
       error: null,
       message:
-        blockedByFreeTierLimit > 0
-          ? `Uploaded ${createdTransactions.length} transaction rows successfully. Skipped ${skippedRows} invalid rows. ${blockedByFreeTierLimit} uploaded rows were saved without automatic categorization because your free plan has reached the ${FREE_TIER_TRANSACTION_LIMIT} transaction limit.`
-          : `Parsed ${createdTransactions.length} transaction rows successfully. Skipped ${skippedRows} invalid rows.`,
+        skippedRows > 0
+          ? `Uploaded ${createdTransactions.length} transactions successfully. Skipped ${skippedRows} invalid transactions.`
+          : `Uploaded ${createdTransactions.length} transactions successfully.`,
       firstTimeUser: !existingPayPeriod,
       transactions: !existingPayPeriod ? incomeSelectionTransactions : [],
+      limitReached: freeTierLimitReached,
     };
   } catch {
     return {
@@ -346,6 +416,7 @@ export async function uploadInput(
       message: null,
       firstTimeUser: false,
       transactions: [],
+      limitReached: false,
     };
   }
 }

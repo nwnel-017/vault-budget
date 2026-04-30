@@ -12,6 +12,7 @@ export default function NavBar() {
     { href: "/dashboard", label: "Home" },
     { href: "/tutorial", label: "Help" },
     { href: "/upload", label: "Add a Spreadsheet" },
+    { href: "/files", label: "Manage My Spreadsheets" },
     { href: "/transactions/review", label: "Review Transactions" },
     { href: "/transactions/categories", label: "Categories" },
     { href: "/goals", label: "Savings Goals" },

@@ -4,10 +4,15 @@ import { requireSession } from "@/lib/auth-helpers";
 import db from "../../../../lib/prisma";
 import ReviewTransactionsClient from "./_components/ReviewTransactionsClient";
 import DeleteTransactions from "./_components/DeleteTransactions";
+import FreeTierExpired from "./_components/FreeTierExpired";
 import WelcomePanel from "./_components/WelcomePanel";
 import styles from "./page.module.css";
 
+// TO DO - review new flow with limit reached param
+// cleanup
+
 type ReviewSearchParams = Promise<{
+  freeTierLimitReached?: string | string[] | undefined;
   page?: string | string[] | undefined;
   tab?: string | string[] | undefined;
 }>;
@@ -59,6 +64,8 @@ export default async function ReviewTransactions({
   const activeFilter = normalizeFilter(
     getSearchParamValue(resolvedSearchParams.tab),
   );
+  const showFreeTierExpired =
+    getSearchParamValue(resolvedSearchParams.freeTierLimitReached) === "true";
   const requestedPage = normalizePage(
     getSearchParamValue(resolvedSearchParams.page),
   );
@@ -118,6 +125,7 @@ export default async function ReviewTransactions({
 
   return (
     <div className={styles.pageLayout}>
+      <FreeTierExpired active={showFreeTierExpired} />
       <WelcomePanel active={categorizedTransactionCount === 0} />
       <DeleteTransactions />
       <ReviewTransactionsClient
