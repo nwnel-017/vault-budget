@@ -342,6 +342,94 @@ export async function addNewTransactionCategory(
   }
 }
 
+export async function removeTransactionCategory(
+  userId: string,
+  transactionId: string,
+) {
+  const validatedUserId = String(userId ?? "").trim();
+  const validatedTransactionId = String(transactionId ?? "").trim();
+
+  if (!validatedUserId || !validatedTransactionId) {
+    return {
+      success: false,
+      error: "User id and transaction id are required.",
+    };
+  }
+
+  try {
+    await db.$transaction(async (tx) => {
+      // Load the user's transaction first so ownership is enforced here too.
+      const transaction = await tx.transaction.findFirst({
+        where: {
+          id: validatedTransactionId,
+          user_id: validatedUserId,
+        },
+        select: {
+          id: true,
+          category_id: true,
+          transaction_rule_id: true,
+        },
+      });
+
+      if (!transaction) {
+        throw new Error("Transaction not found.");
+      }
+
+      if (!transaction.category_id) {
+        throw new Error("Transaction is already uncategorized.");
+      }
+
+      const currentRuleId = transaction.transaction_rule_id;
+
+      // Clear the category and rule link on the selected transaction.
+      await tx.transaction.update({
+        where: {
+          id: transaction.id,
+        },
+        data: {
+          category_id: null,
+          transaction_rule_id: null,
+        },
+      });
+
+      if (!currentRuleId) {
+        return;
+      }
+
+      const remainingRuleUsageCount = await tx.transaction.count({
+        where: {
+          user_id: validatedUserId,
+          transaction_rule_id: currentRuleId,
+        },
+      });
+
+      // Remove orphaned rules after the current transaction is detached.
+      if (remainingRuleUsageCount === 0) {
+        await tx.transactionRule.delete({
+          where: {
+            id: currentRuleId,
+          },
+        });
+      }
+    });
+
+    revalidatePath("/transactions/review");
+
+    return {
+      success: true,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unable to remove transaction category.",
+    };
+  }
+}
+
 export async function cleanupTransactions(
   userId: string,
   latestTransactionDate: Date,

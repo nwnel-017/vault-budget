@@ -1,9 +1,19 @@
-import Image from "next/image";
 import styles from "./page.module.css";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { AppLogo } from "@/components/ui/icons/AppLogo";
+import { auth } from "@/lib/auth";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <div>
       <div className="flex-center">

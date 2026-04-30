@@ -108,14 +108,12 @@ export function getDefaultDateRange(
         date.getMonth(),
       );
 
+      // TO DO - fix this - always return current interval but with incomplete message
       if (date >= currentMonthStart) {
         return currentMonthStart;
       }
 
-      return getPeriodStartForMonth(
-        date.getFullYear(),
-        date.getMonth() - 1,
-      );
+      return getPeriodStartForMonth(date.getFullYear(), date.getMonth() - 1);
     };
 
     const currentIntervalStart = getIntervalStart(mostRecentTransactionDate);
@@ -139,6 +137,8 @@ export type DateRangeOption = {
   end: string;
 };
 
+// TO DO - this function should not just include the last complete month
+// include the last month where transactions exist, but return with an incomplete message
 export function getDateRanges(
   latestTransactionDate: Date,
   payPeriodStartDay?: number | null,

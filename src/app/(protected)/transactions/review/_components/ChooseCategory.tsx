@@ -4,25 +4,27 @@ import styles from "./ChooseCategory.module.css";
 
 type ChooseCategoryProps = {
   active: boolean;
+  currentCategory: string | null;
   categories: {
     id: string;
     category_name: string;
   }[];
   addTransactionCategory: (categoryId: string) => void | Promise<void>;
   autoCategorizeSimilarTransactions: boolean;
-  setAutoCategorizeSimilarTransactions: (
-    shouldAutoCategorize: boolean,
-  ) => void;
+  setAutoCategorizeSimilarTransactions: (shouldAutoCategorize: boolean) => void;
+  removeTransactionCategory: () => void;
   closeChooseCategory?: () => void;
 };
 
 // TO DO : review and refactor
 export function ChooseCategory({
   active,
+  currentCategory,
   categories,
   addTransactionCategory,
   autoCategorizeSimilarTransactions,
   setAutoCategorizeSimilarTransactions,
+  removeTransactionCategory,
   closeChooseCategory,
 }: ChooseCategoryProps) {
   if (!active) {
@@ -81,6 +83,15 @@ export function ChooseCategory({
             );
           })}
         </div>
+        {currentCategory ? (
+          <button
+            className={styles.removeCategoryButton}
+            type="button"
+            onClick={() => removeTransactionCategory()}
+          >
+            Remove the category for this transaction
+          </button>
+        ) : null}
       </div>
     </div>
   );

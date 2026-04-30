@@ -6,6 +6,7 @@ import db from "@/lib/prisma";
 import {
   associateTranToCategory,
   changeTransactionCategory,
+  removeTransactionCategory,
 } from "@/lib/transaction-rules";
 
 // lets the user delete all their transactions
@@ -142,4 +143,44 @@ export async function categorizeTransaction(
     ...result,
     showFreeTrialNotice,
   };
+}
+
+export async function deleteTransactionCategory(transactionId: string) {
+  const sessionResult = await requireSession();
+
+  if (sessionResult.error) {
+    return {
+      success: false,
+      error: "Invalid Session",
+    };
+  }
+
+  const userId = sessionResult.session?.user.id;
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Missing user in session",
+    };
+  }
+
+  const validatedTransactionId = String(transactionId ?? "").trim();
+
+  // Keep the action input checks simple before delegating to the lib layer.
+  if (!validatedTransactionId) {
+    return {
+      success: false,
+      error: "Transaction id is required.",
+    };
+  }
+  try {
+    return removeTransactionCategory(userId, validatedTransactionId);
+  } catch (error) {
+    console.error("Error in deleteTransactionCategory action:", error);
+    return {
+      success: false,
+      error:
+        "An unexpected error occurred while removing the transaction category.",
+    };
+  }
 }

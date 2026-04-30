@@ -42,6 +42,16 @@
   cursor: pointer;
 }
 
+.removeCategoryButton {
+  border: 1px solid #1f1f1f;
+  border-radius: 8px;
+  background-color: transparent;
+  padding: 0.55rem 0.95rem;
+  font: inherit;
+  cursor: pointer;
+  max-width: 50%;
+}
+
 .closeButton:hover {
   background-color: #f3f4f6;
 }

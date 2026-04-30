@@ -5,7 +5,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { ChooseCategory } from "./ChooseCategory";
 import FreeTrialNotice from "./FreeTrialNotice";
-import { categorizeTransaction, deleteTransaction } from "../actions";
+import {
+  categorizeTransaction,
+  deleteTransaction,
+  deleteTransactionCategory,
+} from "../actions";
 import { formatTransaction } from "@/utils/funds";
 import styles from "../page.module.css";
 
@@ -29,6 +33,11 @@ type ReviewTransactionsClientProps = {
   }[];
 };
 
+type Transaction = {
+  id: string;
+  categoryId: string | null;
+};
+
 type TransactionFilter = "all" | "categorized" | "uncategorized";
 
 // takes in categories and transactions
@@ -45,9 +54,14 @@ export default function ReviewTransactionsClient({
 }) {
   const [chooseCategoryOptions, setChooseCategoryOptions] = useState(false);
   const [showFreeTrialNotice, setShowFreeTrialNotice] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState("");
-  const [autoCategorizeSimilarTransactions, setAutoCategorizeSimilarTransactions]
-    = useState(true);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction>({
+    id: "",
+    categoryId: null,
+  });
+  const [
+    autoCategorizeSimilarTransactions,
+    setAutoCategorizeSimilarTransactions,
+  ] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -74,14 +88,14 @@ export default function ReviewTransactionsClient({
   }
 
   async function addTransactionCategory(categoryId: string) {
-    if (!selectedTransaction || !categoryId) {
+    if (!selectedTransaction.id || !categoryId) {
       toastError("No transaction selected");
       return;
     }
 
     // This lets the user choose whether to create a future rule.
     const response = await categorizeTransaction(
-      selectedTransaction,
+      selectedTransaction.id,
       categoryId,
       autoCategorizeSimilarTransactions,
     );
@@ -95,15 +109,34 @@ export default function ReviewTransactionsClient({
       toastSuccess("Updated transaction category.");
     }
 
-    setSelectedTransaction("");
+    setSelectedTransaction({ id: "", categoryId: null });
     setAutoCategorizeSimilarTransactions(true);
     setChooseCategoryOptions(false);
   }
 
-  function selectTransaction(id: string) {
+  async function removeTransactionCategory() {
+    if (!selectedTransaction.id) {
+      toastError("No transaction selected");
+      return;
+    }
+
+    const response = await deleteTransactionCategory(selectedTransaction.id);
+
+    if (!response.success) {
+      toastError(response.error ?? "Unable to remove transaction category.");
+      return;
+    }
+    router.refresh();
+    toastSuccess("Transaction category removed.");
+    setSelectedTransaction({ id: "", categoryId: null });
+    setAutoCategorizeSimilarTransactions(true);
+    setChooseCategoryOptions(false);
+  }
+
+  function selectTransaction(id: string, categoryId: string | null) {
     if (!id) return;
 
-    setSelectedTransaction(id);
+    setSelectedTransaction({ id, categoryId });
     setAutoCategorizeSimilarTransactions(true);
     setChooseCategoryOptions(true);
   }
@@ -129,12 +162,14 @@ export default function ReviewTransactionsClient({
       <FreeTrialNotice active={showFreeTrialNotice} />
       <ChooseCategory
         active={chooseCategoryOptions}
+        currentCategory={selectedTransaction.categoryId}
         categories={categories}
         addTransactionCategory={addTransactionCategory}
         autoCategorizeSimilarTransactions={autoCategorizeSimilarTransactions}
         setAutoCategorizeSimilarTransactions={
           setAutoCategorizeSimilarTransactions
         }
+        removeTransactionCategory={removeTransactionCategory}
         closeChooseCategory={() => {
           setAutoCategorizeSimilarTransactions(true);
           setChooseCategoryOptions(false);
@@ -227,7 +262,12 @@ export default function ReviewTransactionsClient({
                       <button
                         className={`${styles.categoryButton} ${styles.changeCategoryButton}`}
                         type="button"
-                        onClick={() => selectTransaction(transaction.id)}
+                        onClick={() =>
+                          selectTransaction(
+                            transaction.id,
+                            transaction.category?.id || null,
+                          )
+                        }
                       >
                         {transaction.category.category_name}
                       </button>
@@ -235,7 +275,12 @@ export default function ReviewTransactionsClient({
                       <button
                         className={`${styles.categoryButton} ${styles.addCategoryButton}`}
                         type="button"
-                        onClick={() => selectTransaction(transaction.id)}
+                        onClick={() =>
+                          selectTransaction(
+                            transaction.id,
+                            transaction.category?.id || null,
+                          )
+                        }
                       >
                         Uncategorized
                       </button>
