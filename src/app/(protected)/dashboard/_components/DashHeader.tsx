@@ -145,7 +145,7 @@ export default function DashHeader({
           ))}
         </div>
       </div>
-      <div className={styles.controls}>
+      {/* <div className={styles.controls}>
         {cards.map((card, index) => (
           <button
             key={card.id}
@@ -160,7 +160,7 @@ export default function DashHeader({
             •
           </button>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
