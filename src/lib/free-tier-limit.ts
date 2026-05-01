@@ -2,9 +2,14 @@ import "server-only";
 
 import db from "@/lib/prisma";
 
-const FREE_TIER_TRANSACTION_LIMIT = 150;
+export function getFreeTierTransactionLimit() {
+  return !isNaN(Number(process.env.FREE_TIER_TRANSACTION_LIMIT))
+    ? Number(process.env.FREE_TIER_TRANSACTION_LIMIT)
+    : 300;
+}
 
 export async function hasReachedFreeTierTransactionLimit(userId: string) {
+  const FREE_TIER_TRANSACTION_LIMIT = getFreeTierTransactionLimit();
   const user = await db.user.findUnique({
     where: {
       id: userId,

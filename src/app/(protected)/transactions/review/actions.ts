@@ -6,6 +6,7 @@ import db from "@/lib/prisma";
 import {
   associateTranToCategory,
   changeTransactionCategory,
+  cleanupUnusedTransactionRule,
   removeTransactionCategory,
 } from "@/lib/transaction-rules";
 
@@ -67,17 +68,40 @@ export async function deleteTransaction(transactionId: string) {
     };
   }
 
-  const deletedTransaction = await db.transaction.deleteMany({
-    where: {
-      id: transactionId,
-      user_id: userId,
-    },
-  });
+  try {
+    await db.$transaction(async (tx) => {
+      const transaction = await tx.transaction.findFirst({
+        where: {
+          id: transactionId,
+          user_id: userId,
+        },
+        select: {
+          id: true,
+          transaction_rule_id: true,
+        },
+      });
 
-  if (deletedTransaction.count === 0) {
+      if (!transaction) {
+        throw new Error("Transaction not found");
+      }
+
+      await tx.transaction.delete({
+        where: {
+          id: transaction.id,
+        },
+      });
+
+      await cleanupUnusedTransactionRule(
+        tx,
+        userId,
+        transaction.transaction_rule_id,
+      );
+    });
+  } catch (error) {
     return {
       success: false,
-      error: "Transaction not found",
+      error:
+        error instanceof Error ? error.message : "Unable to delete transaction",
     };
   }
 

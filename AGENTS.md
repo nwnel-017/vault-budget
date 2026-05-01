@@ -17,8 +17,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - This app uses Better Auth for authentication
 - Look at Next js docs for best practices
 - Use SOLID Principles
-- When writing css and html - use dynamic sizing (%, rem, em, dvh, dvw) instead of using fixed pixel sizes, except for images
-- Use a mobile first approach when writing css and html
+- When writing css and html - use dynamic sizing (%, rem, em, dvh, dvw) instead of using fixed pixel sizes, except for images.
+- Use a mobile first approach when writing css and html. Use min-width 768px and min-width 1024px for media queries.
 
 ## Scripts You Can Run
 

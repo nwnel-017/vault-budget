@@ -3,6 +3,7 @@ import "server-only";
 // TO DO - reevaluate structure
 
 import { revalidatePath } from "next/cache";
+import type { PrismaClient } from "@/app/generated/prisma/client";
 import db from "@/lib/prisma";
 import {
   generateCategoryRule,
@@ -10,6 +11,32 @@ import {
 } from "@/lib/category-rules";
 import { validateCategoryTransaction } from "@/lib/transaction-validation";
 import type { Transaction } from "@/lib/transaction-validation";
+
+export async function cleanupUnusedTransactionRule(
+  tx: Pick<PrismaClient, "transaction" | "transactionRule">, // change this type
+  userId: string,
+  transactionRuleId: string | null,
+) {
+  if (!transactionRuleId) {
+    return;
+  }
+
+  const remainingRuleUsageCount = await tx.transaction.count({
+    where: {
+      user_id: userId,
+      transaction_rule_id: transactionRuleId,
+    },
+  });
+
+  // Remove rules that no longer have any transactions pointing to them.
+  if (remainingRuleUsageCount === 0) {
+    await tx.transactionRule.delete({
+      where: {
+        id: transactionRuleId,
+      },
+    });
+  }
+}
 
 export async function associateTranToCategory(
   userId: string,
@@ -64,17 +91,26 @@ export async function changeTransactionCategory(
     return validationResult;
   }
 
-  const { validatedCategoryId, validatedTransactionId } = validationResult;
+  const { transaction, validatedCategoryId, validatedTransactionId } =
+    validationResult;
 
   try {
-    await db.transaction.update({
-      where: {
-        id: validatedTransactionId,
-      },
-      data: {
-        category_id: validatedCategoryId,
-        transaction_rule_id: null,
-      },
+    await db.$transaction(async (tx) => {
+      await tx.transaction.update({
+        where: {
+          id: validatedTransactionId,
+        },
+        data: {
+          category_id: validatedCategoryId,
+          transaction_rule_id: null,
+        },
+      });
+
+      await cleanupUnusedTransactionRule(
+        tx,
+        userId,
+        transaction.transaction_rule_id,
+      );
     });
 
     revalidatePath("/transactions/review");
@@ -93,19 +129,6 @@ export async function changeTransactionCategory(
     };
   }
 }
-
-// TO DO - make sure matches is incremented in transaction_rule when new transactions are categorized
-
-// TO DO - fix problem
-// when we manually categorize a transaction - we also want to find all other uncategorized transactions that match the rule and apply the category to them as well
-// when we manually update a transaction category:
-//  first retreive all transaction rules for the user and ordered by length of the pattern
-//  find the first one that matches
-//  if the first match is our current rule (the old rule) - then we need to create a new rule pattern and store
-//  if the first match is not our current rule - then we have found a better rule - we dont need to generate a new rule pattern
-//    in this case we update the category and use this existing rule id
-//    this way - if multiple transactions were incorrectly categorized and all should belong to same category - manually moving each one to a
-//    new category does not generate new pattern every time
 
 // update a transaction that is already categorized
 export async function updateTransactionCategory(
@@ -220,6 +243,12 @@ export async function updateTransactionCategory(
           transaction_rule_id: transactionRuleId,
         },
       });
+
+      await cleanupUnusedTransactionRule(
+        tx,
+        userId,
+        existingTransactionRule.id,
+      );
 
       // i will uncomment later
       // we first need to find an efficient way to increment transaction_rule.matches whenever a new transaction uses a rule
@@ -396,21 +425,7 @@ export async function removeTransactionCategory(
         return;
       }
 
-      const remainingRuleUsageCount = await tx.transaction.count({
-        where: {
-          user_id: validatedUserId,
-          transaction_rule_id: currentRuleId,
-        },
-      });
-
-      // Remove orphaned rules after the current transaction is detached.
-      if (remainingRuleUsageCount === 0) {
-        await tx.transactionRule.delete({
-          where: {
-            id: currentRuleId,
-          },
-        });
-      }
+      await cleanupUnusedTransactionRule(tx, validatedUserId, currentRuleId);
     });
 
     revalidatePath("/transactions/review");

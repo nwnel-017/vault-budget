@@ -34,6 +34,7 @@
 .gridRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  /* width: 100%; */
   gap: 1rem;
   align-items: center;
 }

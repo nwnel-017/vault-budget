@@ -1,20 +1,28 @@
 // helper function - just returns the first meaningful token for now
 // TO DO - investigate this - we returned 'purchase' as pattern for costco
+
+// TO DO - we should check if the first token is generic (less than 4 characters) - include first two tokens if it is
+// TO DO - improve token matching
 export function generateCategoryRule(
   transactionDesc: string,
   categoryId: string,
 ) {
   if (!transactionDesc || !categoryId) return "";
 
-  // logic to generate a pattern to store in category_rules
-  // 1.) split transaction into tokens and remove whitespace
-  // 2.) remove generic common words
-  // 3.) remove numeric or alpha numeric tokens
-  // 4.) return the first token with length >= 3
-
   const tokens = getMeaningfulTokens(transactionDesc);
 
-  return tokens[0] || "";
+  // No useful tokens means we should not save a rule.
+  if (tokens.length === 0) return "";
+
+  // If there is only one useful token, use it as the rule.
+  if (tokens.length === 1) return tokens[0];
+
+  // Short leading tokens are too broad, so include the next token too.
+  if (tokens[0].length <= 3) {
+    return `${tokens[0]} ${tokens[1]}`;
+  }
+
+  return tokens[0];
 }
 
 // 1.) normalizes description
@@ -72,11 +80,51 @@ export function matchTransactionCategory(
 
   if (!normalizedDesc) return null;
 
-  const matchedRule = transactionRules.find(
-    (rule) => rule.pattern && normalizedDesc.includes(rule.pattern),
-  );
+  const descTokens = normalizedDesc.split(" ").filter(Boolean);
+
+  // Check longer patterns first so more specific rules win before broad ones.
+  const sortedRules = [...transactionRules].sort((firstRule, secondRule) => {
+    const firstRuleLength = firstRule.pattern.split(" ").filter(Boolean).length;
+    const secondRuleLength = secondRule.pattern
+      .split(" ")
+      .filter(Boolean).length;
+
+    return secondRuleLength - firstRuleLength;
+  });
+
+  const matchedRule = sortedRules.find((rule) => {
+    if (!rule.pattern) return false;
+
+    const ruleTokens = rule.pattern.split(" ").filter(Boolean);
+
+    if (!ruleTokens.length) return false;
+
+    // Old behavior matched any substring inside the normalized description.
+    // return normalizedDesc.includes(rule.pattern);
+
+    return containsTokenPhrase(descTokens, ruleTokens);
+  });
 
   return matchedRule ?? null;
+}
+
+function containsTokenPhrase(descTokens: string[], ruleTokens: string[]) {
+  for (
+    let startIndex = 0;
+    startIndex <= descTokens.length - ruleTokens.length;
+    startIndex += 1
+  ) {
+    const candidateTokens = descTokens.slice(
+      startIndex,
+      startIndex + ruleTokens.length,
+    );
+
+    if (candidateTokens.join(" ") === ruleTokens.join(" ")) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function normalizeDescription(description: string) {

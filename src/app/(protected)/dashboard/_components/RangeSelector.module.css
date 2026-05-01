@@ -31,6 +31,25 @@
 
 .dropdownWrap {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+}
+
+.hamburgerIcon {
+  width: 1.7rem;
+  height: 1.7rem;
+  /* border: 1px solid black; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  cursor: pointer;
+}
+
+.hamburgerIcon span {
+  width: 100%;
+  border: 0.1px solid black;
 }
 
 .button {
@@ -117,12 +136,21 @@
     align-items: center;
   }
 
-  .button {
+  .dropdownWrap .button {
     min-width: 6.25rem;
     padding: 0.75rem 1rem;
   }
 
   .buttonWrap {
     display: flex;
+    /* border: 1px solid red; */
+  }
+
+  .button {
+    width: 5rem;
+  }
+
+  .hamburgerIcon {
+    display: none;
   }
 }
