@@ -13,7 +13,7 @@ import { validateCategoryTransaction } from "@/lib/transaction-validation";
 import type { Transaction } from "@/lib/transaction-validation";
 
 export async function cleanupUnusedTransactionRule(
-  tx: Pick<PrismaClient, "transaction" | "transactionRule">, // change this type
+  tx: Pick<PrismaClient, "transaction" | "transactionRule">,
   userId: string,
   transactionRuleId: string | null,
 ) {
@@ -36,6 +36,26 @@ export async function cleanupUnusedTransactionRule(
       },
     });
   }
+}
+
+export async function cleanupAllUnusedTransactionRules(
+  tx: Pick<PrismaClient, "transaction" | "transactionRule">,
+  userId: string,
+) {
+  if (!userId) {
+    throw new Error("User ID is required to clean up transaction rules.");
+  }
+
+  await tx.transactionRule.deleteMany({
+    where: {
+      user_id: userId,
+      transactions: {
+        none: {
+          user_id: userId,
+        },
+      },
+    },
+  });
 }
 
 export async function associateTranToCategory(
@@ -186,9 +206,29 @@ export async function updateTransactionCategory(
     );
 
     if (!updatedPattern) {
+      await db.$transaction(async (tx) => {
+        await tx.transaction.update({
+          where: {
+            id: transactionId,
+          },
+          data: {
+            category_id: newCategoryId,
+            transaction_rule_id: null,
+          },
+        });
+
+        await cleanupUnusedTransactionRule(
+          tx,
+          userId,
+          existingTransactionRule.id,
+        );
+      });
+
+      revalidatePath("/transactions/review");
+
       return {
-        success: false,
-        error: "Could not recategorize transaction",
+        success: true,
+        error: null,
       };
     }
 

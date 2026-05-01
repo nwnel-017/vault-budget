@@ -1,8 +1,3 @@
-// helper function - just returns the first meaningful token for now
-// TO DO - investigate this - we returned 'purchase' as pattern for costco
-
-// TO DO - we should check if the first token is generic (less than 4 characters) - include first two tokens if it is
-// TO DO - improve token matching
 export function generateCategoryRule(
   transactionDesc: string,
   categoryId: string,
@@ -25,11 +20,9 @@ export function generateCategoryRule(
   return tokens[0];
 }
 
-// 1.) normalizes description
-// 2.) splits into tokens and removes whitespace
-// 3.) removes generic common words
-// 4.) removes numeric or alpha numeric tokens
-// 5.) returns a new pattern that has an extra token from the existing pattern
+// TO DO - fix bug
+// when a category is recategorized, we always increase the pattern length
+// errors when a transaction is recategorized and the description length is reached
 export function updateTransactionRule(
   currentPattern: string,
   newTransactionDesc: string,

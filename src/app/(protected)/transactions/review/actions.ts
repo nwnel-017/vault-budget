@@ -6,6 +6,7 @@ import db from "@/lib/prisma";
 import {
   associateTranToCategory,
   changeTransactionCategory,
+  cleanupAllUnusedTransactionRules,
   cleanupUnusedTransactionRule,
   removeTransactionCategory,
 } from "@/lib/transaction-rules";
@@ -30,10 +31,14 @@ export async function resetUserTransactions() {
     };
   }
 
-  await db.transaction.deleteMany({
-    where: {
-      user_id: userId,
-    },
+  await db.$transaction(async (tx) => {
+    await tx.transaction.deleteMany({
+      where: {
+        user_id: userId,
+      },
+    });
+
+    await cleanupAllUnusedTransactionRules(tx, userId);
   });
 
   return {
