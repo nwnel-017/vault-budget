@@ -54,6 +54,18 @@ body {
   overflow-x: hidden;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/background_doodles.PNG");
+  background-repeat: repeat;
+  background-size: 800px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: -100;
+}
+
 body {
   min-height: 100%;
   display: flex;
