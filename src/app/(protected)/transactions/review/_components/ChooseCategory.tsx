@@ -70,18 +70,24 @@ export function ChooseCategory({
         </label>
 
         <div className={styles.categoryGrid}>
-          {categories.map((category) => {
-            return (
-              <button
-                className={styles.categoryBubble}
-                key={category.id}
-                type="button"
-                onClick={() => addTransactionCategory(category.id)}
-              >
-                {category.category_name}
-              </button>
-            );
-          })}
+          {categories.length > 0 ? (
+            categories.map((category) => {
+              return (
+                <button
+                  className={styles.categoryBubble}
+                  key={category.id}
+                  type="button"
+                  onClick={() => addTransactionCategory(category.id)}
+                >
+                  {category.category_name}
+                </button>
+              );
+            })
+          ) : (
+            <div className={styles.noCategoriesMessage}>
+              No categories added.
+            </div>
+          )}
         </div>
         {currentCategory ? (
           <button

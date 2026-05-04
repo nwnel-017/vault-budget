@@ -8,9 +8,11 @@
   justify-content: center;
   align-items: center;
   z-index: 10;
+  animation: overlayFadeIn 0.5s ease-out;
 }
 
 .modal {
+  /* Pop the dialog into place. */
   width: min(48rem, 90dvw);
   max-height: 80dvh;
   border-radius: 8px;
@@ -20,6 +22,8 @@
   padding: 1.5rem;
   gap: 1rem;
   overflow: hidden;
+  transform-origin: center;
+  animation: modalPopIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .header {
@@ -31,6 +35,10 @@
 
 .header h1 {
   margin: 0;
+}
+
+.noCategoriesMessage {
+  width: 100%;
 }
 
 .closeButton {
@@ -113,5 +121,36 @@
 
   .categoryGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Fade the backdrop in. */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Pop the dialog in with a small lift. */
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .modal {
+    animation: none;
   }
 }

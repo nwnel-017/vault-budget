@@ -10,6 +10,7 @@ export default function SpendingGoal({
 }: {
   currentGoal?: string | null;
 }) {
+  const savedGoalAmount = currentGoal ?? "0.00";
   const initialState = {
     success: false,
     error: null,
@@ -28,7 +29,7 @@ export default function SpendingGoal({
     <section className={styles.wrapper}>
       <form className={styles.form} action={formAction}>
         <label className={styles.label} htmlFor="spendingGoalAmount">
-          Goal for total savings per month:
+          Goal for total savings per month: ${savedGoalAmount}
         </label>
         <input
           className={styles.input}

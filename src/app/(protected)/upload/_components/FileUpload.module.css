@@ -71,6 +71,10 @@
 
 .fileTrigger {
   cursor: pointer;
+  /* border: 1px solid black; */
+  /* background: var(--theme-gray);
+  border-radius: 8px;
+  padding: 0.5rem 1rem; */
 }
 
 .noticeTitle {
@@ -179,6 +183,6 @@
   }
 
   .title {
-  font-size: var(--title-font);
+    font-size: var(--title-font);
   }
 }
