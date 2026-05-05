@@ -1,52 +1,52 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { updateSavingsGoal } from "../actions";
+import { useEffect, useState } from "react";
 import styles from "./SpendingGoal.module.css";
-
+import ChangeSpendingGoal from "./ChangeSpendingGoal";
+import TargetIcon from "@/components/ui/icons/TargetIcon";
+import PencilIcon from "@/components/ui/icons/PencilIcon";
 // TO DO - review
 export default function SpendingGoal({
   currentGoal,
 }: {
   currentGoal?: string | null;
 }) {
-  const savedGoalAmount = currentGoal ?? "0.00";
-  const initialState = {
-    success: false,
-    error: null,
-  };
-  const [state, formAction, isPending] = useActionState(
-    updateSavingsGoal,
-    initialState,
-  );
+  const [toggleChangeGoal, setToggleChangeGoal] = useState(false);
   const [amount, setAmount] = useState(currentGoal ?? "");
 
   useEffect(() => {
     setAmount(currentGoal ?? "");
   }, [currentGoal]);
 
+  function closeChangeGoal() {
+    setToggleChangeGoal(false);
+  }
+
   return (
     <section className={styles.wrapper}>
-      <form className={styles.form} action={formAction}>
-        <label className={styles.label} htmlFor="spendingGoalAmount">
-          Goal for total savings per month: ${savedGoalAmount}
-        </label>
-        <input
-          className={styles.input}
-          id="spendingGoalAmount"
-          name="spendingGoalAmount"
-          type="text"
-          inputMode="decimal"
-          placeholder="0.00"
-          value={amount}
-          onChange={(event) => setAmount(event.target.value)}
-          disabled={isPending}
-        />
-        <button type="submit" disabled={isPending}>
-          {isPending ? "Updating..." : "Update Goal"}
+      <div className={styles.container}>
+        <div className={styles.containerContent}>
+          <div className={styles.iconWrapper}>
+            <TargetIcon />
+          </div>
+          <div className={styles.textWrap}>
+            <div className={styles.label}>Total Monthly Savings Goal</div>
+            <label className={styles.label} htmlFor="spendingGoalAmount">
+              <h1>${amount}</h1>
+            </label>
+          </div>
+        </div>
+        <button
+          className={styles.button}
+          onClick={() => setToggleChangeGoal(true)}
+        >
+          <PencilIcon />
+          Change Goal
         </button>
-        {state.error ? <p role="alert">{state.error}</p> : null}
-      </form>
+      </div>
+      {toggleChangeGoal ? (
+        <ChangeSpendingGoal onClose={closeChangeGoal} />
+      ) : null}
     </section>
   );
 }

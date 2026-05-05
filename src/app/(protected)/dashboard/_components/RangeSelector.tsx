@@ -77,11 +77,11 @@ export default function RangeSelector({
           </form>
         </div>
         <div className={styles.dropdownWrap}>
-          <div className={styles.hamburgerIcon}>
+          {/* <div className={styles.hamburgerIcon}>
             <span></span>
             <span></span>
             <span></span>
-          </div>
+          </div> */}
           <RangeDropdown
             ranges={dateRanges}
             selectedLabel={selectedLabel}

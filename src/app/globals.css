@@ -97,6 +97,10 @@ a {
   align-items: center;
 }
 
+.icon-center {
+  /* margin: auto; */
+}
+
 .flex-col {
   display: flex;
   flex-direction: column;

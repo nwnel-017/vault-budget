@@ -72,9 +72,13 @@
 .fileTrigger {
   cursor: pointer;
   /* border: 1px solid black; */
-  /* background: var(--theme-gray);
+  /* background: var(--theme-gray); */
+  display: flex;
+  align-items: center;
+  background: var(--accent);
+  color: var(--background);
   border-radius: 8px;
-  padding: 0.5rem 1rem; */
+  padding: 0.5rem 1rem;
 }
 
 .noticeTitle {

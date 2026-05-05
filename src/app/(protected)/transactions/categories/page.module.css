@@ -99,6 +99,10 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .categoryBubble:hover {
@@ -106,9 +110,16 @@
 }
 
 .addCategoryButton {
-  border: 1px solid #1f1f1f;
-  border-radius: 999px;
-  background-color: var(--background);
+  /* border: 1px solid #1f1f1f; */
+  /* border-radius: 999px; */
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  /* background-color: var(--background); */
+  background-color: var(--accent);
+  color: var(--background);
   padding: 0.55rem 0.95rem;
   font: inherit;
   cursor: pointer;

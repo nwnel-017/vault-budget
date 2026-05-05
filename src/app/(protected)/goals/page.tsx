@@ -45,9 +45,11 @@ export default async function SavingsGoals() {
 
   return (
     <div className={styles.page}>
-      <section className={styles.panel}>
+      <section className={styles.section}>
         <SpendingGoal currentGoal={savingsGoal?.amount.toString() ?? null} />
-        <CategoryGoals categories={categoryGoals} />
+        <div className={styles.panel}>
+          <CategoryGoals categories={categoryGoals} />
+        </div>
       </section>
     </div>
   );

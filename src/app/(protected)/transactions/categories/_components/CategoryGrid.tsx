@@ -4,6 +4,8 @@ import { useState } from "react";
 import CategoryDetails from "./CategoryDetails";
 import { createCategory, deleteCategory, editCategoryName } from "../actions";
 import styles from "../page.module.css";
+import PlusIcon from "@/components/ui/icons/PlusIcon";
+import ArrowRight from "@/components/ui/icons/ArrowRight";
 
 type CategoryGridProps = {
   categories: {
@@ -132,6 +134,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
               type="button"
               onClick={() => setIsFormOpen((current) => !current)}
             >
+              <PlusIcon />
               Add Category
             </button>
           </div>
@@ -182,6 +185,7 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
                   }}
                 >
                   {category.category_name}
+                  <ArrowRight />
                 </button>
               );
             })
