@@ -25,12 +25,12 @@ function getSearchParamValue(value: string | string[] | undefined) {
   return typeof value === "string" ? value : null;
 }
 
+// Reviewed
 export default async function Dashboard({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  // validate session
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
 
@@ -66,7 +66,6 @@ export default async function Dashboard({
     orderBy: { date_purchased: "desc" },
   });
 
-  // get interval from search params
   startDateString = getSearchParamValue(resolvedSearchParams.start);
   endDateString = getSearchParamValue(resolvedSearchParams.end);
 
@@ -115,7 +114,6 @@ export default async function Dashboard({
     return null;
   }
 
-  // all transactions and their corresponding categories
   const transactions = await db.transaction.findMany({
     where: {
       date_purchased: {

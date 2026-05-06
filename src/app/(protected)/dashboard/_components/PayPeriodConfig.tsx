@@ -3,13 +3,10 @@
 import { useState } from "react";
 import { APP_NAME } from "@/lib/app-name";
 import { toastError, toastSuccess } from "@/lib/toast";
+import type { SelectPayPeriodResult } from "@/types/pay-period";
 import styles from "./PayPeriodConfig.module.css";
 
-type SelectPayPeriodResult = {
-  success: boolean;
-  error: string | null;
-};
-
+// Reviewed
 export default function PayPeriodConfig({
   onSelectPayPeriod,
 }: {

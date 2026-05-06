@@ -1,8 +1,10 @@
 import UpgradeMembershipForm from "./_components/UpgradeMembershipForm";
 import styles from "./_components/UpgradeMembershipForm.module.css";
 
+// Reviewed
 function getMonthlyRateLabel() {
-  const configuredRate = process.env.NEXT_STRIPE_PREMIUM_MEMBERSHIP_RATE;
+  const configuredRate =
+    process.env.NEXT_STRIPE_PREMIUM_MEMBERSHIP_RATE ?? "3.99";
 
   // Show the current premium price on the page until the app stores this
   // in Stripe or the database in a richer format.
@@ -10,7 +12,7 @@ function getMonthlyRateLabel() {
     return "$5 / month";
   }
 
-  return "$5 / month";
+  return `$${configuredRate} / month`;
 }
 
 export default function UpgradeMembershipPage() {

@@ -2,6 +2,7 @@ import type { Prisma } from "@/app/generated/prisma/client";
 import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth-helpers";
 import db from "../../../../lib/prisma";
+import type { TransactionFilter } from "@/types/transactions";
 import ReviewTransactionsClient from "./_components/ReviewTransactionsClient";
 import DeleteTransactions from "./_components/DeleteTransactions";
 import FreeTierExpired from "./_components/FreeTierExpired";
@@ -16,8 +17,6 @@ type ReviewSearchParams = Promise<{
   page?: string | string[] | undefined;
   tab?: string | string[] | undefined;
 }>;
-
-type TransactionFilter = "all" | "categorized" | "uncategorized";
 
 const PAGE_SIZE = 50;
 

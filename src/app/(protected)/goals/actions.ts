@@ -5,13 +5,11 @@ import { requireSession } from "@/lib/auth-helpers";
 import db from "@/lib/prisma";
 import { santizeFunds } from "@/utils/funds";
 
-// TO DO - review
-// refactor into separate layers
+// Reviewed
 export async function changeCategoryGoal(
   categoryId: string,
   amountValue: string,
 ) {
-  // require session and validate user
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
 
@@ -22,7 +20,6 @@ export async function changeCategoryGoal(
     };
   }
 
-  // validate input
   const validatedCategoryId = String(categoryId ?? "").trim();
 
   if (!validatedCategoryId) {
@@ -85,7 +82,8 @@ export async function changeCategoryGoal(
       success: true,
       error: null,
     };
-  } catch {
+  } catch (error) {
+    console.log("Failed to update category goal:", error);
     return {
       success: false,
       error: "Unable to update goal.",
@@ -97,7 +95,6 @@ export async function updateSavingsGoal(
   _previousState: { success: boolean; error: string | null },
   formData: FormData,
 ) {
-  // validate session and user
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
 
@@ -108,7 +105,6 @@ export async function updateSavingsGoal(
     };
   }
 
-  // validate the input
   const rawAmount = formData.get("spendingGoalAmount")?.toString() ?? "";
   const sanitizedAmount = santizeFunds(rawAmount);
 
@@ -155,7 +151,8 @@ export async function updateSavingsGoal(
       success: true,
       error: null,
     };
-  } catch {
+  } catch (error) {
+    console.log("Failed to update savings goal:", error);
     return {
       success: false,
       error: "Unable to update goal.",

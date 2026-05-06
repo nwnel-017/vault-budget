@@ -9,6 +9,7 @@ import { toastError, toastSuccess } from "@/lib/toast";
 import FileConfig from "./FileConfig";
 import FieldMapping from "./FieldMapping";
 import { FileUploadIcon } from "@/components/ui/icons/FileUpload";
+import type { FieldMap } from "@/types/upload";
 import styles from "./FileUpload.module.css";
 
 const MAX_SERVER_ACTION_FILE_SIZE_BYTES = 1024 * 1024;
@@ -16,12 +17,6 @@ const FILE_SIZE_ERROR_MESSAGE = "File size must not exceed 1 MB.";
 const FILE_REQUIRED_ERROR_MESSAGE = "No file!";
 const GENERIC_ERROR_MESSAGE = "Something went wrong!";
 const UPLOAD_SUCCESS_MESSAGE = "Upload complete.";
-
-type FieldMap = {
-  amount: string;
-  date_purchased: string;
-  merchant: string;
-} | null;
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -34,7 +29,11 @@ function SubmitButton() {
 }
 
 // TO DO - review new flow with limit reached param
-export default function FileUpload({ fieldMap }: { fieldMap: FieldMap }) {
+export default function FileUpload({
+  fieldMap,
+}: {
+  fieldMap: FieldMap | null;
+}) {
   const [file, setFile] = useState<File | null>(null);
   const [showFileConfig, setShowFileConfig] = useState(false);
   const [showFieldMapping, setShowFieldMapping] = useState(false);

@@ -24,6 +24,7 @@ function formatDate(dateValue: string) {
   }).format(new Date(dateValue));
 }
 
+// Reviewed
 export default function FilesGrid({ files }: FilesGridProps) {
   const [deletingFileId, setDeletingFileId] = useState("");
   const router = useRouter();

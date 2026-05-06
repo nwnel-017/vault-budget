@@ -16,7 +16,6 @@ function getPayPeriodLabel(day: number | null | undefined) {
     return "Not set";
   }
 
-  // Keep 11, 12, and 13 on "th" because they do not use the usual suffix rule.
   const remainder = day % 100;
 
   if (remainder >= 11 && remainder <= 13) {
@@ -35,6 +34,7 @@ function getPayPeriodLabel(day: number | null | undefined) {
   }
 }
 
+// Reviewed
 export default async function Settings() {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
@@ -78,8 +78,7 @@ export default async function Settings() {
             <div className={styles.sectionContent}>
               <h2 className={styles.sectionTitle}>Account settings</h2>
               <p className={styles.sectionDescription}>
-                Review your email, update your password, or delete your
-                account.
+                Review your email, update your password, or delete your account.
               </p>
             </div>
             <Link className={styles.actionLink} href="/settings/account">

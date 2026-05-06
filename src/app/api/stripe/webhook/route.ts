@@ -7,6 +7,8 @@ import {
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+// TO DO - we need to store event details in db
+// make webhook idempotent by checking if event id already exists in db before processing
 export async function POST(request: Request) {
   if (!stripeSecretKey) {
     return Response.json(

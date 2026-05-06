@@ -15,6 +15,7 @@
   --accent: #3860b8;
   --error: #b42318;
   --success: #10b981;
+  --theme-green: "#11B96A";
   /* --accent: linear-gradient(
     135deg,
     #93c5fd 0%,
@@ -61,7 +62,7 @@ body::before {
   background-image: url("/background_doodles.PNG");
   background-repeat: repeat;
   background-size: 800px;
-  opacity: 0.5;
+  opacity: 0.35;
   pointer-events: none;
   z-index: -100;
 }

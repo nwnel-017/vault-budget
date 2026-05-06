@@ -1,14 +1,12 @@
 "use client";
 
+import type { CategorySummary } from "@/types/category";
 import styles from "./ChooseCategory.module.css";
 
 type ChooseCategoryProps = {
   active: boolean;
   currentCategory: string | null;
-  categories: {
-    id: string;
-    category_name: string;
-  }[];
+  categories: CategorySummary[];
   addTransactionCategory: (categoryId: string) => void | Promise<void>;
   autoCategorizeSimilarTransactions: boolean;
   setAutoCategorizeSimilarTransactions: (shouldAutoCategorize: boolean) => void;

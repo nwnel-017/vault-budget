@@ -4,8 +4,8 @@ import db from "../../../../lib/prisma";
 import CategoryGrid from "./_components/CategoryGrid";
 import styles from "./page.module.css";
 
+// Reviewed
 export default async function ReviewTransactions() {
-  // make sure only the current user's categories are shown
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
 

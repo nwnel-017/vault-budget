@@ -10,6 +10,7 @@ type PayPeriodSectionProps = {
   currentPayPeriodStartDay: number | null;
 };
 
+// Reviewed
 export default function PayPeriodSection({
   currentPayPeriodStartDay,
 }: PayPeriodSectionProps) {
@@ -23,7 +24,6 @@ export default function PayPeriodSection({
   const dayOptions = Array.from({ length: 31 }, (_, index) => `${index + 1}`);
 
   function openModal() {
-    // Reset the form to the saved value each time the popup opens.
     setSelectedDay(
       currentPayPeriodStartDay ? currentPayPeriodStartDay.toString() : "1",
     );
@@ -36,7 +36,7 @@ export default function PayPeriodSection({
     setIsOpen(false);
   }
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsPending(true);
     setErrorMessage("");
@@ -89,8 +89,8 @@ export default function PayPeriodSection({
                 all calculations.
               </p>
               <p className={styles.description}>
-                Note: If no value is entered, {APP_NAME} will use the 1st day
-                of the month by default.
+                Note: If no value is entered, {APP_NAME} will use the 1st day of
+                the month by default.
               </p>
               <p className={styles.currentValue}>
                 Current day: {currentPayPeriodStartDay ?? "Not set"}

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toastError, toastSuccess } from "@/lib/toast";
+import type { CategorySummary } from "@/types/category";
+import type { TransactionFilter } from "@/types/transactions";
 import { ChooseCategory } from "./ChooseCategory";
 import FreeTrialNotice from "./FreeTrialNotice";
 import {
@@ -14,10 +16,7 @@ import { formatTransaction } from "@/utils/funds";
 import styles from "../page.module.css";
 
 type ReviewTransactionsClientProps = {
-  categories: {
-    id: string;
-    category_name: string;
-  }[];
+  categories: CategorySummary[];
   currentPage: number;
   totalPages: number;
   totalTransactions: number;
@@ -37,8 +36,6 @@ type Transaction = {
   id: string;
   categoryId: string | null;
 };
-
-type TransactionFilter = "all" | "categorized" | "uncategorized";
 
 // takes in categories and transactions
 // TO DO - review logic

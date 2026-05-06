@@ -13,21 +13,35 @@ type CategorySpending = {
   totalSpent: number;
 };
 
+// const pieColors = [
+//   "#e34e4e",
+//   "#f97316",
+//   "#f59e0b",
+//   "#84cc16",
+//   "#10b981",
+//   "#14b8a6",
+//   "#06b6d4",
+//   "#3b82f6",
+//   "#6366f1",
+//   "#8b5cf6",
+//   "#ec4899",
+//   "#f43f5e",
+// ];
+
 const pieColors = [
-  "#e34e4e",
-  "#f97316",
-  "#f59e0b",
-  "#84cc16",
-  "#10b981",
-  "#14b8a6",
-  "#06b6d4",
-  "#3b82f6",
+  "#6EA8FE",
+  "#5BC0BE",
+  "#7BC47F",
+  "#E9B872",
+  "#E27D60",
+  "#A78BFA",
+  "#94A3B8",
+  "#7DD3FC",
   "#6366f1",
   "#8b5cf6",
   "#ec4899",
   "#f43f5e",
 ];
-
 export default function CategorySpendingChart({
   topCategories,
 }: {
@@ -46,7 +60,7 @@ export default function CategorySpendingChart({
       {
         data: topCategories.map((category) => category.totalSpent),
         backgroundColor: categoryChartColors,
-        borderColor: "var(--background)",
+        borderColor: `var(--accent)`,
         borderWidth: 2,
       },
     ],

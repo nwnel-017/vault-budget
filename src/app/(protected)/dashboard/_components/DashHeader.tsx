@@ -5,6 +5,7 @@ import { formatFunds } from "@/utils/funds";
 import styles from "./DashHeader.module.css";
 import ArrowDown from "@/app/components/ui/ArrowDown";
 import ArrowUp from "@/app/components/ui/ArrowUp";
+import type { SavedHistory } from "@/types/dashboard";
 import CategorySpendingChart from "./CategorySpendingChart";
 import SavedHistoryChart from "./SavedHistoryChart";
 
@@ -14,12 +15,7 @@ type CategorySpending = {
   totalSpent: number;
 };
 
-type SavedHistory = {
-  monthStart: string;
-  totalSaved: number;
-};
-
-// TO DO - looks off on medium screen sizes - fix
+// reviewed
 export default function DashHeader({
   totalSpent,
   totalEarned,
@@ -145,22 +141,6 @@ export default function DashHeader({
           ))}
         </div>
       </div>
-      {/* <div className={styles.controls}>
-        {cards.map((card, index) => (
-          <button
-            key={card.id}
-            className={`${styles.dotButton} ${
-              activeIndex === index ? styles.activeDot : ""
-            }`}
-            type="button"
-            onClick={() => setActiveIndex(index)}
-            aria-label={`Go to panel ${index + 1}`}
-            aria-pressed={activeIndex === index}
-          >
-            •
-          </button>
-        ))}
-      </div> */}
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
 import type { ChartOptions, TooltipItem } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { formatFunds } from "@/utils/funds";
+import type { SavedHistory } from "@/types/dashboard";
 
 ChartJS.register(
   CategoryScale,
@@ -21,11 +22,6 @@ ChartJS.register(
   Tooltip,
   Filler,
 );
-
-type SavedHistory = {
-  monthStart: string;
-  totalSaved: number;
-};
 
 export default function SavedHistoryChart({
   savedHistory,

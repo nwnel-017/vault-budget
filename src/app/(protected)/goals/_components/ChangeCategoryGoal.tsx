@@ -13,7 +13,7 @@ type ChangeCategoryGoalProps = {
   changeCategoryGoal: (amount: string) => void | Promise<void>;
 };
 
-// TO DO - review logic and improve
+// Reviewed
 export default function ChangeCategoryGoal({
   active,
   categoryName,
@@ -25,6 +25,7 @@ export default function ChangeCategoryGoal({
 }: ChangeCategoryGoalProps) {
   const [amount, setAmount] = useState(currentGoal ?? "");
 
+  // TO DO - fix unnecessary re-render
   useEffect(() => {
     setAmount(currentGoal ?? "");
   }, [currentGoal, active, categoryName]);
@@ -37,10 +38,6 @@ export default function ChangeCategoryGoal({
     event.preventDefault();
 
     const sanitizedAmount = amount.trim();
-
-    if (!sanitizedAmount) {
-      return;
-    }
 
     await changeCategoryGoal(sanitizedAmount);
   }
@@ -94,11 +91,7 @@ export default function ChangeCategoryGoal({
             >
               Cancel
             </button>
-            <button
-              className={styles.primaryButton}
-              type="submit"
-              disabled={isPending || !amount.trim()}
-            >
+            <button className={styles.primaryButton} type="submit">
               Save goal
             </button>
           </div>

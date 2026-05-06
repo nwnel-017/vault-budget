@@ -5,7 +5,7 @@ import styles from "./SpendingGoal.module.css";
 import ChangeSpendingGoal from "./ChangeSpendingGoal";
 import TargetIcon from "@/components/ui/icons/TargetIcon";
 import PencilIcon from "@/components/ui/icons/PencilIcon";
-// TO DO - review
+// Reviewed
 export default function SpendingGoal({
   currentGoal,
 }: {
@@ -14,6 +14,7 @@ export default function SpendingGoal({
   const [toggleChangeGoal, setToggleChangeGoal] = useState(false);
   const [amount, setAmount] = useState(currentGoal ?? "");
 
+  // TO DO - fix unnecessary re-rendering when currentGoal changes
   useEffect(() => {
     setAmount(currentGoal ?? "");
   }, [currentGoal]);
@@ -31,13 +32,12 @@ export default function SpendingGoal({
           </div>
           <div className={styles.textWrap}>
             <div className={styles.label}>Total Monthly Savings Goal</div>
-            <label className={styles.label} htmlFor="spendingGoalAmount">
-              <h1>${amount}</h1>
-            </label>
+            <div className={styles.amount}>${amount}</div>
           </div>
         </div>
         <button
           className={styles.button}
+          type="button"
           onClick={() => setToggleChangeGoal(true)}
         >
           <PencilIcon />

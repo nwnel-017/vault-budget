@@ -1,6 +1,7 @@
 export default function TargetIcon() {
   return (
     <svg
+      style={{ display: "block" }}
       width="50px"
       height="50px"
       viewBox="0 0 16 16"

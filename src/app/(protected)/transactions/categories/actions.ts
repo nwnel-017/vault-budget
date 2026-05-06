@@ -6,6 +6,7 @@ import { requireSession } from "@/lib/auth-helpers";
 import db from "@/lib/prisma";
 import { sanitizeTextInput } from "@/utils/transactions";
 
+// Reviewed
 export async function createCategory(category: string) {
   const sessionResult = await requireSession();
 

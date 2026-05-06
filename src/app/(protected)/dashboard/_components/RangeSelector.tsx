@@ -14,7 +14,7 @@ type RangeSelectorProps = {
   dateRanges: DateRangeOption[];
 };
 
-// TO DO - looks off on medium screen sizes - fix
+// Reviewed
 export default function RangeSelector({
   startDate,
   endDate,
@@ -39,11 +39,9 @@ export default function RangeSelector({
     selectedStart === latestRange.start &&
     selectedEnd === latestRange.end;
 
-  // get range dates for previous and next month buttons
   const previousRange = getPreviousRange(startDate);
   const nextRange = getNextRange(endDate);
 
-  // convert to string
   const previousMonthStart = previousRange.startDate
     ? formatDateInputValue(previousRange.startDate)
     : "";

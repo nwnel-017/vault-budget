@@ -63,12 +63,10 @@ export function getDate(value: string) {
   }
 }
 
-// TO DO - review this function and improve performance
 export function getDefaultDateRange(
   mostRecentTransactionDate: Date,
   payPeriodStartDay?: number | null,
 ) {
-  // validate
   if (!mostRecentTransactionDate || !isValidDate(mostRecentTransactionDate)) {
     return { startDate: null, endDate: null };
   }
@@ -108,7 +106,6 @@ export function getDefaultDateRange(
         date.getMonth(),
       );
 
-      // TO DO - fix this - always return current interval but with incomplete message
       if (date >= currentMonthStart) {
         return currentMonthStart;
       }

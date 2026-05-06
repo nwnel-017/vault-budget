@@ -1,12 +1,9 @@
 "use client";
 
-import styles from "./FieldMapping.module.css";
+"use client";
 
-type FieldMap = {
-  amount: string;
-  date_purchased: string;
-  merchant: string;
-};
+import type { FieldMap } from "@/types/upload";
+import styles from "./FieldMapping.module.css";
 
 export default function FieldMapping({
   active,

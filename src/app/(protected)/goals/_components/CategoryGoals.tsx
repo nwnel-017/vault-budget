@@ -13,7 +13,6 @@ type CategoryGoalsProps = {
   }[];
 };
 
-// TO DO - remove - I already have formatting helper for this
 function formatSpendingGoal(spendingGoal: string | null) {
   if (!spendingGoal) {
     return "No goal set";
@@ -31,7 +30,7 @@ function formatSpendingGoal(spendingGoal: string | null) {
   }).format(goalAmount);
 }
 
-// TO DO - review logic
+// Reviewed
 export default function CategoryGoals({ categories }: CategoryGoalsProps) {
   const [changeGoals, setChangeGoals] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -59,6 +58,7 @@ export default function CategoryGoals({ categories }: CategoryGoalsProps) {
   }
 
   async function submitCategoryGoal(amount: string) {
+    amount = amount.trim();
     if (!selectedCategory) {
       return;
     }

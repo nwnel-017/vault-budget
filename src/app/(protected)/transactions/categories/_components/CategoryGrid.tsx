@@ -6,25 +6,20 @@ import { createCategory, deleteCategory, editCategoryName } from "../actions";
 import styles from "../page.module.css";
 import PlusIcon from "@/components/ui/icons/PlusIcon";
 import ArrowRight from "@/components/ui/icons/ArrowRight";
+import type { CategorySummary } from "@/types/category";
 
 type CategoryGridProps = {
-  categories: {
-    id: string;
-    category_name: string;
-  }[];
+  categories: CategorySummary[];
 };
 
-// TO DO: review this component
-// TO DO: possibly move this to a components folder?
+// Reviewed
 export default function CategoryGrid({ categories }: CategoryGridProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [category, setCategory] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<{
-    id: string;
-    category_name: string;
-  } | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategorySummary | null>(null);
   const [editedCategoryName, setEditedCategoryName] = useState("");
 
   async function submit(e: React.SubmitEvent) {
@@ -96,7 +91,6 @@ export default function CategoryGrid({ categories }: CategoryGridProps) {
         return;
       }
 
-      // Keep the selected category details in sync after renaming.
       setSelectedCategory({
         ...selectedCategory,
         category_name: editedCategoryName.trim(),

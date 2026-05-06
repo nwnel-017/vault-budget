@@ -11,6 +11,7 @@ type RangeDropdownProps = {
   selectedValue: string;
 };
 
+// Reviewed
 export default function RangeDropdown({
   ranges,
   selectedLabel,

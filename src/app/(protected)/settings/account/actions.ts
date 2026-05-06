@@ -9,6 +9,7 @@ export type ChangePasswordState = {
   success: string | null;
 };
 
+// Reviewed
 export async function changePassword(
   _currentState: ChangePasswordState,
   formData: FormData,
@@ -40,7 +41,6 @@ export async function changePassword(
     };
   }
 
-  // Stop here if the user typed two different new passwords.
   if (
     typeof confirmNewPassword !== "string" ||
     !confirmNewPassword ||
