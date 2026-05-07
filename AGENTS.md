@@ -11,7 +11,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Always ask for approval before applying changes
 - Only focus on the specific instruction you are given. Do not focus on other errors or other functionality when given a task.
 - Do not make a change unless you are specifically asked to.
-- When writing code, leave periodic comments to explain the code (in very simple wording)
 - Next js components are always .tsx files
 - This app is built with Next.js, TypeScript, Vanilla CSS, PostgreSQL, and Prisma ORM
 - This app uses Better Auth for authentication

@@ -1,3 +1,5 @@
+// Reviewed
+
 export function isValidDate(value: unknown): value is Date {
   return value instanceof Date && !Number.isNaN(value.getTime());
 }
@@ -60,6 +62,24 @@ export function getDate(value: string) {
     return parsedDate;
   } catch {
     return null;
+  }
+}
+
+export function getUserFacingDateValue(value: string | Date) {
+  const parsedDate = value instanceof Date ? value : getDate(value);
+
+  if (!parsedDate || !isValidDate(parsedDate)) {
+    return "";
+  }
+
+  try {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(parsedDate);
+  } catch {
+    return "";
   }
 }
 
@@ -134,13 +154,11 @@ export type DateRangeOption = {
   end: string;
 };
 
-// TO DO - this function should not just include the last complete month
-// include the last month where transactions exist, but return with an incomplete message
 export function getDateRanges(
   latestTransactionDate: Date,
   payPeriodStartDay?: number | null,
 ): DateRangeOption[] {
-  if (!isValidDate(latestTransactionDate)) {
+  if (!latestTransactionDate || !isValidDate(latestTransactionDate)) {
     return [];
   }
 
@@ -158,7 +176,7 @@ export function getDateRanges(
   let currentEndDate: Date | null = latestRange.endDate;
 
   // Build the last 12 available intervals for the dropdown.
-  for (let index = 0; index < 12; index += 1) {
+  for (let index = 0; index < 12; index++) {
     if (!currentStartDate || !currentEndDate) {
       break;
     }
@@ -177,7 +195,7 @@ export function getDateRanges(
 }
 
 export function getDatePreviousMonth(date: Date) {
-  if (!isValidDate(date)) {
+  if (!date || !isValidDate(date)) {
     return null;
   }
 
@@ -333,10 +351,16 @@ export function getNextRange(endDate: Date) {
 
   const nextStartMonth = nextStartDate.getMonth();
   const nextStartYear = nextStartDate.getFullYear();
+  const nextEndMonthLastDay = new Date(nextStartYear, nextStartMonth + 2, 0);
+
+  if (!isValidDate(nextEndMonthLastDay)) {
+    return { startDate: null, endDate: null };
+  }
+
   const nextEndDate = new Date(
     nextStartYear,
     nextStartMonth + 1,
-    nextStartDate.getDate() - 1,
+    Math.min(nextStartDate.getDate() - 1, nextEndMonthLastDay.getDate()),
   );
 
   if (!isValidDate(nextEndDate)) {

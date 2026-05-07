@@ -7,12 +7,10 @@ type FreeTrialNoticeProps = {
   active: boolean;
 };
 
-export default function FreeTrialNotice({
-  active,
-}: FreeTrialNoticeProps) {
+// Reviewed
+export default function FreeTrialNotice({ active }: FreeTrialNoticeProps) {
   const [isClosed, setIsClosed] = useState(false);
 
-  // hides the notice until the parent remounts it or changes its key
   if (!active || isClosed) {
     return null;
   }

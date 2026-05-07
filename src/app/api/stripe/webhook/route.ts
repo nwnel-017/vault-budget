@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import db from "@/lib/prisma";
 import {
   handleCheckoutSessionCompleted,
   updateSubscriptionStatus,
@@ -7,8 +8,8 @@ import {
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// TO DO - we need to store event details in db
-// make webhook idempotent by checking if event id already exists in db before processing
+// TO DO - fix to handle concurrent requests
+// Reviewed
 export async function POST(request: Request) {
   if (!stripeSecretKey) {
     return Response.json(
@@ -48,17 +49,21 @@ export async function POST(request: Request) {
     console.log("Stripe webhook signature verification failed:", error);
     return Response.json(
       {
-        error:
-          error instanceof Error
-            ? `Webhook signature verification failed: ${error.message}`
-            : "Webhook signature verification failed.",
+        error: "Webhook signature verification failed.",
       },
       { status: 400 },
     );
   }
 
   try {
+    const isDuplicateEvent = await checkDuplicateEvent(event);
+
+    if (isDuplicateEvent) {
+      return Response.json({ received: true });
+    }
+
     await handleWebhookEvent(stripe, event);
+    await processWebhookEvent(event);
   } catch (error) {
     console.error("Error handling Stripe webhook event:", error);
     return Response.json(
@@ -73,15 +78,68 @@ export async function POST(request: Request) {
   return Response.json({ received: true });
 }
 
+function getStripeObjectId(event: Stripe.Event) {
+  const object = event.data.object as { id?: unknown };
+
+  return typeof object?.id === "string" ? object.id : null;
+}
+
+async function processWebhookEvent(event: Stripe.Event) {
+  try {
+    await db.processedStripeEvent.create({
+      data: {
+        event_id: event.id,
+        event_type: event.type,
+        stripe_object_id: getStripeObjectId(event),
+        processed_at: new Date(),
+      },
+    });
+  } catch (error) {
+    console.log("Failed to insert processed stripe event: " + error);
+    throw new Error("Failed to insert processed stripe event.");
+  }
+}
+
+async function checkDuplicateEvent(event: Stripe.Event) {
+  try {
+    const existingEvent = await db.processedStripeEvent.findUnique({
+      where: {
+        event_id: event.id,
+      },
+      select: {
+        event_id: true,
+      },
+    });
+
+    return Boolean(existingEvent);
+  } catch (error) {
+    console.log("Failed to check duplicate stripe event: " + error);
+    throw new Error("Failed to check duplicate stripe event.");
+  }
+}
+
 async function handleWebhookEvent(stripe: Stripe, event: Stripe.Event) {
   switch (event.type) {
-    case "checkout.session.completed":
-      await handleCheckoutSessionCompleted(stripe, event.data.object);
+    case "checkout.session.completed": {
+      const result = await handleCheckoutSessionCompleted(
+        stripe,
+        event.data.object,
+      );
+
+      if (result.status === "ignored") {
+        console.log(`Ignored Stripe event ${event.id}: ${result.reason}`);
+      }
       break;
+    }
     case "customer.subscription.updated":
-    case "customer.subscription.deleted":
-      await updateSubscriptionStatus(event.data.object);
+    case "customer.subscription.deleted": {
+      const result = await updateSubscriptionStatus(event.data.object);
+
+      if (result.status === "ignored") {
+        console.log(`Ignored Stripe event ${event.id}: ${result.reason}`);
+      }
       break;
+    }
     default:
       break;
   }

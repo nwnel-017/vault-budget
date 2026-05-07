@@ -1,7 +1,8 @@
 import "server-only";
 
 import db from "@/lib/prisma";
-import { sanitizeTextInput } from "@/utils/transactions";
+
+// Reviewed
 
 type TransactionValidationResult =
   | {
@@ -20,7 +21,6 @@ type TransactionValidationResult =
       error: string;
     };
 
-// TO DO - move to generic types folder
 export type Transaction = {
   id: string;
   merchant: string;
@@ -36,10 +36,10 @@ export async function validateCategoryTransaction(
   categoryId = String(categoryId ?? "").trim();
   transactionId = String(transactionId ?? "").trim();
 
-  if (!categoryId || !transactionId) {
+  if (!userId) {
     return {
       success: false,
-      error: "Category id and transaction id are required.",
+      error: "Missing user id",
     };
   }
 

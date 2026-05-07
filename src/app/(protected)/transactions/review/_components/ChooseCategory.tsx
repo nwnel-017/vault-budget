@@ -11,10 +11,10 @@ type ChooseCategoryProps = {
   autoCategorizeSimilarTransactions: boolean;
   setAutoCategorizeSimilarTransactions: (shouldAutoCategorize: boolean) => void;
   removeTransactionCategory: () => void;
-  closeChooseCategory?: () => void;
+  closeChooseCategory: () => void;
 };
 
-// TO DO : review and refactor
+// Reviewed
 export function ChooseCategory({
   active,
   currentCategory,
@@ -33,7 +33,7 @@ export function ChooseCategory({
     <div
       className={styles.overlay}
       onClick={() => {
-        closeChooseCategory?.();
+        closeChooseCategory();
       }}
     >
       <div
@@ -42,15 +42,13 @@ export function ChooseCategory({
       >
         <div className={styles.header}>
           <h1>Select a category</h1>
-          {closeChooseCategory ? (
-            <button
-              className={styles.closeButton}
-              type="button"
-              onClick={closeChooseCategory}
-            >
-              Close
-            </button>
-          ) : null}
+          <button
+            className={styles.closeButton}
+            type="button"
+            onClick={closeChooseCategory}
+          >
+            Close
+          </button>
         </div>
 
         <label className={styles.checkboxRow}>

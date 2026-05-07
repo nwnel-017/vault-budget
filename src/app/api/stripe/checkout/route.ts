@@ -1,11 +1,14 @@
 import Stripe from "stripe";
 import { auth } from "@/lib/auth";
+import db from "@/lib/prisma";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const premiumMembershipRate = process.env.STRIPE_MEMBERSHIP_PRICE_ID;
 
+// Reviewed
+
 function getBaseUrl(request: Request) {
-  return process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+  return process.env.NEXT_PUBLIC_APP_URL;
 }
 
 export async function POST(request: Request) {
@@ -34,8 +37,53 @@ export async function POST(request: Request) {
   const stripe = new Stripe(stripeSecretKey);
   const baseUrl = getBaseUrl(request);
 
+  if (!baseUrl) {
+    return Response.json({ error: "App url was not found" }, { status: 500 });
+  }
+
   try {
-    // Create a hosted Stripe Checkout session for the premium subscription.
+    const userBilling = await db.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        accountTier: true,
+        billing: {
+          select: {
+            stripe_subscription_id: true,
+            subscription_status: true,
+            access_expires_at: true,
+          },
+        },
+      },
+    });
+
+    const hasPremiumAccess =
+      userBilling?.accountTier === "PREMIUM" ||
+      (userBilling?.billing?.access_expires_at !== null &&
+        userBilling?.billing?.access_expires_at !== undefined &&
+        userBilling?.billing.access_expires_at > new Date());
+
+    const hasExistingStripeSubscription =
+      Boolean(userBilling?.billing?.stripe_subscription_id) &&
+      userBilling?.billing?.subscription_status !== "canceled" &&
+      userBilling?.billing?.subscription_status !== "unpaid";
+
+    if (hasPremiumAccess || hasExistingStripeSubscription) {
+      return Response.json(
+        { error: "This account already has premium membership." },
+        { status: 409 },
+      );
+    }
+  } catch (error) {
+    console.log("Failed to lookup users current billing info: " + error);
+    return Response.json(
+      { error: "Failed to lookup users current billing info." },
+      { status: 400 },
+    );
+  }
+
+  try {
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer_email: session.user.email,
@@ -57,12 +105,10 @@ export async function POST(request: Request) {
       url: checkoutSession.url,
     });
   } catch (error) {
+    console.log("Failed to create checkout session: " + error);
     return Response.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unable to create checkout session.",
+        error: "Unable to create checkout session.",
       },
       { status: 500 },
     );

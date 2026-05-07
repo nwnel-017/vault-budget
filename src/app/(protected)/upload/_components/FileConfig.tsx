@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import styles from "./FileConfig.module.css";
 
+// Reviewed
 export default function FileConfig({
   active,
   headers,
@@ -17,9 +18,9 @@ export default function FileConfig({
   }) => void;
 }) {
   const steps = [
-    { key: "merchantField", label: "Transaction Description" },
-    { key: "amountField", label: "Transaction Amount" },
-    { key: "dateField", label: "Date of Transaction" },
+    { key: "merchantField", label: "transaction description" },
+    { key: "amountField", label: "transaction amount" },
+    { key: "dateField", label: "date of transaction" },
   ] as const;
 
   const [showOverview, setShowOverview] = useState(true);

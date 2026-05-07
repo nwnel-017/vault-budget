@@ -1,6 +1,9 @@
 import Stripe from "stripe";
 import db from "@/lib/prisma";
 
+// Reviewed
+const premiumMembershipPriceId = process.env.STRIPE_MEMBERSHIP_PRICE_ID;
+
 function getSubscriptionPriceId(subscription: Stripe.Subscription) {
   return subscription.items.data[0]?.price.id ?? null;
 }
@@ -30,6 +33,48 @@ function getBillingDetails(subscription: Stripe.Subscription) {
   };
 }
 
+type SubscriptionSyncResult =
+  | {
+      status: "applied";
+    }
+  | {
+      status: "ignored";
+      reason: string;
+    };
+
+function shouldUseFreeTier(subscription: Stripe.Subscription) {
+  return subscription.status !== "active" && subscription.status !== "trialing";
+}
+
+function isSameBillingState(
+  currentBilling: {
+    stripe_customer_id: string | null;
+    stripe_subscription_id: string | null;
+    stripe_price_id: string | null;
+    subscription_status: string | null;
+    access_expires_at: Date | null;
+    cancel_at_period_end: boolean;
+  } | null,
+  nextBilling: ReturnType<typeof getBillingDetails>,
+) {
+  if (!currentBilling) {
+    return false;
+  }
+
+  const currentExpiryTime = currentBilling.access_expires_at?.getTime() ?? null;
+  const nextExpiryTime = nextBilling.access_expires_at?.getTime() ?? null;
+
+  return (
+    currentBilling.stripe_customer_id === nextBilling.stripe_customer_id &&
+    currentBilling.stripe_subscription_id ===
+      nextBilling.stripe_subscription_id &&
+    currentBilling.stripe_price_id === nextBilling.stripe_price_id &&
+    currentBilling.subscription_status === nextBilling.subscription_status &&
+    currentBilling.cancel_at_period_end === nextBilling.cancel_at_period_end &&
+    currentExpiryTime === nextExpiryTime
+  );
+}
+
 async function getUserId(subscription: Stripe.Subscription) {
   const stripeCustomerId = getStripeCustomerId(subscription);
 
@@ -56,33 +101,63 @@ async function getUserId(subscription: Stripe.Subscription) {
   return billing?.user_id ?? null;
 }
 
-// subscription.deleted -> the end of the final period for free tier was reached
 export async function updateSubscriptionStatus(
   subscription: Stripe.Subscription,
   options?: {
     userId?: string;
   },
-) {
-  let resolvedUserId;
+): Promise<SubscriptionSyncResult> {
+  let resolvedUserId: string | null;
 
   if (options?.userId) {
     resolvedUserId = options.userId;
   } else {
-    try {
-      resolvedUserId = await getUserId(subscription);
-    } catch (error) {
-      throw new Error("Unable to find a user for this Stripe subscription.");
-    }
+    resolvedUserId = await getUserId(subscription);
   }
-
   if (!resolvedUserId) {
-    throw new Error("Unable to find a user for this Stripe subscription.");
+    return {
+      status: "ignored",
+      reason: "No matching user was found for this Stripe subscription.",
+    };
   }
 
-  // This keeps the Stripe fields in one place for create and update.
   const billingDetails = getBillingDetails(subscription);
-  const shouldUseFreeTier =
-    subscription.status === "canceled" || subscription.status === "unpaid";
+  const nextAccountTier = shouldUseFreeTier(subscription) ? "FREE" : "PREMIUM";
+  const existingUser = await db.user.findUnique({
+    where: {
+      id: resolvedUserId,
+    },
+    select: {
+      accountTier: true,
+      billing: {
+        select: {
+          stripe_customer_id: true,
+          stripe_subscription_id: true,
+          stripe_price_id: true,
+          subscription_status: true,
+          access_expires_at: true,
+          cancel_at_period_end: true,
+        },
+      },
+    },
+  });
+
+  if (!existingUser) {
+    return {
+      status: "ignored",
+      reason: "User was not found for this Stripe subscription.",
+    };
+  }
+
+  if (
+    existingUser.accountTier === nextAccountTier &&
+    isSameBillingState(existingUser.billing, billingDetails)
+  ) {
+    return {
+      status: "ignored",
+      reason: "Subscription state was already up to date.",
+    };
+  }
 
   await db.$transaction(async (tx) => {
     await tx.userBilling.upsert({
@@ -101,16 +176,27 @@ export async function updateSubscriptionStatus(
         id: resolvedUserId,
       },
       data: {
-        accountTier: shouldUseFreeTier ? "FREE" : "PREMIUM",
+        accountTier: nextAccountTier,
       },
     });
   });
+
+  return {
+    status: "applied",
+  };
 }
 
 export async function handleCheckoutSessionCompleted(
   stripe: Stripe,
   session: Stripe.Checkout.Session,
-) {
+): Promise<SubscriptionSyncResult> {
+  if (session.mode !== "subscription") {
+    return {
+      status: "ignored",
+      reason: "Checkout session was not a subscription checkout.",
+    };
+  }
+
   const userId = session.metadata?.userId;
 
   if (!userId) {
@@ -128,7 +214,18 @@ export async function handleCheckoutSessionCompleted(
   const subscription =
     await stripe.subscriptions.retrieve(stripeSubscriptionId);
 
-  await updateSubscriptionStatus(subscription, {
+  if (!premiumMembershipPriceId) {
+    throw new Error("Missing premium membership price id.");
+  }
+
+  if (getSubscriptionPriceId(subscription) !== premiumMembershipPriceId) {
+    return {
+      status: "ignored",
+      reason: "Checkout session did not match the premium membership price.",
+    };
+  }
+
+  return updateSubscriptionStatus(subscription, {
     userId,
   });
 }

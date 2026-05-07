@@ -6,6 +6,7 @@ import { toastError, toastSuccess } from "@/lib/toast";
 import type { SelectPayPeriodResult } from "@/types/pay-period";
 import styles from "./IncomeSelect.module.css";
 
+// Reviewed
 export default function IncomeSelect({
   onSelectPayPeriod,
 }: {
@@ -54,7 +55,6 @@ export default function IncomeSelect({
           <label className={styles.label} htmlFor="pay-period-day">
             Day of the month
           </label>
-          {/* Keep the select simple so the user can save fast */}
           <select
             className={styles.select}
             id="pay-period-day"

@@ -1,9 +1,9 @@
 "use client";
 
+import { getUserFacingDateValue } from "@/utils/date";
 import { formatTransaction } from "@/utils/funds";
 import styles from "./Transactions.module.css";
 
-// TO DO - move to types/
 export type TransactionsProps = {
   transactions: {
     id: string;
@@ -17,6 +17,7 @@ export type TransactionsProps = {
   }[];
 };
 
+// Reviewed
 export default function Transactions({ transactions }: TransactionsProps) {
   return (
     <section className={styles.section}>
@@ -38,11 +39,9 @@ export default function Transactions({ transactions }: TransactionsProps) {
         </div>
         <div className={styles.gridBody}>
           {transactions.map((transaction) => {
-            const formattedDate = new Intl.DateTimeFormat("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }).format(new Date(transaction.date_purchased));
+            const formattedDate = getUserFacingDateValue(
+              transaction.date_purchased,
+            );
             const transactionAmount = Number(transaction.amount);
             const amountClassName =
               transactionAmount < 0
@@ -51,7 +50,6 @@ export default function Transactions({ transactions }: TransactionsProps) {
 
             return (
               <div className={styles.gridRow} key={transaction.id} role="row">
-                {/* Show a compact label on small screens */}
                 <span className={styles.mobileLabel}>Amount</span>
                 <span className={styles.valueCell}>
                   <span className={amountClassName}>

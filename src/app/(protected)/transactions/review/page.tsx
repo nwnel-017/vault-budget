@@ -9,8 +9,7 @@ import FreeTierExpired from "./_components/FreeTierExpired";
 import WelcomePanel from "./_components/WelcomePanel";
 import styles from "./page.module.css";
 
-// TO DO - review new flow with limit reached param
-// cleanup
+// Reviewed
 
 type ReviewSearchParams = Promise<{
   freeTierLimitReached?: string | string[] | undefined;
@@ -51,7 +50,6 @@ export default async function ReviewTransactions({
 }: {
   searchParams: ReviewSearchParams;
 }) {
-  // make sure only signed-in users can review transactions
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
 
@@ -69,7 +67,7 @@ export default async function ReviewTransactions({
     getSearchParamValue(resolvedSearchParams.page),
   );
 
-  // Build one shared filter so the count and page query stay aligned.
+  // TO DO : move to lib/
   const where: Prisma.TransactionWhereInput = {
     user_id: userId,
   };

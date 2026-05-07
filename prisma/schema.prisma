@@ -65,6 +65,20 @@ model UserBilling {
   @@map("user_billing")
 }
 
+model ProcessedStripeEvent {
+  id               String   @id @default(cuid())
+  event_id         String   @unique
+  event_type       String
+  stripe_object_id String?
+  processed_at     DateTime?
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@index([event_type])
+  @@index([stripe_object_id])
+  @@map("processed_stripe_event")
+}
+
 model UserPayPeriod {
   id                   String   @id @default(cuid())
   user_id              String

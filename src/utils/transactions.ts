@@ -8,6 +8,8 @@ type FileValidationResult =
       error: string;
     };
 
+const MAX_FILE_SIZE = 1024 * 1024;
+
 export function sanitizeHeader(header: string): string {
   return header.replace(/^\uFEFF/, "").replace(/[^a-zA-Z0-9]/g, "");
 }
@@ -31,12 +33,16 @@ export function validateCsvFile(form: FormData | null): FileValidationResult {
     return { file: null, error: "Please choose a CSV file." };
   }
 
+  if (uploadedFile.size > MAX_FILE_SIZE) {
+    return {
+      file: null,
+      error: "File was too large, please upload a file under 1 MB",
+    };
+  }
+
   const isCsvFile = uploadedFile.name.toLowerCase().endsWith(".csv");
 
-  const allowedTypes = [
-    "text/csv",
-    "application/vnd.ms-excel",
-  ];
+  const allowedTypes = ["text/csv", "application/vnd.ms-excel"];
 
   if (!isCsvFile || !allowedTypes.includes(uploadedFile.type)) {
     return { file: null, error: "Only .csv files are allowed." };

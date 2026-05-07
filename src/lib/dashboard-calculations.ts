@@ -1,5 +1,11 @@
 import db from "./prisma";
-import { getDatePreviousMonth, isValidDate } from "@/utils/date";
+import {
+  getDatePreviousMonth,
+  getEndDateExclusive,
+  isValidDate,
+} from "@/utils/date";
+
+// Reviewed
 
 type TransactionCategory = {
   id: string;
@@ -49,7 +55,6 @@ export function getDashboardSpendingSummary(
   }
 
   try {
-    // total spent for each category
     const spendingByCategory = transactions.reduce<
       Map<string, CategorySpending>
     >((categoryTotals, transaction) => {
@@ -95,14 +100,12 @@ export function getDashboardSpendingSummary(
       category.goalDifference = category.goalAmount - category.totalSpent; // positive if user has spent below their goal
     });
 
-    // categories sorted by total spent in descending order
     const topCategories = Array.from(spendingByCategory.values()).sort(
       (firstCategory, secondCategory) => {
         return secondCategory.totalSpent - firstCategory.totalSpent;
       },
     );
 
-    // category with the highest total spent
     const topCategory: TopCategory | null = topCategories[0]
       ? {
           categoryName: topCategories[0].categoryName,
@@ -110,7 +113,6 @@ export function getDashboardSpendingSummary(
         }
       : null;
 
-    // the total amount spent
     const totalSpent = transactions.reduce((total, transaction) => {
       const amount = Number(transaction?.amount);
 
@@ -137,7 +139,8 @@ export function getDashboardSpendingSummary(
       totalSpent,
       totalEarned,
     };
-  } catch {
+  } catch (error) {
+    console.log("Failed to retrieve dashboard summary: " + error);
     return emptySummary;
   }
 }
@@ -150,8 +153,6 @@ export async function getSavedHistoryLastThreeMonths(
   if (!isValidDate(currentStartDate) || !isValidDate(currentEndDate)) {
     return [];
   }
-
-  // build the same rolling periods the dashboard uses
   const previousStartDate = getDatePreviousMonth(currentStartDate);
   const previousEndDate = getDatePreviousMonth(currentEndDate);
   const oldestStartDate = previousStartDate
@@ -214,10 +215,25 @@ export async function getSavedHistoryLastThreeMonths(
   ];
 
   return ranges.map(({ monthStart, monthEnd }) => {
+    const monthStartAtMidnight = new Date(monthStart);
+    monthStartAtMidnight.setHours(0, 0, 0, 0);
+
+    const monthEndExclusive = getEndDateExclusive(monthEnd);
+
+    if (!monthEndExclusive) {
+      return {
+        monthStart: monthStart.toISOString(),
+        totalSaved: 0,
+      };
+    }
+
     const totalSaved = transactions.reduce((total, transaction) => {
       const transactionDate = new Date(transaction.date_purchased);
 
-      if (transactionDate < monthStart || transactionDate > monthEnd) {
+      if (
+        transactionDate < monthStartAtMidnight ||
+        transactionDate >= monthEndExclusive
+      ) {
         return total;
       }
 

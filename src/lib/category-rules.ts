@@ -1,18 +1,14 @@
-export function generateCategoryRule(
-  transactionDesc: string,
-  categoryId: string,
-) {
-  if (!transactionDesc || !categoryId) return "";
+// Reviewed
+
+export function generateCategoryRule(transactionDesc: string) {
+  if (!transactionDesc) return "";
 
   const tokens = getMeaningfulTokens(transactionDesc);
 
-  // No useful tokens means we should not save a rule.
   if (tokens.length === 0) return "";
 
-  // If there is only one useful token, use it as the rule.
   if (tokens.length === 1) return tokens[0];
 
-  // Short leading tokens are too broad, so include the next token too.
   if (tokens[0].length <= 3) {
     return `${tokens[0]} ${tokens[1]}`;
   }
@@ -20,9 +16,6 @@ export function generateCategoryRule(
   return tokens[0];
 }
 
-// TO DO - fix bug
-// when a category is recategorized, we always increase the pattern length
-// errors when a transaction is recategorized and the description length is reached
 export function updateTransactionRule(
   currentPattern: string,
   newTransactionDesc: string,
@@ -59,10 +52,6 @@ type CategoryRuleMatch = {
   category_id: string;
 };
 
-// we will take in the transaction description and list of category rules that were found for the user
-// we will search the transaction rules to find one where our transactionDesc includes the pattern
-// if we find a match - we return the category id to be inserted into the transaction
-// if not - we return null and the transaction will be uncategorized
 export function matchTransactionCategory(
   transactionDesc: string,
   transactionRules: CategoryRuleMatch[],
@@ -74,26 +63,12 @@ export function matchTransactionCategory(
   if (!normalizedDesc) return null;
 
   const descTokens = normalizedDesc.split(" ").filter(Boolean);
-
-  // Check longer patterns first so more specific rules win before broad ones.
-  const sortedRules = [...transactionRules].sort((firstRule, secondRule) => {
-    const firstRuleLength = firstRule.pattern.split(" ").filter(Boolean).length;
-    const secondRuleLength = secondRule.pattern
-      .split(" ")
-      .filter(Boolean).length;
-
-    return secondRuleLength - firstRuleLength;
-  });
-
-  const matchedRule = sortedRules.find((rule) => {
+  const matchedRule = transactionRules.find((rule) => {
     if (!rule.pattern) return false;
 
     const ruleTokens = rule.pattern.split(" ").filter(Boolean);
 
     if (!ruleTokens.length) return false;
-
-    // Old behavior matched any substring inside the normalized description.
-    // return normalizedDesc.includes(rule.pattern);
 
     return containsTokenPhrase(descTokens, ruleTokens);
   });
@@ -160,7 +135,6 @@ function getMeaningfulTokens(transactionDesc: string) {
     "service",
   ]);
 
-  // we are calling this twice?
   return normalizeDescription(transactionDesc)
     .split(" ")
     .map((token) => token.trim())

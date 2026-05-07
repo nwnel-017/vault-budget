@@ -2,6 +2,7 @@ import "server-only";
 
 import db from "@/lib/prisma";
 
+// Reviewed
 export function getFreeTierTransactionLimit() {
   return !isNaN(Number(process.env.FREE_TIER_TRANSACTION_LIMIT))
     ? Number(process.env.FREE_TIER_TRANSACTION_LIMIT)

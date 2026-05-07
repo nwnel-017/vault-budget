@@ -4,6 +4,7 @@ import { useState } from "react";
 import { APP_NAME } from "@/lib/app-name";
 import styles from "./WelcomePanel.module.css";
 
+// Reviewed
 export default function WelcomePanel({ active }: { active: boolean }) {
   const [closePanel, setClosePanel] = useState(false);
 

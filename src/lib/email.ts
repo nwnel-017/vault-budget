@@ -4,6 +4,7 @@ type SendVerificationEmailInput = {
   text: string;
 };
 
+// Reviewed
 export async function sendVerificationEmail({
   to,
   subject,
@@ -12,14 +13,12 @@ export async function sendVerificationEmail({
   const resendApiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.AUTH_FROM_EMAIL;
 
-  // In development, this logs the link if no provider is set yet.
   if (!resendApiKey || !fromEmail) {
     console.warn("Email provider is not configured for Better Auth.");
     console.info(`Verification email for ${to}: ${subject}\n${text}`);
     return;
   }
 
-  // This uses Resend without adding a new package.
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {

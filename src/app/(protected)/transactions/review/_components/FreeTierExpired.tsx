@@ -9,7 +9,7 @@ type FreeTierExpiredProps = {
   active: boolean;
 };
 
-// TO DO - review
+// Reviewed
 export default function FreeTierExpired({ active }: FreeTierExpiredProps) {
   const [isClosed, setIsClosed] = useState(false);
   const pathname = usePathname();
@@ -19,7 +19,6 @@ export default function FreeTierExpired({ active }: FreeTierExpiredProps) {
   function closePanel() {
     const params = new URLSearchParams(searchParams.toString());
 
-    // Remove the flag so the alert stays closed during review navigation.
     params.delete("freeTierLimitReached");
 
     const nextQuery = params.toString();
@@ -29,7 +28,6 @@ export default function FreeTierExpired({ active }: FreeTierExpiredProps) {
     router.replace(nextUrl);
   }
 
-  // Hide the alert after closing it locally or when the flag is not present.
   if (!active || isClosed) {
     return null;
   }

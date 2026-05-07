@@ -1,10 +1,10 @@
+// Reviewed
+
 export function formatFunds(funds: number) {
-  return (
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(funds) ?? 0
-  );
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(funds);
 }
 
 export function formatTransaction(amount: string) {
@@ -16,7 +16,7 @@ export function formatTransaction(amount: string) {
     );
 
     if (!Number.isFinite(parsedAmount)) {
-      return 0;
+      return "$0.00";
     }
 
     return new Intl.NumberFormat("en-US", {
@@ -24,12 +24,11 @@ export function formatTransaction(amount: string) {
       currency: "USD",
     }).format(parsedAmount);
   } catch {
-    return 0;
+    return "$0.00";
   }
 }
 
-// TO DO - review
-export function santizeFunds(value: string): string {
+export function sanitizeFunds(value: string): string {
   const normalizedValue = value.normalize("NFKC").replace(/[^\d.]/g, "");
 
   if (!normalizedValue) {

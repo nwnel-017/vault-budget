@@ -27,8 +27,7 @@ function SubmitButton() {
     </button>
   );
 }
-
-// TO DO - review new flow with limit reached param
+// Reviewed
 export default function FileUpload({
   fieldMap,
 }: {
@@ -63,7 +62,6 @@ export default function FileUpload({
   async function submit(e: React.SubmitEvent) {
     e.preventDefault();
 
-    // stop early when the file is missing
     if (!file) {
       toastError(FILE_REQUIRED_ERROR_MESSAGE);
       return;

@@ -1,7 +1,5 @@
 import "server-only";
 
-// TO DO - reevaluate structure
-
 import { revalidatePath } from "next/cache";
 import type { PrismaClient } from "@/app/generated/prisma/client";
 import db from "@/lib/prisma";
@@ -12,12 +10,14 @@ import {
 import { validateCategoryTransaction } from "@/lib/transaction-validation";
 import type { Transaction } from "@/lib/transaction-validation";
 
+// Reviewed
+
 export async function cleanupUnusedTransactionRule(
   tx: Pick<PrismaClient, "transaction" | "transactionRule">,
   userId: string,
   transactionRuleId: string | null,
 ) {
-  if (!transactionRuleId) {
+  if (!transactionRuleId || !userId) {
     return;
   }
 
@@ -28,11 +28,11 @@ export async function cleanupUnusedTransactionRule(
     },
   });
 
-  // Remove rules that no longer have any transactions pointing to them.
   if (remainingRuleUsageCount === 0) {
     await tx.transactionRule.delete({
       where: {
         id: transactionRuleId,
+        user_id: userId,
       },
     });
   }
@@ -63,7 +63,6 @@ export async function associateTranToCategory(
   transactionId: string,
   newCategoryId: string,
 ) {
-  // validate transaction and category
   const validationResult = await validateCategoryTransaction(
     userId,
     transactionId,
@@ -77,7 +76,6 @@ export async function associateTranToCategory(
   const { transaction, validatedCategoryId, validatedTransactionId } =
     validationResult;
 
-  // if there is an existing transaction-category association, we will update it
   if (transaction.transaction_rule_id) {
     return updateTransactionCategory(
       userId,
@@ -150,7 +148,6 @@ export async function changeTransactionCategory(
   }
 }
 
-// update a transaction that is already categorized
 export async function updateTransactionCategory(
   userId: string,
   transactionId: string,
@@ -165,11 +162,6 @@ export async function updateTransactionCategory(
   }
 
   try {
-    // later - review error handling
-    // it might be better to throw errors inside this try / catch for better visibility
-    // a safe error response will be returned in catch block
-
-    // look up current transaction rule
     const existingTransactionRule = await db.transactionRule.findFirst({
       where: {
         id: transaction.transaction_rule_id,
@@ -197,7 +189,6 @@ export async function updateTransactionCategory(
       };
     }
 
-    // get old rule to generate a more specific rule
     const oldPattern = existingTransactionRule.pattern;
 
     const updatedPattern = updateTransactionRule(
@@ -232,14 +223,9 @@ export async function updateTransactionCategory(
       };
     }
 
-    // 1.) create new transaction rule
-    // 2.) update the current transaction to have new category and new rule
-    // LATER
-    // 3.) lookup transactions for the user with no category assigned yet
-    // 4.) apply updatedPattern
-    // 5.) update those trans to have newCategoryId and rule id
     await db.$transaction(async (tx) => {
-      // check if there is already a rule with our pattern
+      // TO DO - fix race condition here
+      // if two concurrent requests dont find a transaction rule - they could insert duplicates
       const existingRule = await tx.transactionRule.findFirst({
         where: {
           user_id: userId,
@@ -257,9 +243,7 @@ export async function updateTransactionCategory(
         throw new Error("Rule already exists for a different category.");
       }
 
-      // only create a new transaction rule if there was not an existing one
       if (!transactionRuleId) {
-        console.log("new transaction rule created");
         const createdRule = await tx.transactionRule.create({
           data: {
             user_id: userId,
@@ -333,15 +317,13 @@ export async function updateTransactionCategory(
   }
 }
 
-// add a new category association to a transaction
 export async function addNewTransactionCategory(
   userId: string,
   transactionId: string,
   newCategoryId: string,
   transaction: Transaction,
 ) {
-  // get the new rule pattern
-  const rulePattern = generateCategoryRule(transaction.merchant, newCategoryId);
+  const rulePattern = generateCategoryRule(transaction.merchant);
 
   if (!rulePattern) {
     return {
@@ -427,7 +409,6 @@ export async function removeTransactionCategory(
 
   try {
     await db.$transaction(async (tx) => {
-      // Load the user's transaction first so ownership is enforced here too.
       const transaction = await tx.transaction.findFirst({
         where: {
           id: validatedTransactionId,
@@ -492,7 +473,6 @@ export async function cleanupTransactions(
   const cutoffDate = new Date(latestTransactionDate);
   cutoffDate.setFullYear(cutoffDate.getFullYear() - 1);
 
-  // Remove older history so only the rolling one-year window remains.
   await db.transaction.deleteMany({
     where: {
       user_id: userId,

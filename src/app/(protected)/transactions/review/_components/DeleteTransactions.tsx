@@ -4,6 +4,7 @@ import { toastError, toastSuccess } from "@/lib/toast";
 import { resetUserTransactions } from "../actions";
 import styles from "./DeleteTransactions.module.css";
 
+// Reviewed
 export default function DeleteTransactions() {
   async function resetTransactions() {
     const res = await resetUserTransactions();

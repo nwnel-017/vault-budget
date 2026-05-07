@@ -11,7 +11,7 @@ import {
   removeTransactionCategory,
 } from "@/lib/transaction-rules";
 
-// lets the user delete all their transactions
+// Reviewed
 export async function resetUserTransactions() {
   const sessionResult = await requireSession();
 
@@ -116,7 +116,6 @@ export async function deleteTransaction(transactionId: string) {
   };
 }
 
-// function to generate a category rule for a transaction based on the merchant name
 export async function categorizeTransaction(
   transactionId: string,
   categoryId: string,
@@ -141,7 +140,6 @@ export async function categorizeTransaction(
     };
   }
 
-  // checks if this will be the user's first categorized transaction
   const categorizedTransactionCount = await db.transaction.count({
     where: {
       user_id: userId,
@@ -195,7 +193,6 @@ export async function deleteTransactionCategory(transactionId: string) {
 
   const validatedTransactionId = String(transactionId ?? "").trim();
 
-  // Keep the action input checks simple before delegating to the lib layer.
   if (!validatedTransactionId) {
     return {
       success: false,

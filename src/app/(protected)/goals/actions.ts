@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireSession } from "@/lib/auth-helpers";
 import db from "@/lib/prisma";
-import { santizeFunds } from "@/utils/funds";
+import { sanitizeFunds } from "@/utils/funds";
 
 // Reviewed
 export async function changeCategoryGoal(
@@ -106,7 +106,7 @@ export async function updateSavingsGoal(
   }
 
   const rawAmount = formData.get("spendingGoalAmount")?.toString() ?? "";
-  const sanitizedAmount = santizeFunds(rawAmount);
+  const sanitizedAmount = sanitizeFunds(rawAmount);
 
   if (!sanitizedAmount) {
     return {

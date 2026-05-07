@@ -6,20 +6,18 @@ import { requireSession } from "@/lib/auth-helpers";
 import { matchTransactionCategory } from "@/lib/category-rules";
 import { parseValidTransactionRow } from "@/lib/csv-helpers";
 import db from "@/lib/prisma";
-import { cleanupTransactions } from "@/lib/transaction-rules";
 import {
   fileValidationErrorResult,
   sanitizeHeader,
   validateCsvFile,
 } from "@/utils/transactions";
-import { skip } from "node:test";
 
 const FREE_TIER_TRANSACTION_LIMIT =
   Number(process.env.FREE_TIER_TRANSACTION_LIMIT) || 300;
+const MAX_CSV_ROW_BYTES = 64 * 1024;
 
-// TO DO - refactor and move into separate functions / files
+// Reviewed
 
-// TO DO - move these to types
 export type SelectedUploadColumns = {
   merchantType: string;
   amount: string;
@@ -64,11 +62,10 @@ function normalizeUploadFileName(fileName: string) {
   return normalizedFileName.slice(0, MAX_UPLOAD_FILE_NAME_LENGTH);
 }
 
-// function to validate file and return the normalized headers
+// Read only the header row from the CSV file.
 export async function normalizeFile(form: FormData) {
   const sessionResult = await requireSession();
 
-  // validate the session
   if (sessionResult.error) {
     return fileValidationErrorResult(sessionResult.error);
   }
@@ -79,16 +76,40 @@ export async function normalizeFile(form: FormData) {
     return fileValidationErrorResult(fileResult.error ?? "No file");
   }
 
-  // we just want to retrieve the headers of the csv file
-  // we will just grab the first line and normalize
-  // either retrieve the headers or return an error if we are unable to read the file
   try {
-    const chunk = await fileResult.file.slice(0, 1024).text();
-    const firstLine = chunk.split(/\r?\n/)[0];
-    console.log(firstLine);
-    const normalizedHeaders = firstLine
-      .split(",")
-      .map((header) => header.trim().replace(/^"|"$/g, ""));
+    const fileBuffer = Buffer.from(await fileResult.file.arrayBuffer());
+    const source = Readable.from(fileBuffer);
+    const parser = csv({
+      maxRowBytes: MAX_CSV_ROW_BYTES,
+    });
+
+    const normalizedHeaders = await new Promise<string[]>((resolve, reject) => {
+      let headersResolved = false;
+
+      parser.on("headers", (headers: string[]) => {
+        if (headersResolved) {
+          return;
+        }
+
+        headersResolved = true;
+        resolve(headers.map((header) => header.replace(/^\uFEFF/, "").trim()));
+
+        source.destroy();
+        parser.destroy();
+      });
+
+      parser.on("end", () => {
+        if (headersResolved) {
+          return;
+        }
+
+        reject(new Error("CSV file does not contain headers."));
+      });
+
+      parser.on("error", reject);
+      source.on("error", reject);
+      source.pipe(parser);
+    });
 
     return {
       error: null,
@@ -104,8 +125,6 @@ export async function normalizeFile(form: FormData) {
   }
 }
 
-// uploads the entire file
-// takes in the form and the selected column mappings
 export async function uploadInput(
   form: FormData,
   merchantTypeColumn: string,
@@ -113,7 +132,6 @@ export async function uploadInput(
   transactionDateColumn: string,
   fileName: string,
 ): Promise<UploadInputResult> {
-  // validate session
   const sessionResult = await requireSession();
 
   if (sessionResult.error) {
@@ -139,7 +157,6 @@ export async function uploadInput(
     };
   }
 
-  // validate the file
   const fileResult = validateCsvFile(form);
 
   if (!fileResult || fileResult.error || !fileResult.file) {
@@ -153,7 +170,6 @@ export async function uploadInput(
     };
   }
 
-  // validate input column selections
   const selectedColumns = {
     merchantType: sanitizeHeader(merchantTypeColumn),
     amount: sanitizeHeader(amountColumn),
@@ -168,7 +184,7 @@ export async function uploadInput(
   ) {
     return {
       success: false,
-      error: "All column selections are required.",
+      error: "Please enter in valid values for all fields.",
       message: null,
       firstTimeUser: false,
       transactions: [],
@@ -206,8 +222,6 @@ export async function uploadInput(
       limitReached: false,
     };
   }
-  // parse the file
-  // add parsed rows to parsedRows array, keep track of skipped rows
   try {
     const existingPayPeriod = await db.userPayPeriod.findUnique({
       where: {
@@ -223,7 +237,6 @@ export async function uploadInput(
     const parsedRows: ParsedTransactionRow[] = [];
     let skippedRows = 0;
 
-    // created batch of parsed rows
     await new Promise<void>((resolve, reject) => {
       Readable.from(fileBuffer)
         .pipe(
@@ -298,7 +311,6 @@ export async function uploadInput(
       };
     }
 
-    // find transaction rules for the user
     const userTransactionRules = await db.transactionRule.findMany({
       where: {
         user_id: userId,
@@ -309,6 +321,7 @@ export async function uploadInput(
         category_id: true,
       },
     });
+    // do this in the db instead?
     const sortedUserTransactionRules = userTransactionRules
       .filter((rule) => rule.pattern)
       .sort((a, b) => b.pattern.length - a.pattern.length);
@@ -317,7 +330,6 @@ export async function uploadInput(
       await db.$transaction(async (tx) => {
         await tx.$queryRaw`SELECT id FROM "user" WHERE id = ${userId} FOR UPDATE`;
 
-        // Save one upload record so all inserted transactions point to it.
         const fileUpload = await tx.userFileUpload.create({
           data: {
             user_id: userId,
@@ -391,10 +403,14 @@ export async function uploadInput(
       }),
     );
 
-    if (latestTransactionDate) {
-      // Keep uploaded history trimmed to one year from the newest transaction.
-      await cleanupTransactions(userId, latestTransactionDate);
-    }
+    // TO DO - add back later and find a way to safely delete old transactions
+    // this is removed as a safety feature - protects a incorrect date that is newly added from wiping data
+    // it also protects the bug where users can delete their transactions and get functionally limitless premium access
+    // if (latestTransactionDate) {
+    //   await cleanupTransactions(userId, latestTransactionDate);
+    // }
+
+    // option - add a job for routinely scheduled transaction cleanup
 
     const freeTierLimitReached = blockedByFreeTierLimit > 0;
 
@@ -421,8 +437,6 @@ export async function uploadInput(
   }
 }
 
-// sets the default pay period
-// used as the beginning of the month for tracking spending
 export async function setUserPayPeriodBegin(periodBegin: string) {
   const sessionResult = await requireSession();
 
@@ -448,7 +462,17 @@ export async function setUserPayPeriodBegin(periodBegin: string) {
     };
   }
 
-  const parsedPeriodBegin = Number.parseInt(periodBegin, 10);
+  const normalizedPeriodBegin = String(periodBegin).trim();
+
+  // Only accept a plain day number so values like 1e2 or 1abc are rejected.
+  if (!/^\d{1,2}$/.test(normalizedPeriodBegin)) {
+    return {
+      success: false,
+      error: "Please enter a valid number.",
+    };
+  }
+
+  const parsedPeriodBegin = Number.parseInt(normalizedPeriodBegin, 10);
   if (
     Number.isNaN(parsedPeriodBegin) ||
     parsedPeriodBegin < 1 ||

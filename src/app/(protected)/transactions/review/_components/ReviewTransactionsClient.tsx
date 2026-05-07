@@ -37,8 +37,7 @@ type Transaction = {
   categoryId: string | null;
 };
 
-// takes in categories and transactions
-// TO DO - review logic
+// Reviewed
 export default function ReviewTransactionsClient({
   activeFilter,
   categories,
@@ -90,7 +89,6 @@ export default function ReviewTransactionsClient({
       return;
     }
 
-    // This lets the user choose whether to create a future rule.
     const response = await categorizeTransaction(
       selectedTransaction.id,
       categoryId,
@@ -100,7 +98,6 @@ export default function ReviewTransactionsClient({
     if (!response?.success) {
       toastError(response?.error || "Something went wrong!");
     } else {
-      // shows the free trial notice only after the first successful categorization
       setShowFreeTrialNotice(response.showFreeTrialNotice === true);
       router.refresh();
       toastSuccess("Updated transaction category.");

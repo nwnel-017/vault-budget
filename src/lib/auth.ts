@@ -25,11 +25,8 @@ export const auth = betterAuth({
     },
   },
   emailVerification: {
-    // Send the first verification email right after sign up.
     sendOnSignUp: true,
-    // Resend the link if an unverified user tries to sign in.
     sendOnSignIn: true,
-    // After verification, Better Auth can create the session for them.
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       await sendVerificationEmail({
