@@ -4,7 +4,6 @@ import db from "@/lib/prisma";
 import FilesGrid from "./_components/FilesGrid";
 import styles from "./page.module.css";
 
-// Reviewed
 export default async function FilesPage() {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;

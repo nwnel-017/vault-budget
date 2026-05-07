@@ -6,7 +6,6 @@ import { AppLogo } from "@/components/ui/icons/AppLogo";
 import { auth } from "@/lib/auth";
 import App from "next/app";
 
-// Reviewed
 export default async function Home() {
   const session = await auth.api.getSession({
     headers: await headers(),

@@ -9,7 +9,6 @@ import FreeTierExpired from "./_components/FreeTierExpired";
 import WelcomePanel from "./_components/WelcomePanel";
 import styles from "./page.module.css";
 
-// Reviewed
 
 type ReviewSearchParams = Promise<{
   freeTierLimitReached?: string | string[] | undefined;

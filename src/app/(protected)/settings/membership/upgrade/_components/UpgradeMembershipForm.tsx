@@ -8,7 +8,6 @@ type UpgradeMembershipFormProps = {
   monthlyRateLabel: string;
 };
 
-// Reviewed
 export default function UpgradeMembershipForm({
   monthlyRateLabel,
 }: UpgradeMembershipFormProps) {

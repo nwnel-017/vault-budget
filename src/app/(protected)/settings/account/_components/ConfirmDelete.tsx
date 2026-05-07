@@ -10,7 +10,6 @@ const initialState: DeleteAccountState = {
   error: null,
 };
 
-// Reviewed
 export default function ConfirmDelete({
   feedback,
   onCancel,

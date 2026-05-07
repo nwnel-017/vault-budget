@@ -1,7 +1,6 @@
 import Stripe from "stripe";
 import db from "@/lib/prisma";
 
-// Reviewed
 const premiumMembershipPriceId = process.env.STRIPE_MEMBERSHIP_PRICE_ID;
 
 function getSubscriptionPriceId(subscription: Stripe.Subscription) {

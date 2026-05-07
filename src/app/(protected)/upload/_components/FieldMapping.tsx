@@ -3,7 +3,6 @@
 import type { FieldMap } from "@/types/upload";
 import styles from "./FieldMapping.module.css";
 
-// Reviewed
 export default function FieldMapping({
   active,
   fieldMap,

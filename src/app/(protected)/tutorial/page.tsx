@@ -3,7 +3,6 @@ import { APP_NAME } from "@/lib/app-name";
 import styles from "./page.module.css";
 
 export default function TutorialPage() {
-  // Reviewed
   return (
     <main className={styles.page}>
       <section className={styles.panel}>

@@ -10,8 +10,6 @@ import {
 import { validateCategoryTransaction } from "@/lib/transaction-validation";
 import type { Transaction } from "@/lib/transaction-validation";
 
-// Reviewed
-
 export async function cleanupUnusedTransactionRule(
   tx: Pick<PrismaClient, "transaction" | "transactionRule">,
   userId: string,

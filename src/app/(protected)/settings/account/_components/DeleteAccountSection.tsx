@@ -7,7 +7,6 @@ import styles from "./DeleteAccountSection.module.css";
 
 const MAX_FEEDBACK_LENGTH = 500;
 
-// Reviewed
 export default function DeleteAccountSection() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);

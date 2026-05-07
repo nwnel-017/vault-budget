@@ -4,7 +4,6 @@ import styles from "./SpendingGoal.module.css";
 import { useActionState, useEffect, useState } from "react";
 import { updateSavingsGoal } from "../actions";
 
-// Reviewed
 export default function ChangeSpendingGoal({
   onClose,
 }: {

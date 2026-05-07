@@ -2,8 +2,6 @@ import "server-only";
 
 import db from "@/lib/prisma";
 
-// Reviewed
-
 type TransactionValidationResult =
   | {
       success: true;

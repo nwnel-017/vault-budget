@@ -5,7 +5,6 @@ import styles from "./SpendingGoal.module.css";
 import ChangeSpendingGoal from "./ChangeSpendingGoal";
 import TargetIcon from "@/components/ui/icons/TargetIcon";
 import PencilIcon from "@/components/ui/icons/PencilIcon";
-// Reviewed
 export default function SpendingGoal({
   currentGoal,
 }: {

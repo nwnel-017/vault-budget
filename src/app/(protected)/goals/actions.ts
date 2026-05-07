@@ -5,7 +5,6 @@ import { requireSession } from "@/lib/auth-helpers";
 import db from "@/lib/prisma";
 import { sanitizeFunds } from "@/utils/funds";
 
-// Reviewed
 export async function changeCategoryGoal(
   categoryId: string,
   amountValue: string,

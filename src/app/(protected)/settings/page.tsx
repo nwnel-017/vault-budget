@@ -34,7 +34,6 @@ function getPayPeriodLabel(day: number | null | undefined) {
   }
 }
 
-// Reviewed
 export default async function Settings() {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;

@@ -5,8 +5,6 @@ import db from "@/lib/prisma";
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const premiumMembershipRate = process.env.STRIPE_MEMBERSHIP_PRICE_ID;
 
-// Reviewed
-
 function getBaseUrl(request: Request) {
   return process.env.NEXT_PUBLIC_APP_URL;
 }

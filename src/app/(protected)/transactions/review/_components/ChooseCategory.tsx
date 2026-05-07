@@ -14,7 +14,6 @@ type ChooseCategoryProps = {
   closeChooseCategory: () => void;
 };
 
-// Reviewed
 export function ChooseCategory({
   active,
   currentCategory,

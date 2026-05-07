@@ -25,7 +25,6 @@ function getSearchParamValue(value: string | string[] | undefined) {
   return typeof value === "string" ? value : null;
 }
 
-// Reviewed
 export default async function Dashboard({
   searchParams,
 }: {

@@ -19,7 +19,6 @@ export type CancelMembershipState = {
 const MAX_FEEDBACK_LENGTH = 500;
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-// Reviewed
 function formatMembershipEndDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",

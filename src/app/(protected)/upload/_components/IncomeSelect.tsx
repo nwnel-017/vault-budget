@@ -6,7 +6,6 @@ import { toastError, toastSuccess } from "@/lib/toast";
 import type { SelectPayPeriodResult } from "@/types/pay-period";
 import styles from "./IncomeSelect.module.css";
 
-// Reviewed
 export default function IncomeSelect({
   onSelectPayPeriod,
 }: {

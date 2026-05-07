@@ -9,7 +9,6 @@ const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // TO DO - fix to handle concurrent requests
-// Reviewed
 export async function POST(request: Request) {
   if (!stripeSecretKey) {
     return Response.json(

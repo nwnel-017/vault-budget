@@ -4,7 +4,6 @@ import db from "../../../../lib/prisma";
 import CategoryGrid from "./_components/CategoryGrid";
 import styles from "./page.module.css";
 
-// Reviewed
 export default async function ReviewTransactions() {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;

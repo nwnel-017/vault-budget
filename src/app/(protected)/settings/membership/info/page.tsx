@@ -19,7 +19,6 @@ const premiumFeatures = [
   },
 ];
 
-// Reviewed
 export default function MembershipInfoPage() {
   return (
     <main className={styles.page}>

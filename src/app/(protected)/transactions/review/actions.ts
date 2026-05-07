@@ -11,7 +11,6 @@ import {
   removeTransactionCategory,
 } from "@/lib/transaction-rules";
 
-// Reviewed
 export async function resetUserTransactions() {
   const sessionResult = await requireSession();
 

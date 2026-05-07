@@ -5,7 +5,6 @@ import CategoryGoals from "./_components/CategoryGoals";
 import SpendingGoal from "./_components/SpendingGoal";
 import styles from "./page.module.css";
 
-// Reviewed
 export default async function SavingsGoals() {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;

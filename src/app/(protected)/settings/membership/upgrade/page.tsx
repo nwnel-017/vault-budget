@@ -1,7 +1,6 @@
 import UpgradeMembershipForm from "./_components/UpgradeMembershipForm";
 import styles from "./_components/UpgradeMembershipForm.module.css";
 
-// Reviewed
 function getMonthlyRateLabel() {
   const configuredRate =
     process.env.NEXT_STRIPE_PREMIUM_MEMBERSHIP_RATE ?? "3.99";

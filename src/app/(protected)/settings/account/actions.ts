@@ -9,7 +9,6 @@ export type ChangePasswordState = {
   success: string | null;
 };
 
-// Reviewed
 export async function changePassword(
   _currentState: ChangePasswordState,
   formData: FormData,

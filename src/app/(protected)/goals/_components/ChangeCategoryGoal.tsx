@@ -13,7 +13,6 @@ type ChangeCategoryGoalProps = {
   changeCategoryGoal: (amount: string) => void | Promise<void>;
 };
 
-// Reviewed
 export default function ChangeCategoryGoal({
   active,
   categoryName,

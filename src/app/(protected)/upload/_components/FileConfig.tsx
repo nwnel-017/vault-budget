@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import styles from "./FileConfig.module.css";
 
-// Reviewed
 export default function FileConfig({
   active,
   headers,

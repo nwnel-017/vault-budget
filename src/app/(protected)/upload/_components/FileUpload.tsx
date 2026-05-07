@@ -27,7 +27,6 @@ function SubmitButton() {
     </button>
   );
 }
-// Reviewed
 export default function FileUpload({
   fieldMap,
 }: {

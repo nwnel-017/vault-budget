@@ -1,5 +1,3 @@
-// Reviewed
-
 export function formatFunds(funds: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",

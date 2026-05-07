@@ -6,7 +6,6 @@ import ChangePasswordForm from "./_components/ChangePasswordForm";
 import DeleteAccountSection from "./_components/DeleteAccountSection";
 import styles from "./page.module.css";
 
-// Reviewed
 export default async function AccountSettingsPage() {
   const sessionResult = await requireSession();
   const user = sessionResult.session?.user;

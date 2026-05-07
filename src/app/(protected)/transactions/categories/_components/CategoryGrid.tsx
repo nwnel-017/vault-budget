@@ -12,7 +12,6 @@ type CategoryGridProps = {
   categories: CategorySummary[];
 };
 
-// Reviewed
 export default function CategoryGrid({ categories }: CategoryGridProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);

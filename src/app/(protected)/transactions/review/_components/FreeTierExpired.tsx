@@ -9,7 +9,6 @@ type FreeTierExpiredProps = {
   active: boolean;
 };
 
-// Reviewed
 export default function FreeTierExpired({ active }: FreeTierExpiredProps) {
   const [isClosed, setIsClosed] = useState(false);
   const pathname = usePathname();

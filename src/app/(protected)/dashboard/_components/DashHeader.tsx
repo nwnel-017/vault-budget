@@ -15,7 +15,6 @@ type CategorySpending = {
   totalSpent: number;
 };
 
-// reviewed
 export default function DashHeader({
   totalSpent,
   totalEarned,

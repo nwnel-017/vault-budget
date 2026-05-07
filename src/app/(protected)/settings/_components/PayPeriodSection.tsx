@@ -10,7 +10,6 @@ type PayPeriodSectionProps = {
   currentPayPeriodStartDay: number | null;
 };
 
-// Reviewed
 export default function PayPeriodSection({
   currentPayPeriodStartDay,
 }: PayPeriodSectionProps) {

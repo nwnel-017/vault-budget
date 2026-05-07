@@ -4,7 +4,6 @@ type SendVerificationEmailInput = {
   text: string;
 };
 
-// Reviewed
 export async function sendVerificationEmail({
   to,
   subject,

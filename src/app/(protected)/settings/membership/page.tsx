@@ -22,7 +22,6 @@ function getPlan(accountTier: "FREE" | "PREMIUM") {
   };
 }
 
-// Reviewed
 export default async function MembershipPage() {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;

@@ -4,7 +4,6 @@ import { normalizeTextValue } from "@/utils/transactions";
 import { normalizeAmountValue } from "@/utils/transactions";
 import { isValidDate } from "@/utils/date";
 
-// Reviewed
 function parseValidTransactionRow(
   row: Record<string, unknown>,
   selectedColumns: SelectedUploadColumns,

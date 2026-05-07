@@ -17,7 +17,6 @@ export type TransactionsProps = {
   }[];
 };
 
-// Reviewed
 export default function Transactions({ transactions }: TransactionsProps) {
   return (
     <section className={styles.section}>

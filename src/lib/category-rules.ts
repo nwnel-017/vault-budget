@@ -1,5 +1,3 @@
-// Reviewed
-
 export function generateCategoryRule(transactionDesc: string) {
   if (!transactionDesc) return "";
 

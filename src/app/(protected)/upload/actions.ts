@@ -16,8 +16,6 @@ const FREE_TIER_TRANSACTION_LIMIT =
   Number(process.env.FREE_TIER_TRANSACTION_LIMIT) || 300;
 const MAX_CSV_ROW_BYTES = 64 * 1024;
 
-// Reviewed
-
 export type SelectedUploadColumns = {
   merchantType: string;
   amount: string;

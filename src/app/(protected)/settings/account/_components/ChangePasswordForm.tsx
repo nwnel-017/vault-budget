@@ -10,7 +10,6 @@ const initialState: ChangePasswordState = {
   success: null,
 };
 
-// Reviewed
 export default function ChangePasswordForm() {
   const [state, formAction, pending] = useActionState(
     changePassword,

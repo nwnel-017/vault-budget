@@ -14,7 +14,6 @@ type RangeSelectorProps = {
   dateRanges: DateRangeOption[];
 };
 
-// Reviewed
 export default function RangeSelector({
   startDate,
   endDate,

@@ -37,7 +37,6 @@ type Transaction = {
   categoryId: string | null;
 };
 
-// Reviewed
 export default function ReviewTransactionsClient({
   activeFilter,
   categories,

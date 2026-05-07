@@ -11,7 +11,6 @@ type CancellationFeedbackProps = {
   onChange: (value: string) => void;
 };
 
-// Reviewed
 export default function CancellationFeedback({
   feedback,
   maxLength,

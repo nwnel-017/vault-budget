@@ -5,8 +5,6 @@ import {
   isValidDate,
 } from "@/utils/date";
 
-// Reviewed
-
 type TransactionCategory = {
   id: string;
   category_name: string;

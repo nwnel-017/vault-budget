@@ -30,7 +30,6 @@ function formatSpendingGoal(spendingGoal: string | null) {
   }).format(goalAmount);
 }
 
-// Reviewed
 export default function CategoryGoals({ categories }: CategoryGoalsProps) {
   const [changeGoals, setChangeGoals] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");

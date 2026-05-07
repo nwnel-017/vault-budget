@@ -7,7 +7,6 @@ type FreeTrialNoticeProps = {
   active: boolean;
 };
 
-// Reviewed
 export default function FreeTrialNotice({ active }: FreeTrialNoticeProps) {
   const [isClosed, setIsClosed] = useState(false);
 
