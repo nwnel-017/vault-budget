@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { APP_NAME } from "@/lib/app-name";
+import { APP_NAME } from "@/lib/general/app-name";
 import styles from "./WelcomePanel.module.css";
 
 export default function WelcomePanel({ active }: { active: boolean }) {

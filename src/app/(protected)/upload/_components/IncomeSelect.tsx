@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { APP_NAME } from "@/lib/app-name";
-import { toastError, toastSuccess } from "@/lib/toast";
+import { APP_NAME } from "@/lib/general/app-name";
+import { toastError, toastSuccess } from "@/lib/general/toast";
 import type { SelectPayPeriodResult } from "@/types/pay-period";
 import styles from "./IncomeSelect.module.css";
 

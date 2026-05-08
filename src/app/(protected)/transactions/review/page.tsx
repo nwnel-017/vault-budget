@@ -1,7 +1,7 @@
 import type { Prisma } from "@/app/generated/prisma/client";
 import { redirect } from "next/navigation";
-import { requireSession } from "@/lib/auth-helpers";
-import db from "../../../../lib/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import db from "../../../../lib/general/prisma";
 import type { TransactionFilter } from "@/types/transactions";
 import ReviewTransactionsClient from "./_components/ReviewTransactionsClient";
 import DeleteTransactions from "./_components/DeleteTransactions";
@@ -9,6 +9,7 @@ import FreeTierExpired from "./_components/FreeTierExpired";
 import WelcomePanel from "./_components/WelcomePanel";
 import styles from "./page.module.css";
 
+// TO DO - refactor
 
 type ReviewSearchParams = Promise<{
   freeTierLimitReached?: string | string[] | undefined;

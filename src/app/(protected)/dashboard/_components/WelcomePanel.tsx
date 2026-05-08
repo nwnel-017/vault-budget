@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { APP_NAME } from "@/lib/app-name";
+import { APP_NAME } from "@/lib/general/app-name";
 import styles from "./WelcomePanel.module.css";
 
 export default function WelcomePanel() {

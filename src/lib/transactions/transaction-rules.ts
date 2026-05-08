@@ -2,13 +2,13 @@ import "server-only";
 
 import { revalidatePath } from "next/cache";
 import type { PrismaClient } from "@/app/generated/prisma/client";
-import db from "@/lib/prisma";
+import db from "@/lib/general/prisma";
 import {
   generateCategoryRule,
   updateTransactionRule,
-} from "@/lib/category-rules";
-import { validateCategoryTransaction } from "@/lib/transaction-validation";
-import type { Transaction } from "@/lib/transaction-validation";
+} from "@/lib/transactions/category-rules";
+import { validateCategoryTransaction } from "@/lib/transactions/transaction-validation";
+import type { Transaction } from "@/lib/transactions/transaction-validation";
 
 export async function cleanupUnusedTransactionRule(
   tx: Pick<PrismaClient, "transaction" | "transactionRule">,

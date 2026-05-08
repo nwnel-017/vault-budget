@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import db from "@/lib/prisma";
-import { requireSession } from "@/lib/auth-helpers";
+import db from "@/lib/general/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
 import styles from "./page.module.css";
 import PayPeriodSection from "./_components/PayPeriodSection";
 

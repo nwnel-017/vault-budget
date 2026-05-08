@@ -1,8 +1,8 @@
 "use server";
 
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { requireSession } from "@/lib/auth-helpers";
+import { auth } from "@/lib/auth/auth";
+import { requireSession } from "@/lib/auth/auth-helpers";
 
 export type ChangePasswordState = {
   error: string | null;

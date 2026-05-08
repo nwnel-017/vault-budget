@@ -2,10 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@/app/generated/prisma/client";
-import { requireSession } from "@/lib/auth-helpers";
-import db from "@/lib/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import db from "@/lib/general/prisma";
 import { sanitizeTextInput } from "@/utils/transactions";
 
+// TO DO - refactor
 export async function createCategory(category: string) {
   const sessionResult = await requireSession();
 

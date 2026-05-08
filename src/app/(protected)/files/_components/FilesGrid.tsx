@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toastError, toastSuccess } from "@/lib/toast";
+import { toastError, toastSuccess } from "@/lib/general/toast";
 import { deleteFile } from "../actions";
 import styles from "./FilesGrid.module.css";
 

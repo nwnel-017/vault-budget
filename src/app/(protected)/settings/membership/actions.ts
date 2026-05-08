@@ -3,9 +3,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Stripe from "stripe";
-import { auth } from "@/lib/auth";
-import { requireSession } from "@/lib/auth-helpers";
-import db from "@/lib/prisma";
+import { auth } from "@/lib/auth/auth";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import db from "@/lib/general/prisma";
 
 export type DeleteAccountState = {
   error: string | null;

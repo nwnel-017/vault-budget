@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireSession } from "@/lib/auth-helpers";
-import db from "@/lib/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import db from "@/lib/general/prisma";
 
 export async function deleteFile(fileUploadId: string) {
   const sessionResult = await requireSession();

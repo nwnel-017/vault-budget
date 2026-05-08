@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireSession } from "@/lib/auth-helpers";
-import db from "@/lib/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import db from "@/lib/general/prisma";
 import { sanitizeFunds } from "@/utils/funds";
 
 export async function changeCategoryGoal(

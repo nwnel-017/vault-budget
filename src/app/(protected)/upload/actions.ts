@@ -2,15 +2,17 @@
 
 import { Readable } from "node:stream";
 import csv from "csv-parser";
-import { requireSession } from "@/lib/auth-helpers";
-import { matchTransactionCategory } from "@/lib/category-rules";
-import { parseValidTransactionRow } from "@/lib/csv-helpers";
-import db from "@/lib/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import { matchTransactionCategory } from "@/lib/transactions/category-rules";
+import { parseValidTransactionRow } from "@/lib/transactions/csv-helpers";
+import db from "@/lib/general/prisma";
 import {
   fileValidationErrorResult,
   sanitizeHeader,
   validateCsvFile,
 } from "@/utils/transactions";
+
+// TO DO - refactor
 
 const FREE_TIER_TRANSACTION_LIMIT =
   Number(process.env.FREE_TIER_TRANSACTION_LIMIT) || 300;

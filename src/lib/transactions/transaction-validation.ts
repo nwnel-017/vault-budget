@@ -1,6 +1,6 @@
 import "server-only";
 
-import db from "@/lib/prisma";
+import db from "@/lib/general/prisma";
 
 type TransactionValidationResult =
   | {

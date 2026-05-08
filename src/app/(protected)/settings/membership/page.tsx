@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import db from "@/lib/prisma";
-import { requireSession } from "@/lib/auth-helpers";
+import db from "@/lib/general/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
 import Button from "@/app/components/ui/Button";
 import DeleteAccountSection from "../account/_components/DeleteAccountSection";
 import CancelMembershipForm from "./_components/CancelMembershipForm";

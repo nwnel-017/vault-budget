@@ -1,15 +1,15 @@
 "use server";
 
-import { requireSession } from "@/lib/auth-helpers";
-import { hasReachedFreeTierTransactionLimit } from "@/lib/free-tier-limit";
-import db from "@/lib/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import { hasReachedFreeTierTransactionLimit } from "@/lib/billing/free-tier-limit";
+import db from "@/lib/general/prisma";
 import {
   associateTranToCategory,
   changeTransactionCategory,
   cleanupAllUnusedTransactionRules,
   cleanupUnusedTransactionRule,
   removeTransactionCategory,
-} from "@/lib/transaction-rules";
+} from "@/lib/transactions/transaction-rules";
 
 export async function resetUserTransactions() {
   const sessionResult = await requireSession();

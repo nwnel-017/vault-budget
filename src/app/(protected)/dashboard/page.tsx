@@ -1,19 +1,13 @@
-import db from "../../../lib/prisma";
-import { requireSession } from "@/lib/auth-helpers";
+import { requireSession } from "@/lib/auth/auth-helpers";
 import {
-  getDashboardSpendingSummary,
-  getSavedHistoryLastThreeMonths,
-} from "@/lib/dashboard-calculations";
+  getLatestTransaction,
+  getUserPayPeriod,
+} from "@/lib/dashboard/dashboard-queries";
+import {
+  getDashboardViewData,
+  resolveDashboardDateRange,
+} from "@/lib/dashboard/dashboard-service";
 import { setUserPayPeriodBegin } from "../upload/actions";
-import {
-  getDateRanges,
-  formatDateInputValue,
-  formatSelectedDateLabel,
-  getEndDateExclusive,
-  getSelectedDateRange,
-  getDefaultDateRange,
-  type DateRangeOption,
-} from "@/utils/date";
 import TopCategories from "./_components/TopCategories";
 import DashHeader from "./_components/DashHeader";
 import RangeSelector from "./_components/RangeSelector";
@@ -37,121 +31,57 @@ export default async function Dashboard({
     return null;
   }
 
-  const resolvedSearchParams = await searchParams;
-
-  let startDateString: string | null = null;
-  let endDateString: string | null = null;
-  let startDate: Date | null = null;
-  let endDate: Date | null = null;
-  let dateRanges: DateRangeOption[] = [];
-
-  const userPayPeriod = await db.userPayPeriod.findUnique({
-    where: {
-      user_id: userId,
-    },
-    select: {
-      pay_period_start_day: true,
-    },
-  });
+  const userPayPeriod = await getUserPayPeriod(userId);
 
   if (!userPayPeriod) {
     return <PayPeriodConfig onSelectPayPeriod={setUserPayPeriodBegin} />;
   }
 
-  const latestTransaction = await db.transaction.findFirst({
-    where: {
-      user_id: userId,
-    },
-    orderBy: { date_purchased: "desc" },
-  });
+  const latestTransaction = await getLatestTransaction(userId);
+  const resolvedSearchParams = await searchParams;
 
-  startDateString = getSearchParamValue(resolvedSearchParams.start);
-  endDateString = getSearchParamValue(resolvedSearchParams.end);
+  const startDateString = getSearchParamValue(resolvedSearchParams.start);
+  const endDateString = getSearchParamValue(resolvedSearchParams.end);
+
+  const { startDate, endDate, dateRanges, selectedLabel } =
+    resolveDashboardDateRange(
+      startDateString,
+      endDateString,
+      latestTransaction?.date_purchased,
+      userPayPeriod.pay_period_start_day,
+    );
 
   if (!startDateString || !endDateString) {
     if (!latestTransaction) {
       return <WelcomePanel />;
     }
-
-    const defaultRange = getDefaultDateRange(
-      latestTransaction.date_purchased,
-      userPayPeriod?.pay_period_start_day,
-    );
-
-    if (!defaultRange.startDate || !defaultRange.endDate) {
-      return null;
-    }
-
-    startDateString = formatDateInputValue(defaultRange.startDate);
-    endDateString = formatDateInputValue(defaultRange.endDate);
-  }
-
-  const selectedDateRange = getSelectedDateRange(
-    startDateString,
-    endDateString,
-  );
-  startDate = selectedDateRange.startDate;
-  endDate = selectedDateRange.endDate;
-
-  if (!startDate || !endDate) {
-    return null;
   }
 
   if (!latestTransaction) {
     return <WelcomePanel />;
   }
 
-  dateRanges = getDateRanges(
-    latestTransaction.date_purchased,
-    userPayPeriod.pay_period_start_day,
-  );
-
-  const endDateExclusive = getEndDateExclusive(endDate);
-  const selectedLabel = formatSelectedDateLabel(startDate, endDate);
-
-  if (!endDateExclusive) {
+  if (!startDate || !endDate) {
     return null;
   }
 
-  const transactions = await db.transaction.findMany({
-    where: {
-      date_purchased: {
-        gte: startDate,
-        lt: endDateExclusive,
-      },
-      user_id: userId,
-    },
-    include: {
-      category: {
-        include: {
-          goal: {
-            select: {
-              amount: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      date_purchased: "desc",
-    },
-  });
+  const dashboardViewData = await getDashboardViewData(
+    userId,
+    startDate,
+    endDate,
+  );
 
-  const { topCategories, totalSpent, totalEarned } =
-    getDashboardSpendingSummary(transactions);
+  if (!dashboardViewData) {
+    return null;
+  }
 
-  const [savingsGoal, savedHistory] = await Promise.all([
-    db.savingsGoal.findFirst({
-      where: {
-        user_id: userId,
-      },
-      select: {
-        amount: true,
-      },
-    }),
-    getSavedHistoryLastThreeMonths(userId, startDate, endDate),
-  ]);
-  const savingsGoalAmount = savingsGoal ? Number(savingsGoal.amount) : null;
+  const {
+    topCategories,
+    totalSpent,
+    totalEarned,
+    savingsGoalAmount,
+    savedHistory,
+  } = dashboardViewData;
 
   return (
     <div className="flex-col gap col-center max-width">

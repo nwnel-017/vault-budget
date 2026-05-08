@@ -1,5 +1,5 @@
-import db from "../../../lib/prisma";
-import { requireSession } from "@/lib/auth-helpers";
+import db from "../../../lib/general/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
 import FileUpload from "./_components/FileUpload";
 
 export default async function UploadPage() {

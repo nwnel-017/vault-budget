@@ -1,4 +1,3 @@
-import db from "./prisma";
 import {
   getDatePreviousMonth,
   getEndDateExclusive,
@@ -34,6 +33,11 @@ type TopCategory = {
 type SavingsHistoryPoint = {
   monthStart: string;
   totalSaved: number;
+};
+
+type SavingsHistoryTransaction = {
+  amount: unknown;
+  date_purchased: Date;
 };
 
 export function getDashboardSpendingSummary(
@@ -143,14 +147,17 @@ export function getDashboardSpendingSummary(
   }
 }
 
-export async function getSavedHistoryLastThreeMonths(
-  userId: string,
+export function getSavedHistoryFetchRange(
   currentStartDate: Date,
   currentEndDate: Date,
-): Promise<SavingsHistoryPoint[]> {
+): {
+  oldestStartDateAtMidnight: Date;
+  currentEndDateExclusive: Date;
+} | null {
   if (!isValidDate(currentStartDate) || !isValidDate(currentEndDate)) {
-    return [];
+    return null;
   }
+
   const previousStartDate = getDatePreviousMonth(currentStartDate);
   const previousEndDate = getDatePreviousMonth(currentEndDate);
   const oldestStartDate = previousStartDate
@@ -166,7 +173,7 @@ export async function getSavedHistoryLastThreeMonths(
     !oldestStartDate ||
     !oldestEndDate
   ) {
-    return [];
+    return null;
   }
 
   const oldestStartDateAtMidnight = new Date(oldestStartDate);
@@ -176,24 +183,36 @@ export async function getSavedHistoryLastThreeMonths(
   currentEndDateExclusive.setDate(currentEndDateExclusive.getDate() + 1);
   currentEndDateExclusive.setHours(0, 0, 0, 0);
 
-  let transactions;
+  return {
+    oldestStartDateAtMidnight,
+    currentEndDateExclusive,
+  };
+}
 
-  try {
-    transactions = await db.transaction.findMany({
-      where: {
-        user_id: userId,
-        date_purchased: {
-          gte: oldestStartDateAtMidnight,
-          lt: currentEndDateExclusive,
-        },
-      },
-      select: {
-        amount: true,
-        date_purchased: true,
-      },
-    });
-  } catch (err) {
-    console.log("failed to fetch transactions: " + err);
+export function getSavedHistoryLastThreeMonths(
+  transactions: SavingsHistoryTransaction[],
+  currentStartDate: Date,
+  currentEndDate: Date,
+): SavingsHistoryPoint[] {
+  if (!isValidDate(currentStartDate) || !isValidDate(currentEndDate)) {
+    return [];
+  }
+
+  const previousStartDate = getDatePreviousMonth(currentStartDate);
+  const previousEndDate = getDatePreviousMonth(currentEndDate);
+  const oldestStartDate = previousStartDate
+    ? getDatePreviousMonth(previousStartDate)
+    : null;
+  const oldestEndDate = previousEndDate
+    ? getDatePreviousMonth(previousEndDate)
+    : null;
+
+  if (
+    !previousStartDate ||
+    !previousEndDate ||
+    !oldestStartDate ||
+    !oldestEndDate
+  ) {
     return [];
   }
 

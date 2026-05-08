@@ -1,6 +1,6 @@
 import Stripe from "stripe";
-import { auth } from "@/lib/auth";
-import db from "@/lib/prisma";
+import { auth } from "@/lib/auth/auth";
+import db from "@/lib/general/prisma";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const premiumMembershipRate = process.env.STRIPE_MEMBERSHIP_PRICE_ID;
@@ -9,6 +9,7 @@ function getBaseUrl(request: Request) {
   return process.env.NEXT_PUBLIC_APP_URL;
 }
 
+// TO DO - refactor
 export async function POST(request: Request) {
   if (!stripeSecretKey) {
     return Response.json(

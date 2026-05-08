@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import db from "@/lib/prisma";
+import db from "@/lib/general/prisma";
 
 const premiumMembershipPriceId = process.env.STRIPE_MEMBERSHIP_PRICE_ID;
 

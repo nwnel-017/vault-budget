@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { requireSession } from "@/lib/auth-helpers";
-import db from "@/lib/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
+import db from "@/lib/general/prisma";
 import FilesGrid from "./_components/FilesGrid";
 import styles from "./page.module.css";
 

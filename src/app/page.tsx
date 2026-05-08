@@ -3,7 +3,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { AppLogo } from "@/components/ui/icons/AppLogo";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import App from "next/app";
 
 export default async function Home() {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setUserPayPeriodBegin } from "@/app/(protected)/upload/actions";
-import { APP_NAME } from "@/lib/app-name";
+import { APP_NAME } from "@/lib/general/app-name";
 import styles from "./PayPeriodSection.module.css";
 
 type PayPeriodSectionProps = {

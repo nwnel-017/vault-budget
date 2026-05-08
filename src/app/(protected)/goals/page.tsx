@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import db from "@/lib/prisma";
-import { requireSession } from "@/lib/auth-helpers";
+import db from "@/lib/general/prisma";
+import { requireSession } from "@/lib/auth/auth-helpers";
 import CategoryGoals from "./_components/CategoryGoals";
 import SpendingGoal from "./_components/SpendingGoal";
 import styles from "./page.module.css";

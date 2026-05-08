@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { toastError, toastSuccess } from "@/lib/toast";
+import { toastError, toastSuccess } from "@/lib/general/toast";
 import type { CategorySummary } from "@/types/category";
 import type { TransactionFilter } from "@/types/transactions";
 import { ChooseCategory } from "./ChooseCategory";

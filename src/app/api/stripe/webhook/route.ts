@@ -1,14 +1,15 @@
 import Stripe from "stripe";
-import db from "@/lib/prisma";
+import db from "@/lib/general/prisma";
 import {
   handleCheckoutSessionCompleted,
   updateSubscriptionStatus,
-} from "@/lib/subscriptions";
+} from "@/lib/billing/subscriptions";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 // TO DO - fix to handle concurrent requests
+// TO DO - refactor
 export async function POST(request: Request) {
   if (!stripeSecretKey) {
     return Response.json(
