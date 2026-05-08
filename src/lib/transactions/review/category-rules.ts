@@ -44,7 +44,7 @@ export function updateTransactionRule(
   return newPattern;
 }
 
-type CategoryRuleMatch = {
+export type CategoryRuleMatch = {
   id: string;
   pattern: string;
   category_id: string;

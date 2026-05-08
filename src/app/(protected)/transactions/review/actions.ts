@@ -9,7 +9,7 @@ import {
   cleanupAllUnusedTransactionRules,
   cleanupUnusedTransactionRule,
   removeTransactionCategory,
-} from "@/lib/transactions/transaction-rules";
+} from "@/lib/transactions/review/transaction-rules";
 
 export async function resetUserTransactions() {
   const sessionResult = await requireSession();

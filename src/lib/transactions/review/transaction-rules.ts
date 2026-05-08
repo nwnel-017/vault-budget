@@ -6,9 +6,9 @@ import db from "@/lib/general/prisma";
 import {
   generateCategoryRule,
   updateTransactionRule,
-} from "@/lib/transactions/category-rules";
-import { validateCategoryTransaction } from "@/lib/transactions/transaction-validation";
-import type { Transaction } from "@/lib/transactions/transaction-validation";
+} from "@/lib/transactions/review/category-rules";
+import { validateCategoryTransaction } from "@/lib/transactions/review/transaction-validation";
+import type { Transaction } from "@/lib/transactions/review/transaction-validation";
 
 export async function cleanupUnusedTransactionRule(
   tx: Pick<PrismaClient, "transaction" | "transactionRule">,

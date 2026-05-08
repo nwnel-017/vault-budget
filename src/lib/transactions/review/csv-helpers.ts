@@ -1,5 +1,5 @@
-import type { ParsedTransactionRow } from "@/app/(protected)/upload/actions";
-import type { SelectedUploadColumns } from "@/app/(protected)/upload/actions";
+import type { ParsedTransactionRow } from "@/types/upload-actions";
+import type { SelectedUploadColumns } from "@/types/upload-actions";
 import { normalizeTextValue } from "@/utils/transactions";
 import { normalizeAmountValue } from "@/utils/transactions";
 import { isValidDate } from "@/utils/date";
