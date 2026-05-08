@@ -146,10 +146,193 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  /* height: 100dvh; */
+  height: 93dvh;
+  width: 100dvw;
+  flex-shrink: 0;
+  /* border: 2px solid black; */
+}
+
+.finalPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  /* height: 100dvh; */
   height: 100dvh;
   width: 100dvw;
   flex-shrink: 0;
   /* border: 2px solid black; */
+}
+
+.instructionsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.instructionsMedia {
+  width: 100%;
+}
+
+.animationCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 18rem;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), transparent 55%),
+    linear-gradient(160deg, rgba(43, 77, 130, 0.08), rgba(53, 135, 122, 0.16));
+}
+
+.instructionsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.instructionsEyebrow {
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.instructionsTitle {
+  font-size: 2rem;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.instructionsText {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.featureCardStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.featureCard {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08);
+}
+
+.featureCardAccent {
+  width: 0.4rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--accent), rgba(53, 135, 122, 0.45));
+  flex-shrink: 0;
+}
+
+.featureCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.featureCardTitle {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.featureCardText {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.showcasePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background:
+    linear-gradient(180deg, rgba(53, 135, 122, 0.08), rgba(43, 77, 130, 0.04)),
+    var(--background);
+}
+
+.showcaseContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.showcaseCardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.showcaseCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.1rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(53, 135, 122, 0.12);
+  box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.06);
+}
+
+.showcaseCta {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--background);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.showcaseMedia {
+  width: 100%;
+}
+
+.showcaseAnimationSpace {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 20rem;
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: 1.75rem;
+  border: 0.12rem dashed rgba(43, 77, 130, 0.28);
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(53, 135, 122, 0.12),
+      transparent 50%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(238, 247, 245, 0.9));
+}
+
+.showcaseAnimationLabel {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .intro {
@@ -230,10 +413,87 @@ a.secondary {
 }
 
 @media (min-width: 768px) {
+  .instructionsPanel {
+    padding: 2rem;
+  }
+
+  .animationCard {
+    min-height: 22rem;
+    padding: 1.5rem;
+  }
+
+  .instructionsTitle {
+    font-size: 2.4rem;
+    max-width: 18ch;
+  }
+
+  .showcasePanel {
+    padding: 2rem;
+  }
+
+  .showcaseCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .showcaseCard:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .showcaseAnimationSpace {
+    min-height: 24rem;
+  }
 }
 
 @media (min-width: 1024px) {
   .welcomePanel {
     width: 30dvw;
+  }
+
+  .instructionsPanel {
+    width: min(88dvw, 72rem);
+    flex-direction: row;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .instructionsMedia,
+  .instructionsContent {
+    width: 50%;
+  }
+
+  .instructionsContent {
+    gap: 1.25rem;
+  }
+
+  .featureCard:nth-child(2) {
+    margin-left: 1.5rem;
+  }
+
+  .featureCard:nth-child(3) {
+    margin-left: 3rem;
+  }
+
+  .showcasePanel {
+    width: min(88dvw, 76rem);
+    flex-direction: row;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .showcaseContent,
+  .showcaseMedia {
+    width: 50%;
+  }
+
+  .showcaseCardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .showcaseCard:last-child {
+    grid-column: auto;
+  }
+
+  .showcaseAnimationSpace {
+    min-height: 28rem;
   }
 }
