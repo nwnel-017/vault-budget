@@ -6,7 +6,6 @@ import { AppLogo } from "@/components/ui/icons/AppLogo";
 import { RocketShip } from "@/components/ui/icons/RocketShip";
 import PlayIcon from "@/components/ui/icons/PlayIcon";
 import { auth } from "@/lib/auth/auth";
-import App from "next/app";
 
 export default async function Home() {
   const session = await auth.api.getSession({
@@ -18,8 +17,8 @@ export default async function Home() {
   }
 
   return (
-    <div className="page">
-      <div className={styles.main}>
+    <div className={styles.page}>
+      <div className={styles.main} id="landing-page">
         <div className={styles.welcomePanel}>
           <div className={styles.panelContent}>
             <div className={styles.logoHero}>
@@ -28,19 +27,30 @@ export default async function Home() {
             </div>
             <div className={styles.appDetails}>
               <div className={styles.detailsText}>
-                <span>Keep track of your spending, </span>
-                <span className={styles.emphasis}>organized.</span>
+                <div>Keep track of your spending, </div>
+                <span className={styles.emphasis}>safely.</span>
               </div>
-              {/* <div className={styles.subtitle}>
-                Track your spending, set goals, and build better money habits -
-                all in one place.
-              </div> */}
+              <p className={styles.subtitle}>
+                Track your spending, set goals, and set money habits - all in
+                one place.
+              </p>
+              <p className={styles.subtitle}>
+                Manage your expenses easily - all without connecting to your
+                bank account.
+              </p>
+              {/* <p className={styles.subtitle}>
+                {" "}
+                and set money habits - all in one place.
+              </p> */}
               <div className={styles.heroBtnContainer}>
                 <Link href="/signup" className={styles.heroBtn}>
                   <RocketShip />
                   Get Started
                 </Link>
-                <Link href="/learn-more" className={styles.heroBtnSecondary}>
+                <Link
+                  href="#instructions-page"
+                  className={styles.heroBtnSecondary}
+                >
                   <PlayIcon />
                   Learn More
                 </Link>
@@ -48,6 +58,9 @@ export default async function Home() {
             </div>
           </div>
         </div>
+      </div>
+      <div className={styles.main} id="instructions-page">
+        <div>Instructions</div>
       </div>
     </div>
   );
