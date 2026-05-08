@@ -5,15 +5,15 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toastError, toastSuccess } from "@/lib/general/toast";
 import type { CategorySummary } from "@/types/category";
 import type { TransactionFilter } from "@/types/transactions";
-import { ChooseCategory } from "./ChooseCategory";
-import FreeTrialNotice from "./FreeTrialNotice";
+import { ChooseCategory } from "../../categorization/ChooseCategory/ChooseCategory";
+import FreeTrialNotice from "../../notices/FreeTrialNotice/FreeTrialNotice";
 import {
   categorizeTransaction,
   deleteTransaction,
   deleteTransactionCategory,
-} from "../actions";
+} from "../../../actions";
 import { formatTransaction } from "@/utils/funds";
-import styles from "../page.module.css";
+import styles from "../../../page.module.css";
 
 type ReviewTransactionsClientProps = {
   categories: CategorySummary[];

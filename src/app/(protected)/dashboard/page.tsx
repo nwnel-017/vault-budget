@@ -8,11 +8,11 @@ import {
   resolveDashboardDateRange,
 } from "@/lib/dashboard/dashboard-service";
 import { setUserPayPeriodBegin } from "../upload/actions";
-import TopCategories from "./_components/TopCategories";
-import DashHeader from "./_components/DashHeader";
-import RangeSelector from "./_components/RangeSelector";
-import PayPeriodConfig from "./_components/PayPeriodConfig";
-import WelcomePanel from "./_components/WelcomePanel";
+import TopCategories from "./_components/categories/TopCategories/TopCategories";
+import RangeSelector from "./_components/date-range/RangeSelector/RangeSelector";
+import PayPeriodConfig from "./_components/setup/PayPeriodConfig/PayPeriodConfig";
+import WelcomePanel from "./_components/setup/WelcomePanel/WelcomePanel";
+import DashHeader from "./_components/summary/DashHeader/DashHeader";
 import styles from "./page.module.css";
 
 function getSearchParamValue(value: string | string[] | undefined) {

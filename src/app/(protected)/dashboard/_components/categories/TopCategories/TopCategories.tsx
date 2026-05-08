@@ -21,8 +21,8 @@ export default function TopCategories({ categories }: TopCategoriesProps) {
       </div>
       <div className={styles.gridWrapper}>
         <div className={styles.gridHeader} role="row">
-          <span>Category</span>
-          <span>Total Spent</span>
+          <span className="text-secondary">Category</span>
+          <span className="text-secondary">Total Spent</span>
         </div>
         <div className={styles.gridBody}>
           {categories.map((category) => (

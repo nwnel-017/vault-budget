@@ -1,13 +1,13 @@
 "use client";
 
-import { normalizeFile, uploadInput } from "../actions";
+import { normalizeFile, uploadInput } from "../../../actions";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { useState } from "react";
 import { APP_NAME } from "@/lib/general/app-name";
 import { toastError, toastSuccess } from "@/lib/general/toast";
-import FileConfig from "./FileConfig";
-import FieldMapping from "./FieldMapping";
+import FileConfig from "../FileConfig/FileConfig";
+import FieldMapping from "../FieldMapping/FieldMapping";
 import { FileUploadIcon } from "@/components/ui/icons/FileUpload";
 import type { FieldMap } from "@/types/upload";
 import styles from "./FileUpload.module.css";

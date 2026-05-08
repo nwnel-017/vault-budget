@@ -3,10 +3,10 @@ import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth/auth-helpers";
 import db from "../../../../lib/general/prisma";
 import type { TransactionFilter } from "@/types/transactions";
-import ReviewTransactionsClient from "./_components/ReviewTransactionsClient";
-import DeleteTransactions from "./_components/DeleteTransactions";
-import FreeTierExpired from "./_components/FreeTierExpired";
-import WelcomePanel from "./_components/WelcomePanel";
+import DeleteTransactions from "./_components/maintenance/DeleteTransactions/DeleteTransactions";
+import FreeTierExpired from "./_components/notices/FreeTierExpired/FreeTierExpired";
+import WelcomePanel from "./_components/notices/WelcomePanel/WelcomePanel";
+import ReviewTransactionsClient from "./_components/review/ReviewTransactionsClient/ReviewTransactionsClient";
 import styles from "./page.module.css";
 
 // TO DO - refactor

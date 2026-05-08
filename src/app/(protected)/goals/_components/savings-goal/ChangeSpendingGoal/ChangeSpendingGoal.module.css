@@ -1,0 +1,107 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid #d1d5db;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  width: 100dvw;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  animation: overlayFadeIn 0.5s ease-out;
+}
+
+.label {
+  font-size: var(--body-font);
+  font-weight: 600;
+  color: #111827;
+}
+
+.overlay .form {
+  width: min(100%, 32rem);
+  background: #ffffff;
+  box-shadow: 0 1rem 3rem rgb(15 23 42 / 18%);
+  transform-origin: center;
+  animation: modalPopIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.85rem;
+  background: #ffffff;
+  color: inherit;
+  font: inherit;
+}
+
+.input:focus {
+  outline: 0.125rem solid rgba(31, 31, 31, 0.2);
+  outline-offset: 0.125rem;
+}
+
+.form button {
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background-color: var(--background);
+  color: var(--accent);
+  padding: 0.7rem 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.form p {
+  margin: 0;
+  color: #b42318;
+}
+
+@media (min-width: 48rem) {
+  .form {
+    gap: 1rem;
+  }
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .overlay .form {
+    animation: none;
+  }
+}

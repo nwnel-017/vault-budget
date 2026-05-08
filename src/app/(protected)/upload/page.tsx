@@ -1,6 +1,6 @@
 import db from "../../../lib/general/prisma";
 import { requireSession } from "@/lib/auth/auth-helpers";
-import FileUpload from "./_components/FileUpload";
+import FileUpload from "./_components/upload/FileUpload/FileUpload";
 
 export default async function UploadPage() {
   const sessionResult = await requireSession();

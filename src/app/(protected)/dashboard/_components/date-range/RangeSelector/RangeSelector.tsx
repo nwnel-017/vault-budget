@@ -5,7 +5,7 @@ import {
   getPreviousRange,
   type DateRangeOption,
 } from "@/utils/date";
-import RangeDropdown from "./RangeDropdown";
+import RangeDropdown from "../RangeDropdown/RangeDropdown";
 
 type RangeSelectorProps = {
   startDate: Date | null;

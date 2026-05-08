@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import Button from "@/app/components/ui/Button";
-import { changePassword, type ChangePasswordState } from "../actions";
+import { changePassword, type ChangePasswordState } from "../../../actions";
 import styles from "./ChangePasswordForm.module.css";
 
 const initialState: ChangePasswordState = {

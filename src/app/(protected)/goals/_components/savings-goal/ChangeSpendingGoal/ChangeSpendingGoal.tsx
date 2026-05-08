@@ -1,8 +1,8 @@
 "use client";
 
-import styles from "./SpendingGoal.module.css";
+import styles from "./ChangeSpendingGoal.module.css";
 import { useActionState, useEffect, useState } from "react";
-import { updateSavingsGoal } from "../actions";
+import { updateSavingsGoal } from "../../../actions";
 
 export default function ChangeSpendingGoal({
   onClose,

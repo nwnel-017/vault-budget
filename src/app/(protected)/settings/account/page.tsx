@@ -2,8 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth/auth-helpers";
 import Button from "@/app/components/ui/Button";
-import ChangePasswordForm from "./_components/ChangePasswordForm";
-import DeleteAccountSection from "./_components/DeleteAccountSection";
+import DeleteAccountSection from "./_components/delete-account/DeleteAccountSection/DeleteAccountSection";
+import ChangePasswordForm from "./_components/password/ChangePasswordForm/ChangePasswordForm";
 import styles from "./page.module.css";
 
 export default async function AccountSettingsPage() {

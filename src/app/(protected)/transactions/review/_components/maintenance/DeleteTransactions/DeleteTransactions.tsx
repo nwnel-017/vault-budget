@@ -1,7 +1,7 @@
 "use client";
 
 import { toastError, toastSuccess } from "@/lib/general/toast";
-import { resetUserTransactions } from "../actions";
+import { resetUserTransactions } from "../../../actions";
 import styles from "./DeleteTransactions.module.css";
 
 export default function DeleteTransactions() {

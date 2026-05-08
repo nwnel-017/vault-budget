@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import db from "@/lib/general/prisma";
 import { requireSession } from "@/lib/auth/auth-helpers";
-import CategoryGoals from "./_components/CategoryGoals";
-import SpendingGoal from "./_components/SpendingGoal";
+import CategoryGoals from "./_components/category-goals/CategoryGoals/CategoryGoals";
+import SpendingGoal from "./_components/savings-goal/SpendingGoal/SpendingGoal";
 import styles from "./page.module.css";
 
 export default async function SavingsGoals() {

@@ -110,35 +110,35 @@ export async function getDashboardViewData(
   }
 
   const savedHistoryFetchRange = getSavedHistoryFetchRange(startDate, endDate);
-  const savingsHistoryTransactionsPromise = savedHistoryFetchRange
-    ? getSavingsHistoryTransactions(
-        userId,
-        savedHistoryFetchRange.oldestStartDateAtMidnight,
-        savedHistoryFetchRange.currentEndDateExclusive,
-      )
-    : Promise.resolve([]);
-
-  const [transactions, savingsGoal, savingsHistoryTransactions] =
-    await Promise.all([
-      getDashboardTransactions(userId, startDate, endDateExclusive),
-      getSavingsGoal(userId),
-      savingsHistoryTransactionsPromise,
-    ]);
+  const [transactions, savingsGoal] = await Promise.all([
+    getDashboardTransactions(userId, startDate, endDateExclusive),
+    getSavingsGoal(userId),
+  ]);
 
   const { topCategories, totalSpent, totalEarned } =
     getDashboardSpendingSummary(transactions);
+
+  let savedHistory: SavedHistory[] = [];
+
+  if (savedHistoryFetchRange) {
+    const savingsHistoryTransactions = await getSavingsHistoryTransactions(
+      userId,
+      savedHistoryFetchRange.oldestStartDateAtMidnight,
+      savedHistoryFetchRange.currentEndDateExclusive,
+    );
+
+    savedHistory = getSavedHistoryLastThreeMonths(
+      savingsHistoryTransactions,
+      startDate,
+      endDate,
+    );
+  }
 
   return {
     topCategories,
     totalSpent,
     totalEarned,
     savingsGoalAmount: savingsGoal ? Number(savingsGoal.amount) : null,
-    savedHistory: savedHistoryFetchRange
-      ? getSavedHistoryLastThreeMonths(
-          savingsHistoryTransactions,
-          startDate,
-          endDate,
-        )
-      : [],
+    savedHistory,
   };
 }

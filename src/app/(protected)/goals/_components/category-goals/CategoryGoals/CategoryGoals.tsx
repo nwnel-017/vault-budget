@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import styles from "./CategoryGoals.module.css";
-import ChangeCategoryGoal from "./ChangeCategoryGoal";
-import { changeCategoryGoal as updateCategoryGoal } from "../actions";
+import ChangeCategoryGoal from "../ChangeCategoryGoal/ChangeCategoryGoal";
+import { changeCategoryGoal as updateCategoryGoal } from "../../../actions";
 
 type CategoryGoalsProps = {
   categories: {

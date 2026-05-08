@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import CancellationFeedback from "./CancellationFeedback";
-import ConfirmDelete from "./ConfirmDelete";
+import CancellationFeedback from "../CancellationFeedback/CancellationFeedback";
+import ConfirmDelete from "../ConfirmDelete/ConfirmDelete";
 import styles from "./DeleteAccountSection.module.css";
 
 const MAX_FEEDBACK_LENGTH = 500;

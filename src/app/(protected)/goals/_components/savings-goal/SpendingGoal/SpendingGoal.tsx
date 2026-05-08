@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./SpendingGoal.module.css";
-import ChangeSpendingGoal from "./ChangeSpendingGoal";
+import ChangeSpendingGoal from "../ChangeSpendingGoal/ChangeSpendingGoal";
 import TargetIcon from "@/components/ui/icons/TargetIcon";
 import PencilIcon from "@/components/ui/icons/PencilIcon";
 export default function SpendingGoal({

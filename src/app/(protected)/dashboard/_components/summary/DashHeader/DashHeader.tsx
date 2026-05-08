@@ -6,8 +6,8 @@ import styles from "./DashHeader.module.css";
 import ArrowDown from "@/app/components/ui/ArrowDown";
 import ArrowUp from "@/app/components/ui/ArrowUp";
 import type { SavedHistory } from "@/types/dashboard";
-import CategorySpendingChart from "./CategorySpendingChart";
-import SavedHistoryChart from "./SavedHistoryChart";
+import CategorySpendingChart from "../charts/CategorySpendingChart";
+import SavedHistoryChart from "../charts/SavedHistoryChart";
 
 type CategorySpending = {
   id: string;
