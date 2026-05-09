@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { requireSession } from "@/lib/auth/auth-helpers";
 import {
   getLatestTransaction,
@@ -13,17 +14,24 @@ import RangeSelector from "./_components/date-range/RangeSelector/RangeSelector"
 import PayPeriodConfig from "./_components/setup/PayPeriodConfig/PayPeriodConfig";
 import WelcomePanel from "./_components/setup/WelcomePanel/WelcomePanel";
 import DashHeader from "./_components/summary/DashHeader/DashHeader";
+import LoadingSkeleton from "./_components/LoadingSkeleton";
 import styles from "./page.module.css";
 
 function getSearchParamValue(value: string | string[] | undefined) {
   return typeof value === "string" ? value : null;
 }
 
-export default async function Dashboard({
+type DashboardSearchParams = {
+  [key: string]: string | string[] | undefined;
+};
+
+type DashboardProps = {
+  searchParams: Promise<DashboardSearchParams>;
+};
+
+async function DashboardContent({
   searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+}: DashboardProps) {
   const sessionResult = await requireSession();
   const userId = sessionResult.session?.user.id;
 
@@ -105,5 +113,13 @@ export default async function Dashboard({
       />
       <TopCategories categories={topCategories} />
     </div>
+  );
+}
+
+export default function Dashboard({ searchParams }: DashboardProps) {
+  return (
+    <Suspense fallback={<LoadingSkeleton />}>
+      <DashboardContent searchParams={searchParams} />
+    </Suspense>
   );
 }

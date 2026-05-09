@@ -69,16 +69,10 @@ export default function RangeSelector({
               <span className={styles.buttonArrow} aria-hidden="true">
                 &#8249;
               </span>
-              {/* <span>Previous</span> */}
             </button>
           </form>
         </div>
         <div className={styles.dropdownWrap}>
-          {/* <div className={styles.hamburgerIcon}>
-            <span></span>
-            <span></span>
-            <span></span>
-          </div> */}
           <RangeDropdown
             ranges={dateRanges}
             selectedLabel={selectedLabel}

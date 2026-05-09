@@ -29,6 +29,7 @@
 
 .filterTabs {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 0.85rem;
 }
 

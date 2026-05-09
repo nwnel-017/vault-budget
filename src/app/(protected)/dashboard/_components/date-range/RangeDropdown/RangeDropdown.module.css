@@ -22,17 +22,14 @@
 
 .select {
   width: 100%;
-  min-height: 2.95rem;
-  padding: 0.75rem 2.85rem 0.75rem 1rem;
+  min-height: 2.7rem;
+  padding: 0.6rem 2rem 0.6rem 0.75rem;
   border: 0.0625rem solid color-mix(in srgb, var(--foreground) 12%, transparent);
   border-radius: 0.9rem;
-  /* background-color: color-mix(in srgb, #cbd5e1 72%, white 28%); */
-  /* background: var(--theme-gray); */
   color: var(--text-color);
   font: inherit;
-  font-size: var(--supporting-font);
-  /* font-size: var(--small-font); */
-  font-weight: 700;
+  font-size: var(--meta-font);
+  font-weight: 600;
   line-height: 1.2;
   text-align: center;
   text-align-last: center;
@@ -50,8 +47,8 @@
       transparent 50%
     );
   background-position:
-    calc(100% - 1.35rem) calc(50% - 0.12rem),
-    calc(100% - 0.95rem) calc(50% - 0.12rem);
+    calc(100% - 0.95rem) calc(50% - 0.12rem),
+    calc(100% - 0.6rem) calc(50% - 0.12rem);
   background-size:
     0.45rem 0.45rem,
     0.45rem 0.45rem;
@@ -66,7 +63,14 @@
 @media (min-width: 768px) {
   .select {
     min-height: 2.75rem;
+    padding: 0.75rem 2.85rem 0.75rem 1rem;
     font-size: var(--supporting-font);
+    font-weight: 700;
+    text-align: center;
+    text-align-last: center;
+    background-position:
+      calc(100% - 1.35rem) calc(50% - 0.12rem),
+      calc(100% - 0.95rem) calc(50% - 0.12rem);
   }
 }
 

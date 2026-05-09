@@ -1,6 +1,4 @@
 .overlay {
-  width: 100dvw;
-  height: 100dvh;
   position: fixed;
   inset: 0;
   background: rgba(221, 219, 219, 0.5);
@@ -13,7 +11,7 @@
 
 .modal {
   /* Pop the dialog into place. */
-  width: min(48rem, 90dvw);
+  width: min(100%, 48rem);
   max-height: 80dvh;
   border-radius: 8px;
   background-color: white;
@@ -111,7 +109,7 @@
 
 @media (max-width: 640px) {
   .modal {
-    width: 90dvw;
+    width: 100%;
   }
 
   .header {
