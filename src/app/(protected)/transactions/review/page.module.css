@@ -237,7 +237,7 @@
 
 @media (min-width: 768px) {
   .pageLayout {
-    width: min(100%, 86rem);
+    width: min(100%, 76rem);
     padding: 2rem 2.25rem;
   }
 
@@ -253,7 +253,7 @@
     flex-wrap: wrap;
   }
 
-  .gridHeader,
+  /* .gridHeader,
   .gridRow {
     display: grid;
     grid-template-columns:
@@ -262,7 +262,7 @@
     gap: 1rem;
     align-items: center;
     padding: 1rem 1.8rem;
-  }
+  } */
 
   .gridHeader {
     display: grid;
@@ -289,6 +289,17 @@
 }
 
 @media (min-width: 1024px) {
+  .gridHeader,
+  .gridRow {
+    display: grid;
+    grid-template-columns:
+      minmax(8rem, 0.95fr) minmax(14rem, 1.7fr) minmax(9rem, 0.9fr)
+      minmax(10rem, 1fr) minmax(7rem, 0.7fr);
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 1.8rem;
+  }
+
   .gridTopBar {
     flex-direction: row;
     align-items: center;

@@ -14,7 +14,7 @@ export function AppLogo() {
       <path
         d="M0 100C0 44.7715 44.7715 0 100 0H700C755.228 0 800 44.7715 800 100V730C800 785.228 755.228 830 700 830H100C44.7715 830 0 785.228 0 730V100Z"
         fill="url(#paint0_linear_2_30)"
-        fill-opacity="0.2"
+        fillOpacity="0.2"
       />
       <path
         d="M54 153C54 97.7715 98.7715 53 154 53H645C700.228 53 745 97.7715 745 153V677C745 732.228 700.228 777 645 777H154C98.7715 777 54 732.228 54 677V153Z"
@@ -27,7 +27,7 @@ export function AppLogo() {
       <path
         d="M118 220C118 164.772 162.772 120 218 120H582C637.228 120 682 164.772 682 220V610C682 665.228 637.228 710 582 710H218C162.772 710 118 665.228 118 610V220Z"
         fill="url(#paint1_linear_2_30)"
-        fill-opacity="0.2"
+        fillOpacity="0.2"
       />
       <path
         d="M158 262C158 206.772 202.772 162 258 162H541C596.228 162 641 206.772 641 262V568C641 623.228 596.228 668 541 668H258C202.772 668 158 623.228 158 568V262Z"
@@ -56,8 +56,8 @@ export function AppLogo() {
           y2="153.893"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3860B8" />
-          <stop offset="1" stop-color="#8AADFB" />
+          <stop stopColor="#3860B8" />
+          <stop offset="1" stopColor="#8AADFB" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_2_30"
@@ -68,7 +68,7 @@ export function AppLogo() {
           gradientUnits="userSpaceOnUse"
         >
           <stop stop-color="#3860B8" />
-          <stop offset="1" stop-color="#8AADFB" />
+          <stop offset="1" stopColor="#8AADFB" />
         </linearGradient>
       </defs>
     </svg>

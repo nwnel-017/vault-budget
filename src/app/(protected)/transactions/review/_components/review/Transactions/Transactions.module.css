@@ -120,6 +120,7 @@
 
 @media (min-width: 48rem) {
   .section {
+    width: min(100%, 64rem);
     padding: 1.2rem;
   }
 
@@ -133,8 +134,8 @@
   .gridRow {
     display: grid;
     grid-template-columns:
-      minmax(8rem, 0.8fr) minmax(12rem, 1.45fr) minmax(9rem, 0.9fr)
-      minmax(10rem, 1fr);
+      minmax(7rem, 0.8fr) minmax(10rem, 1.25fr) minmax(8rem, 0.85fr)
+      minmax(8rem, 0.95fr);
     gap: 1rem;
     align-items: center;
   }
@@ -143,7 +144,7 @@
     padding: 0 1rem 0.75rem;
     border-bottom: 0.0625rem solid
       color-mix(in srgb, var(--foreground) 18%, transparent);
-  font-size: var(--meta-font);
+    font-size: var(--meta-font);
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;

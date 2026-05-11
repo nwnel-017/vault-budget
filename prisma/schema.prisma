@@ -172,6 +172,7 @@ model Transaction {
     updated_at          DateTime         @updatedAt
 
     @@index([user_id])
+    @@index([user_id, date_purchased])
     @@index([file_upload_id])
     @@index([category_id])
     @@index([transaction_rule_id])

@@ -17,7 +17,7 @@ export default async function FilesPage() {
       user_id: userId,
     },
     orderBy: {
-      created_at: "desc",
+      start_date: "desc",
     },
     select: {
       id: true,
