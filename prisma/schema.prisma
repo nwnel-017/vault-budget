@@ -268,3 +268,17 @@ model UserCancelReason {
   @@index([user_id])
   @@map("user_cancel_reason")
 }
+
+model SubscriptionPremiumCodes {
+  id                    String    @id @default(cuid())
+  code                  String    @unique
+  is_active             Boolean   @default(true)
+  expires_at            DateTime?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+
+  @@index([code])
+  @@index([is_active])
+  @@index([expires_at])
+  @@map("subscription_premium_codes")
+}

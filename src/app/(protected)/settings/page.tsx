@@ -42,14 +42,28 @@ export default async function Settings() {
     redirect("/login");
   }
 
-  const userPayPeriod = await db.userPayPeriod.findUnique({
-    where: {
-      user_id: userId,
-    },
-    select: {
-      pay_period_start_day: true,
-    },
-  });
+  const [user, userPayPeriod] = await Promise.all([
+    db.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        role: true,
+      },
+    }),
+    db.userPayPeriod.findUnique({
+      where: {
+        user_id: userId,
+      },
+      select: {
+        pay_period_start_day: true,
+      },
+    }),
+  ]);
+
+  if (!user) {
+    redirect("/login");
+  }
 
   return (
     <main className={styles.page}>
@@ -96,6 +110,21 @@ export default async function Settings() {
               Manage
             </Link>
           </div>
+
+          {user.role === "ADMIN" ? (
+            <div className={styles.sectionCard}>
+              <div className={styles.sectionContent}>
+                <h2 className={styles.sectionTitle}>Premium Codes</h2>
+                <p className={styles.sectionDescription}>
+                  Create and remove premium access codes for admin-managed
+                  promotions.
+                </p>
+              </div>
+              <Link className={styles.actionLink} href="/settings/admin/codes">
+                Manage
+              </Link>
+            </div>
+          ) : null}
         </div>
       </section>
     </main>

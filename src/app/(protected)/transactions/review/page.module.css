@@ -253,17 +253,6 @@
     flex-wrap: wrap;
   }
 
-  /* .gridHeader,
-  .gridRow {
-    display: grid;
-    grid-template-columns:
-      minmax(8rem, 0.95fr) minmax(14rem, 1.7fr) minmax(9rem, 0.9fr)
-      minmax(10rem, 1fr) minmax(7rem, 0.7fr);
-    gap: 1rem;
-    align-items: center;
-    padding: 1rem 1.8rem;
-  } */
-
   .gridHeader {
     display: grid;
   }

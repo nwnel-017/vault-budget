@@ -16,6 +16,11 @@ export type CancelMembershipState = {
   success: string | null;
 };
 
+export type RedeemPremiumCodeState = {
+  error: string | null;
+  success: string | null;
+};
+
 const MAX_FEEDBACK_LENGTH = 500;
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
@@ -126,6 +131,85 @@ export async function cancelPremiumMembership(
       success: null,
     };
   }
+}
+
+export async function redeemPremiumCode(
+  _currentState: RedeemPremiumCodeState,
+  formData: FormData,
+): Promise<RedeemPremiumCodeState> {
+  const sessionResult = await requireSession();
+  const userId = sessionResult.session?.user.id;
+
+  if (sessionResult.error || !userId) {
+    return {
+      error: "You must be logged in to redeem a premium access code.",
+      success: null,
+    };
+  }
+
+  const rawCode = formData.get("premiumCode");
+  const code = typeof rawCode === "string" ? rawCode.trim().toUpperCase() : "";
+
+  if (!code) {
+    return {
+      error: "Enter a premium access code.",
+      success: null,
+    };
+  }
+
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      accountTier: true,
+    },
+  });
+
+  if (!user) {
+    return {
+      error: "Unable to find your account.",
+      success: null,
+    };
+  }
+
+  if (user.accountTier === "PREMIUM") {
+    return {
+      error: "Your account already has premium access.",
+      success: null,
+    };
+  }
+
+  const premiumCode = await db.subscriptionPremiumCodes.findUnique({
+    where: {
+      code,
+    },
+    select: {
+      id: true,
+      is_active: true,
+    },
+  });
+
+  if (!premiumCode || !premiumCode.is_active) {
+    return {
+      error: "Invalid code.",
+      success: null,
+    };
+  }
+
+  await db.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      accountTier: "PREMIUM",
+    },
+  });
+
+  return {
+    error: null,
+    success: "Premium access has been applied to your account.",
+  };
 }
 
 export async function deleteAccount(

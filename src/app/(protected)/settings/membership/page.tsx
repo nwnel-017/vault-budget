@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import db from "@/lib/general/prisma";
 import { requireSession } from "@/lib/auth/auth-helpers";
 import Button from "@/app/components/ui/Button";
-import DeleteAccountSection from "../account/_components/DeleteAccountSection";
+import DeleteAccountSection from "../account/_components/delete-account/DeleteAccountSection/DeleteAccountSection";
 import CancelMembershipForm from "./_components/CancelMembershipForm";
+import RedeemPremiumCodeForm from "./_components/RedeemPremiumCodeForm";
 import styles from "./page.module.css";
 
 function getPlan(accountTier: "FREE" | "PREMIUM") {
@@ -75,8 +76,9 @@ export default async function MembershipPage() {
               >
                 Upgrade to Premium
               </Link>
+              <RedeemPremiumCodeForm />
               <p className={styles.note}>
-                Premium membership is billed monthly through Stripe.
+                Premium membership is billed monthly through Stripe.{" "}
                 <Link href="/settings/membership/info" className="text-link">
                   Click here to learn more about premium
                 </Link>
