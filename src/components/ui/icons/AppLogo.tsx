@@ -1,8 +1,8 @@
 export function AppLogo() {
   return (
     <svg
-      width="100px"
-      height="100px"
+      width="70px"
+      height="70px"
       viewBox="0 0 800 830"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -13,11 +13,11 @@ export function AppLogo() {
       />
       <path
         d="M0 100C0 44.7715 44.7715 0 100 0H700C755.228 0 800 44.7715 800 100V730C800 785.228 755.228 830 700 830H100C44.7715 830 0 785.228 0 730V100Z"
-        fill="url(#paint0_linear_2_30)"
-        fillOpacity="0.2"
+        fill="url(#paint0_linear_7_25)"
+        fill-opacity="0.2"
       />
       <path
-        d="M54 153C54 97.7715 98.7715 53 154 53H645C700.228 53 745 97.7715 745 153V677C745 732.228 700.228 777 645 777H154C98.7715 777 54 732.228 54 677V153Z"
+        d="M54 103C54 75.3858 76.3858 53 104 53H695C722.614 53 745 75.3858 745 103V727C745 754.614 722.614 777 695 777H104C76.3858 777 54 754.614 54 727V103Z"
         fill="white"
       />
       <path
@@ -26,30 +26,20 @@ export function AppLogo() {
       />
       <path
         d="M118 220C118 164.772 162.772 120 218 120H582C637.228 120 682 164.772 682 220V610C682 665.228 637.228 710 582 710H218C162.772 710 118 665.228 118 610V220Z"
-        fill="url(#paint1_linear_2_30)"
-        fillOpacity="0.2"
+        fill="url(#paint1_linear_7_25)"
+        fill-opacity="0.2"
       />
       <path
-        d="M158 262C158 206.772 202.772 162 258 162H541C596.228 162 641 206.772 641 262V568C641 623.228 596.228 668 541 668H258C202.772 668 158 623.228 158 568V262Z"
+        d="M158 212C158 184.386 180.386 162 208 162H591C618.614 162 641 184.386 641 212V618C641 645.614 618.614 668 591 668H208C180.386 668 158 645.614 158 618V212Z"
         fill="white"
       />
-      <path d="M223 236H576V594H223V236Z" fill="#3860B8" />
-      <path d="M482 236H317L400.5 468L482 236Z" fill="white" />
-      <path d="M575.5 593.5V236L437 593.5H575.5Z" fill="white" />
-      <path d="M223 593.5V236L361.5 593.5H223Z" fill="white" />
-      <path d="M641 296H682V533H641V296Z" fill="white" />
-      <path d="M688 351.5H675V468.5L688 476V351.5Z" fill="white" />
       <path
-        d="M703 311C703 333.644 684.42 352 661.5 352C638.58 352 620 333.644 620 311C620 288.356 638.58 270 661.5 270C684.42 270 703 288.356 703 311Z"
-        fill="#3860B8"
-      />
-      <path
-        d="M703 509C703 531.644 684.42 550 661.5 550C638.58 550 620 531.644 620 509C620 486.356 638.58 468 661.5 468C684.42 468 703 486.356 703 509Z"
+        d="M316.529 237.169L400.506 470.492L482.472 237.166L482.53 237H575.464L436.464 595H362.536L223.536 237H316.469L316.529 237.169Z"
         fill="#3860B8"
       />
       <defs>
         <linearGradient
-          id="paint0_linear_2_30"
+          id="paint0_linear_7_25"
           x1="645.692"
           y1="681.922"
           x2="154.898"
@@ -60,14 +50,14 @@ export function AppLogo() {
           <stop offset="1" stopColor="#8AADFB" />
         </linearGradient>
         <linearGradient
-          id="paint1_linear_2_30"
+          id="paint1_linear_7_25"
           x1="645.692"
           y1="681.922"
           x2="154.898"
           y2="153.893"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3860B8" />
+          <stop stopColor="#3860B8" />
           <stop offset="1" stopColor="#8AADFB" />
         </linearGradient>
       </defs>

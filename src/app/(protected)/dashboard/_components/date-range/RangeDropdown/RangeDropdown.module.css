@@ -2,6 +2,7 @@
   margin: 0 auto;
   /* display: block; */
   /* max-width: 70%; */
+  /* width: 50%; */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -22,6 +23,7 @@
 
 .select {
   width: 100%;
+  /* width: 50%; */
   min-height: 2.7rem;
   padding: 0.6rem 2rem 0.6rem 0.75rem;
   border: 0.0625rem solid color-mix(in srgb, var(--foreground) 12%, transparent);

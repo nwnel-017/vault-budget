@@ -78,6 +78,7 @@ export async function parseUploadedTransactionRows(
     Readable.from(fileBuffer)
       .pipe(
         csv({
+          maxRowBytes: MAX_CSV_ROW_BYTES,
           mapHeaders: ({ header }) => sanitizeHeader(header),
         }),
       )
