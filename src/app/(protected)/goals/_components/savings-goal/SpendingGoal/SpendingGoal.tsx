@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./SpendingGoal.module.css";
 import ChangeSpendingGoal from "../ChangeSpendingGoal/ChangeSpendingGoal";
 import TargetIcon from "@/components/ui/icons/TargetIcon";
@@ -11,12 +11,7 @@ export default function SpendingGoal({
   currentGoal?: string | null;
 }) {
   const [toggleChangeGoal, setToggleChangeGoal] = useState(false);
-  const [amount, setAmount] = useState(currentGoal ?? "");
-
-  // TO DO - fix unnecessary re-rendering when currentGoal changes
-  useEffect(() => {
-    setAmount(currentGoal ?? "");
-  }, [currentGoal]);
+  const amount = currentGoal ?? "";
 
   function closeChangeGoal() {
     setToggleChangeGoal(false);

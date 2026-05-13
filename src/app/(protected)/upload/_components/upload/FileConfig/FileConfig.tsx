@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./FileConfig.module.css";
 
 export default function FileConfig({
@@ -17,30 +17,25 @@ export default function FileConfig({
   }) => void;
 }) {
   const steps = [
-    { key: "merchantField", label: "transaction description" },
+    {
+      key: "merchantField",
+      label: "merchant / transaction description (ex: Walmart, Chevron, etc.)",
+    },
     { key: "amountField", label: "transaction amount" },
     { key: "dateField", label: "date of transaction" },
   ] as const;
 
   const [showOverview, setShowOverview] = useState(true);
   const [curStep, setCurStep] = useState(0);
-  const [availableHeaders, setAvailableHeaders] = useState<string[]>(headers);
   const [selectedColumns, setSelectedColumns] = useState({
     merchantField: "",
     amountField: "",
     dateField: "",
   });
 
-  useEffect(() => {
-    setShowOverview(true);
-    setCurStep(0);
-    setAvailableHeaders(headers);
-    setSelectedColumns({
-      merchantField: "",
-      amountField: "",
-      dateField: "",
-    });
-  }, [headers]);
+  const availableHeaders = headers.filter(
+    (header) => !Object.values(selectedColumns).includes(header),
+  );
 
   if (!active) {
     return null;
@@ -64,12 +59,9 @@ export default function FileConfig({
 
     setSelectedColumns(nextSelectedColumns);
 
-    setAvailableHeaders(availableHeaders.filter((h) => h !== header));
-
     if (curStep === steps.length - 1) {
       setShowOverview(true);
       setCurStep(0);
-      setAvailableHeaders(headers);
       setSelectedColumns({
         merchantField: "",
         amountField: "",

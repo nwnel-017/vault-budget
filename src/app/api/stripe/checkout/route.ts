@@ -5,7 +5,7 @@ import db from "@/lib/general/prisma";
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const premiumMembershipRate = process.env.STRIPE_MEMBERSHIP_PRICE_ID;
 
-function getBaseUrl(request: Request) {
+function getBaseUrl() {
   return process.env.NEXT_PUBLIC_APP_URL;
 }
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
   }
 
   const stripe = new Stripe(stripeSecretKey);
-  const baseUrl = getBaseUrl(request);
+  const baseUrl = getBaseUrl();
 
   if (!baseUrl) {
     return Response.json({ error: "App url was not found" }, { status: 500 });

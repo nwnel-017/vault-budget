@@ -6,14 +6,6 @@ import { logout } from "@/app/(auth)/actions";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { APP_NAME } from "@/lib/general/app-name";
-import HomeIcon from "./ui/icons/HomeIcon";
-import HelpIcon from "./ui/icons/HelpIcon";
-import CloudUploadIcon from "./ui/icons/CloudUploadIcon";
-import FileIcon from "./ui/icons/FileIcon";
-import ReviewIcon from "./ui/icons/ReviewIcon";
-import TagIcon from "./ui/icons/TagIcon";
-import TargetIcon from "./ui/icons/TargetIcon";
-import SettingsIcon from "./ui/icons/SettingsIcon";
 
 export default function NavBar() {
   const path = usePathname();

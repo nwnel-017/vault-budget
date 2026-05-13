@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./ChangeCategoryGoal.module.css";
 
 type ChangeCategoryGoalProps = {
@@ -23,11 +23,6 @@ export default function ChangeCategoryGoal({
   changeCategoryGoal,
 }: ChangeCategoryGoalProps) {
   const [amount, setAmount] = useState(currentGoal ?? "");
-
-  // TO DO - fix unnecessary re-render
-  useEffect(() => {
-    setAmount(currentGoal ?? "");
-  }, [currentGoal, active, categoryName]);
 
   if (!active) {
     return null;

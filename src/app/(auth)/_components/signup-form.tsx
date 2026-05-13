@@ -1,7 +1,6 @@
 "use client";
 
 import { signup } from "../actions";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Button from "@/app/components/ui/Button";
 import styles from "./AuthForm.module.css";
@@ -10,7 +9,6 @@ export default function SignupForm() {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   async function submit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();

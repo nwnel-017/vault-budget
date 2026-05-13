@@ -1,6 +1,4 @@
 "use client";
-
-import { useState } from "react";
 import { formatFunds } from "@/utils/funds";
 import styles from "./DashHeader.module.css";
 import ArrowDown from "@/app/components/ui/ArrowDown";
@@ -120,7 +118,7 @@ export default function DashHeader({
     },
   ];
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const activeIndex = 0;
   const shiftClasses = [
     styles.shift0,
     styles.shift1,

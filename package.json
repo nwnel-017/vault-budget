@@ -10,6 +10,7 @@
     "webhook": "stripe listen --forward-to http://localhost:3000/api/stripe/webhook"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "@stripe/stripe-js": "^9.2.0",
