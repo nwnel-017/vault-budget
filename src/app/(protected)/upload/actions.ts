@@ -5,6 +5,8 @@ import {
   getUploadUserData,
   saveUserColumnMappings,
 } from "@/lib/transactions/upload/upload-persistence";
+import { uploadRateLimit } from "../../../lib/redis/rate-limit";
+import { headers } from "next/headers";
 import {
   normalizeCsvHeaders,
   parseUploadedTransactionRows,
@@ -64,6 +66,18 @@ export async function normalizeFile(form: FormData) {
     return fileValidationErrorResult(sessionResult.error);
   }
 
+  if (!sessionResult.session?.user) {
+    return fileValidationErrorResult("No user in session");
+  }
+
+  const user = sessionResult.session?.user.id;
+
+  const { success } = await uploadRateLimit.limit(user);
+
+  if (!success) {
+    return fileValidationErrorResult("Too many uploads. Please wait a minute.");
+  }
+
   const fileResult = validateCsvFile(form);
 
   if (!fileResult || fileResult.error || !fileResult.file) {
@@ -79,7 +93,7 @@ export async function uploadInput(
   amountColumn: string,
   transactionDateColumn: string,
   fileName: string,
-) : Promise<UploadInputResult> {
+): Promise<UploadInputResult> {
   const sessionResult = await requireSession();
 
   if (sessionResult.error) {
@@ -90,6 +104,12 @@ export async function uploadInput(
 
   if (!userId) {
     return createUploadFailureResult("Missing user id in session");
+  }
+
+  const { success } = await uploadRateLimit.limit(userId);
+
+  if (!success) {
+    return createUploadFailureResult("Too many uploads. Please wait a minute.");
   }
 
   const fileResult = validateCsvFile(form);
