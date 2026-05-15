@@ -4,6 +4,8 @@ A full-stack personal finance application built to help users organize spending,
 
 This project is designed around a practical budgeting workflow: upload transaction data, review and categorize spending, monitor top spending categories, and set goals to stay on track.
 
+View my app at https://vault-budget.vercel.app
+
 ## Overview
 
 The Budgeting App gives users a structured way to manage transaction data and turn it into useful financial insights. Users can import CSV files, categorize transactions, and view a dashboard that summarizes spending activity across different time ranges. Over time, a built-in rule engine learns user behavior to auto-categorize future transactions. When complete, this app will provide a free-tier account and offer premium subscriptions.
