@@ -10,6 +10,7 @@ import {
   normalizeCsvHeaders,
   parseUploadedTransactionRows,
 } from "@/lib/transactions/upload/upload-parsing";
+import { cleanupTransactions } from "@/lib/transactions/review/transaction-rules";
 export type {
   IncomeSelectionTransaction,
   ParsedTransactionRow,
@@ -177,6 +178,8 @@ export async function uploadInput(
         sortedUserTransactionRules,
         user,
       );
+
+    await cleanupTransactions(userId, latestTransactionDate);
 
     const freeTierLimitReached = blockedByFreeTierLimit > 0;
 

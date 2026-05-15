@@ -99,10 +99,18 @@ export async function POST(request: Request) {
       },
     });
 
-    return Response.json({
-      sessionId: checkoutSession.id,
-      url: checkoutSession.url,
-    });
+    // disabling payout to safely host MVP
+    return Response.json(
+      {
+        error: "Payments are not setup yet. Premium membership is coming soon",
+      },
+      { status: 400 },
+    );
+
+    // return Response.json({
+    //   sessionId: checkoutSession.id,
+    //   url: checkoutSession.url,
+    // });
   } catch (error) {
     console.log("Failed to create checkout session: " + error);
     return Response.json(
