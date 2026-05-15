@@ -6,7 +6,6 @@ import {
   saveUserColumnMappings,
 } from "@/lib/transactions/upload/upload-persistence";
 import { uploadRateLimit } from "../../../lib/redis/rate-limit";
-import { headers } from "next/headers";
 import {
   normalizeCsvHeaders,
   parseUploadedTransactionRows,
@@ -89,9 +88,14 @@ export async function normalizeFile(form: FormData) {
 
 export async function uploadInput(
   form: FormData,
-  merchantTypeColumn: string,
-  amountColumn: string,
-  transactionDateColumn: string,
+  selectedColumnConfig: {
+    merchantTypeColumn: string;
+    amountMappingMode: "SINGLE" | "SPLIT";
+    amountColumn?: string | null;
+    positiveColumns?: string[];
+    negativeColumns?: string[];
+    transactionDateColumn: string;
+  },
   fileName: string,
 ): Promise<UploadInputResult> {
   const sessionResult = await requireSession();
@@ -118,11 +122,7 @@ export async function uploadInput(
     return createUploadFailureResult(fileResult?.error ?? "No file");
   }
 
-  const selectedColumns = sanitizeSelectedUploadColumns(
-    merchantTypeColumn,
-    amountColumn,
-    transactionDateColumn,
-  );
+  const selectedColumns = sanitizeSelectedUploadColumns(selectedColumnConfig);
   const normalizedFileName = normalizeUploadFileName(fileName ?? "");
 
   if (!hasValidSelectedUploadColumns(selectedColumns)) {

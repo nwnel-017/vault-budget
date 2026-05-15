@@ -1,5 +1,6 @@
 import "server-only";
 
+import { Prisma } from "@/app/generated/prisma/client";
 import db from "@/lib/general/prisma";
 import { matchTransactionCategory } from "@/lib/transactions/review/category-rules";
 import type {
@@ -22,14 +23,32 @@ export async function saveUserColumnMappings(
     },
     create: {
       user_id: userId,
-      amount: selectedColumns.amount,
       date_purchased: selectedColumns.transactionDate,
       merchant: selectedColumns.merchantType,
+      mode: selectedColumns.mode,
+      amount: selectedColumns.mode === "SINGLE" ? selectedColumns.amount : null,
+      positiveColumns:
+        selectedColumns.mode === "SPLIT"
+          ? selectedColumns.positiveColumns
+          : Prisma.DbNull,
+      negativeColumns:
+        selectedColumns.mode === "SPLIT"
+          ? selectedColumns.negativeColumns
+          : Prisma.DbNull,
     },
     update: {
-      amount: selectedColumns.amount,
       date_purchased: selectedColumns.transactionDate,
       merchant: selectedColumns.merchantType,
+      mode: selectedColumns.mode,
+      amount: selectedColumns.mode === "SINGLE" ? selectedColumns.amount : null,
+      positiveColumns:
+        selectedColumns.mode === "SPLIT"
+          ? selectedColumns.positiveColumns
+          : Prisma.DbNull,
+      negativeColumns:
+        selectedColumns.mode === "SPLIT"
+          ? selectedColumns.negativeColumns
+          : Prisma.DbNull,
     },
   });
 }

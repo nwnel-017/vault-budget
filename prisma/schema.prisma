@@ -22,6 +22,11 @@ enum AccountTier {
   PREMIUM
 }
 
+enum AmountMappingMode {
+  SINGLE
+  SPLIT
+}
+
 model User {
   id                String            @id
   name              String
@@ -97,10 +102,13 @@ model UserColumnMappings {
   user_id        String
   user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   merchant       String
-  amount         String
   date_purchased String
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
+  mode           AmountMappingMode    @default(SINGLE)
+  amount         String?
+  positiveColumns Json?
+  negativeColumns Json?
 
   @@unique([user_id])
   @@index([user_id])
