@@ -3,6 +3,7 @@ import "server-only";
 import { sanitizeHeader } from "@/utils/transactions";
 import type {
   SelectedUploadColumns,
+  AmountMappingMode,
   UploadInputResult,
 } from "@/types/upload-actions";
 
@@ -22,25 +23,61 @@ export function normalizeUploadFileName(fileName: string) {
   return normalizedFileName.slice(0, MAX_UPLOAD_FILE_NAME_LENGTH);
 }
 
-export function sanitizeSelectedUploadColumns(
-  merchantTypeColumn: string,
-  amountColumn: string,
-  transactionDateColumn: string,
-): SelectedUploadColumns {
+function sanitizeHeaderList(columns: string[]) {
+  return columns
+    .map((column) => sanitizeHeader(column))
+    .filter(Boolean);
+}
+
+export function sanitizeSelectedUploadColumns(input: {
+  merchantTypeColumn: string;
+  amountMappingMode: AmountMappingMode;
+  amountColumn?: string | null;
+  positiveColumns?: string[];
+  negativeColumns?: string[];
+  transactionDateColumn: string;
+}): SelectedUploadColumns {
+  const merchantType = sanitizeHeader(input.merchantTypeColumn);
+  const transactionDate = sanitizeHeader(input.transactionDateColumn);
+
+  if (input.amountMappingMode === "SINGLE") {
+    return {
+      mode: "SINGLE",
+      merchantType,
+      amount: sanitizeHeader(input.amountColumn ?? ""),
+      positiveColumns: [],
+      negativeColumns: [],
+      transactionDate,
+    };
+  }
+
   return {
-    merchantType: sanitizeHeader(merchantTypeColumn),
-    amount: sanitizeHeader(amountColumn),
-    transactionDate: sanitizeHeader(transactionDateColumn),
+    mode: "SPLIT",
+    merchantType,
+    amount: null,
+    positiveColumns: sanitizeHeaderList(input.positiveColumns ?? []),
+    negativeColumns: sanitizeHeaderList(input.negativeColumns ?? []),
+    transactionDate,
   };
 }
 
 export function hasValidSelectedUploadColumns(
   selectedColumns: SelectedUploadColumns,
 ) {
+  if (
+    !selectedColumns.merchantType ||
+    !selectedColumns.transactionDate
+  ) {
+    return false;
+  }
+
+  if (selectedColumns.mode === "SINGLE") {
+    return Boolean(selectedColumns.amount);
+  }
+
   return Boolean(
-    selectedColumns.merchantType &&
-      selectedColumns.amount &&
-      selectedColumns.transactionDate,
+    selectedColumns.positiveColumns.length > 0 &&
+      selectedColumns.negativeColumns.length > 0,
   );
 }
 

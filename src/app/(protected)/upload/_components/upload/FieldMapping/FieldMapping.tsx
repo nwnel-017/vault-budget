@@ -20,8 +20,15 @@ export default function FieldMapping({
 
   const fieldRows = [
     {
+      field: "Amount mode",
+      column: fieldMap.mode === "SPLIT" ? "Split columns" : "Single column",
+    },
+    {
       field: "Amount",
-      column: fieldMap.amount,
+      column:
+        fieldMap.mode === "SPLIT"
+          ? `Incoming: ${fieldMap.positiveColumns.join(", ") || "No saved columns"} | Outgoing: ${fieldMap.negativeColumns.join(", ") || "No saved columns"}`
+          : (fieldMap.amount ?? "No saved column"),
     },
     {
       field: "Date purchased",

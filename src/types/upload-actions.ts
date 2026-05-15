@@ -1,8 +1,26 @@
-export type SelectedUploadColumns = {
+export type AmountMappingMode = "SINGLE" | "SPLIT";
+
+export type SingleAmountSelectedUploadColumns = {
   merchantType: string;
-  amount: string;
   transactionDate: string;
+  mode: "SINGLE";
+  amount: string;
+  positiveColumns: [];
+  negativeColumns: [];
 };
+
+export type SplitAmountSelectedUploadColumns = {
+  merchantType: string;
+  transactionDate: string;
+  mode: "SPLIT";
+  amount: null;
+  positiveColumns: string[];
+  negativeColumns: string[];
+};
+
+export type SelectedUploadColumns =
+  | SingleAmountSelectedUploadColumns
+  | SplitAmountSelectedUploadColumns;
 
 export type ParsedTransactionRow = {
   merchantType: string;

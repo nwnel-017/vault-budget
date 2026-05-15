@@ -6,7 +6,7 @@ import { useFormStatus } from "react-dom";
 import { useState } from "react";
 import { APP_NAME } from "@/lib/general/app-name";
 import { toastError, toastSuccess } from "@/lib/general/toast";
-import FileConfig from "../FileConfig/FileConfig";
+import FileConfig, { type UploadColumnSelection } from "../FileConfig/FileConfig";
 import FieldMapping from "../FieldMapping/FieldMapping";
 import { FileUploadIcon } from "@/components/ui/icons/FileUpload";
 import type { FieldMap } from "@/types/upload";
@@ -91,11 +91,9 @@ export default function FileUpload({
     }
   }
 
-  async function handleFileConfigComplete(selectedColumns: {
-    merchantField: string;
-    amountField: string;
-    dateField: string;
-  }) {
+  async function handleFileConfigComplete(
+    selectedColumns: UploadColumnSelection,
+  ) {
     if (!file) {
       toastError(FILE_REQUIRED_ERROR_MESSAGE);
       return;
@@ -111,9 +109,14 @@ export default function FileUpload({
 
     const res = await uploadInput(
       form,
-      selectedColumns.merchantField,
-      selectedColumns.amountField,
-      selectedColumns.dateField,
+      {
+        merchantTypeColumn: selectedColumns.merchantField,
+        amountMappingMode: selectedColumns.amountMappingMode,
+        amountColumn: selectedColumns.amountField,
+        positiveColumns: selectedColumns.positiveAmountFields,
+        negativeColumns: selectedColumns.negativeAmountFields,
+        transactionDateColumn: selectedColumns.dateField,
+      },
       file.name,
     );
 
@@ -162,9 +165,14 @@ export default function FileUpload({
 
     const res = await uploadInput(
       form,
-      fieldMap.merchant,
-      fieldMap.amount,
-      fieldMap.date_purchased,
+      {
+        merchantTypeColumn: fieldMap.merchant,
+        amountMappingMode: fieldMap.mode,
+        amountColumn: fieldMap.amount,
+        positiveColumns: fieldMap.positiveColumns,
+        negativeColumns: fieldMap.negativeColumns,
+        transactionDateColumn: fieldMap.date_purchased,
+      },
       file.name,
     );
 
@@ -210,7 +218,10 @@ export default function FileUpload({
         active={showFieldMapping}
         fieldMap={
           fieldMap ?? {
+            mode: "SINGLE",
             amount: "",
+            positiveColumns: [],
+            negativeColumns: [],
             date_purchased: "",
             merchant: "",
           }
