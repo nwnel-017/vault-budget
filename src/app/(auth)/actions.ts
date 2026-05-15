@@ -47,7 +47,7 @@ export async function login(email: string, password: string) {
       return {
         success: false,
         message:
-          "Please verify your email address. A new verification link was sent.",
+          "Email verification is temporarily disabled. Please try logging in again.",
       };
     }
 
@@ -88,8 +88,7 @@ export async function signup(
 
     return {
       success: true,
-      message:
-        "Signup successful! Check your email to verify your account before logging in.",
+      message: "Signup successful! You can now log in.",
     };
   } catch (error) {
     console.error("Signup error:", error);
