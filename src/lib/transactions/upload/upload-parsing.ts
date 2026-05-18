@@ -12,7 +12,9 @@ import { sanitizeHeader } from "@/utils/transactions";
 
 const MAX_CSV_ROW_BYTES = 64 * 1024;
 
-export async function normalizeCsvHeaders(file: File): Promise<NormalizeFileResult> {
+export async function normalizeCsvHeaders(
+  file: File,
+): Promise<NormalizeFileResult> {
   try {
     const fileBuffer = Buffer.from(await file.arrayBuffer());
     const source = Readable.from(fileBuffer);
@@ -29,7 +31,8 @@ export async function normalizeCsvHeaders(file: File): Promise<NormalizeFileResu
         }
 
         headersResolved = true;
-        resolve(headers.map((header) => header.replace(/^\uFEFF/, "").trim()));
+        // resolve(headers.map((header) => header.replace(/^\uFEFF/, "").trim()));
+        resolve(headers.map((header) => header.trim()));
 
         source.destroy();
         parser.destroy();

@@ -1,5 +1,6 @@
 "use client";
 
+import CsvPreviewGrid from "./CsvPreviewGrid";
 import styles from "../FileConfig.module.css";
 
 export default function OverviewStep({
@@ -19,6 +20,7 @@ export default function OverviewStep({
           {text}
         </p>
       ))}
+      <CsvPreviewGrid />
       <button
         type="button"
         className={styles.continueButton}
