@@ -1,0 +1,90 @@
+.preview {
+  margin-top: auto;
+  border: 0.0625rem solid #d1d5db;
+  border-radius: 0.75rem;
+  background:
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  overflow: hidden;
+}
+
+.headerRow,
+.bodyRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.headerCell,
+.bodyCell {
+  min-height: 3rem;
+  border-right: 0.0625rem solid #e5e7eb;
+  border-bottom: 0.0625rem solid #e5e7eb;
+}
+
+.headerCell:last-child,
+.bodyCell:last-child {
+  border-right: none;
+}
+
+.bodyRow:last-child .bodyCell {
+  border-bottom: none;
+}
+
+.headerCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0.5rem;
+  background:
+    linear-gradient(180deg, #bbf7d0 0%, #86efac 100%);
+}
+
+.headerLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #166534;
+  text-shadow: 0 0.0625rem 0.125rem rgba(240, 253, 244, 0.45);
+  animation: headerPulse 1.8s ease-in-out infinite;
+}
+
+.bodyCell {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.98) 100%);
+}
+
+.headerCell:nth-child(2) .headerLabel {
+  animation-delay: 0.15s;
+}
+
+.headerCell:nth-child(3) .headerLabel {
+  animation-delay: 0.3s;
+}
+
+.headerCell:nth-child(4) .headerLabel {
+  animation-delay: 0.45s;
+}
+
+@keyframes headerPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@media (min-width: 768px) {
+  .headerCell,
+  .bodyCell {
+    min-height: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headerLabel {
+    animation: none;
+  }
+}

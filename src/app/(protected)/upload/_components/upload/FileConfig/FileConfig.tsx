@@ -55,8 +55,7 @@ const STEP_TITLES: Record<Step, string> = {
 
 const STEP_DESCRIPTIONS: Partial<Record<Step, string[]>> = {
   overview: [
-    "Look at the spreadsheet you uploaded and find the columns that match the transaction description, amount information, and effective date.",
-    "First, check whether your file stores transaction amounts in one column or splits them across multiple columns.",
+    "Open spreadsheet you uploaded and find the columns that match the transaction description, amount information, and effective date.",
     `${process.env.NEXT_PUBLIC_APP_NAME} will remember your choices for next time, so if your spreadsheet has the same format in the future, you can skip this step.`,
   ],
   mode: [
