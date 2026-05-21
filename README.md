@@ -11,6 +11,7 @@ View my app at https://vault-budget.vercel.app
 - UX improvements to simplify usage
 - Layout and UI updates
 - Smarter auto categorization and edge case handling
+- Refactoring and testing
 
 ## Overview
 
