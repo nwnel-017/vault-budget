@@ -62,7 +62,7 @@ export default function SignupForm() {
         type="password"
         required
       />
-      <Button fullWidth type="submit">
+      <Button disabled={isLoading} fullWidth type="submit">
         {isLoading ? "Signing up..." : "Signup"}
       </Button>
       {error ? <p className={styles.error}>{error}</p> : null}

@@ -1,22 +1,34 @@
+import type { CSSProperties } from "react";
 import styles from "./CsvPreviewGrid.module.css";
 
-const COLUMN_HEADERS = ["column1", "column2", "column3", "column4"];
 const PREVIEW_ROWS = 4;
 
-export default function CsvPreviewGrid() {
+export default function CsvPreviewGrid({
+  columns,
+  previewRows = PREVIEW_ROWS,
+}: {
+  columns: string[];
+  previewRows?: number;
+}) {
+  const columnCount = Math.max(columns.length, 1);
+
   return (
-    <div className={styles.preview} aria-hidden="true">
+    <div
+      className={styles.preview}
+      style={{ "--preview-column-count": columnCount } as CSSProperties}
+      aria-hidden="true"
+    >
       <div className={styles.headerRow}>
-        {COLUMN_HEADERS.map((header) => (
+        {columns.map((header) => (
           <div key={header} className={styles.headerCell}>
             <span className={styles.headerLabel}>{header}</span>
           </div>
         ))}
       </div>
 
-      {Array.from({ length: PREVIEW_ROWS }, (_, rowIndex) => (
+      {Array.from({ length: previewRows }, (_, rowIndex) => (
         <div key={rowIndex} className={styles.bodyRow}>
-          {COLUMN_HEADERS.map((header) => (
+          {columns.map((header) => (
             <div key={`${header}-${rowIndex}`} className={styles.bodyCell} />
           ))}
         </div>

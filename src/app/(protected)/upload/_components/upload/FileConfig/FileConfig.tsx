@@ -45,17 +45,20 @@ const INITIAL_SELECTED_COLUMNS: SelectedColumnsState = {
 const STEP_TITLES: Record<Step, string> = {
   overview: "Before you upload",
   mode: "Are your transaction amounts split across multiple columns?",
-  merchant: "Please find the column for: merchant / transaction description",
-  amount: "Please find the column for: transaction amount",
-  positive: "Select the columns for incoming amounts such as deposits",
+  merchant:
+    "Please select which column in your spreadsheet is for: merchant / transaction description",
+  amount:
+    "Please select which column in your spreadsheet is for: transaction amount",
+  positive:
+    "Please select which columns in your spreadsheet are for incoming amounts such as deposits",
   negative:
-    "Select the columns for outgoing amounts such as withdrawals, credits, or debits",
+    "Please select which columns in your spreadsheet are for outgoing amounts such as withdrawals, credits, or debits",
   date: "Please choose a column for: date of transaction",
 };
 
 const STEP_DESCRIPTIONS: Partial<Record<Step, string[]>> = {
   overview: [
-    "Open spreadsheet you uploaded and find the columns that match the transaction description, amount information, and effective date.",
+    "Open the spreadsheet you uploaded and find the columns that match the transaction description, amount information, and effective date.",
     `${process.env.NEXT_PUBLIC_APP_NAME} will remember your choices for next time, so if your spreadsheet has the same format in the future, you can skip this step.`,
   ],
   mode: [

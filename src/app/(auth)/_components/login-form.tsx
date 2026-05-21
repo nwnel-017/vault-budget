@@ -46,7 +46,7 @@ export default function LoginForm() {
         type="password"
         required
       />
-      <Button fullWidth type="submit">
+      <Button disabled={isLoading} fullWidth type="submit">
         {isLoading ? "Logging in..." : "Login"}
       </Button>
       {error ? <p className={styles.error}>{error}</p> : null}
