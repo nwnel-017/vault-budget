@@ -186,12 +186,6 @@ a {
   gap: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
-
 @media (min-width: 768px) {
   :root {
     --body-font: 1rem;
