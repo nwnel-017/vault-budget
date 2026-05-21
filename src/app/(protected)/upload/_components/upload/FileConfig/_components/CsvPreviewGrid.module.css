@@ -1,16 +1,16 @@
 .preview {
   margin-top: auto;
+  max-height: 9rem;
   border: 0.0625rem solid #d1d5db;
   border-radius: 0.75rem;
-  background:
-    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
   overflow: hidden;
 }
 
 .headerRow,
 .bodyRow {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--preview-column-count), minmax(8rem, 1fr));
 }
 
 .headerCell,
@@ -34,8 +34,7 @@
   align-items: center;
   justify-content: center;
   padding: 0.75rem 0.5rem;
-  background:
-    linear-gradient(180deg, #bbf7d0 0%, #86efac 100%);
+  background: linear-gradient(180deg, #bbf7d0 0%, #86efac 100%);
 }
 
 .headerLabel {
@@ -47,8 +46,11 @@
 }
 
 .bodyCell {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.98) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(248, 250, 252, 0.98) 100%
+  );
 }
 
 .headerCell:nth-child(2) .headerLabel {
@@ -80,6 +82,10 @@
   .headerCell,
   .bodyCell {
     min-height: 3.5rem;
+  }
+
+  .preview {
+    max-height: none;
   }
 }
 

@@ -20,7 +20,7 @@ export default function OverviewStep({
           {text}
         </p>
       ))}
-      <CsvPreviewGrid />
+      <CsvPreviewGrid columns={["column1", "column2", "column3"]} />
       <button
         type="button"
         className={styles.continueButton}

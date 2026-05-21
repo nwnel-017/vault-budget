@@ -6,6 +6,12 @@ This project is designed around a practical budgeting workflow: upload transacti
 
 View my app at https://vault-budget.vercel.app
 
+**Note:** This app is still a work in progress. Right now it is being tested by users and being modified according to feedback. Even through the features are implemented, the following adjustments will still be made:
+
+- UX improvements to simplify usage
+- Layout and UI updates
+- Smarter auto categorization and edge case handling
+
 ## Overview
 
 The Budgeting App gives users a structured way to manage transaction data and turn it into useful financial insights. Users can import CSV files, categorize transactions, and view a dashboard that summarizes spending activity across different time ranges. Over time, a built-in rule engine learns user behavior to auto-categorize future transactions. When complete, this app will provide a free-tier account and offer premium subscriptions.

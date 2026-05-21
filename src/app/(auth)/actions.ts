@@ -92,6 +92,15 @@ export async function signup(
     };
   } catch (error) {
     console.error("Signup error:", error);
+
+    if (getAuthErrorCode(error) === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
+      return {
+        success: false,
+        message:
+          "Signup failed. Please try again, or log in if you already have an account.",
+      };
+    }
+
     return { success: false, message: "Signup failed. Please try again." };
   }
 }
