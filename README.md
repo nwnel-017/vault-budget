@@ -36,6 +36,10 @@ The Budgeting App gives users a structured way to manage transaction data and tu
 - PostgreSQL
 - Prisma ORM
 
+## Deployment
+
+- Deployed on Vercel and Neon
+
 ## Current Budgeting Workflow
 
 1. A user signs up or logs in
