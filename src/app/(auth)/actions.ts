@@ -88,7 +88,8 @@ export async function signup(
 
     return {
       success: true,
-      message: "Signup successful! You can now log in.",
+      message:
+        "Signup successful! Please check your email to verify your account.",
     };
   } catch (error) {
     console.error("Signup error:", error);
