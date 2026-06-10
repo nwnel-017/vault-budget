@@ -32,6 +32,8 @@ export async function sendVerificationEmail({
     }),
   });
 
+  console.log(`Sent verification email. Status: ${response.status}`);
+
   if (!response.ok) {
     const errorBody = await response.text();
     throw new Error(
