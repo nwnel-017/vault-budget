@@ -13,6 +13,7 @@ export default function NavBar() {
 
   const navItems = [
     { href: "/dashboard", label: "Home" },
+    { href: "/insights", label: "Savings Insights" },
     { href: "/tutorial", label: "Help" },
     { href: "/upload", label: "Add a Spreadsheet" },
     { href: "/files", label: "Manage My Spreadsheets" },
