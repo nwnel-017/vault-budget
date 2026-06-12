@@ -108,12 +108,14 @@ function SkeletonLine({ className }: { className: string }) {
 export default function LoadingSkeleton() {
   return (
     <div
-      className={`flex-col gap col-center max-width ${styles.shell}`}
+      className={styles.shell}
       aria-label="Loading dashboard"
       aria-live="polite"
     >
-      <div className={styles.headingBlock}>
-        <div className={styles.rangeCard} />
+      <div className={styles.contentColumn}>
+        <div className={styles.headingBlock}>
+          <div className={styles.rangeCard} />
+        </div>
       </div>
 
       <div className={styles.cards}>
@@ -140,24 +142,26 @@ export default function LoadingSkeleton() {
         </article>
       </div>
 
-      <section className={styles.section}>
-        <div className={styles.sectionTitle} />
-        <div className={styles.tableHeader}>
-          <SkeletonLine className={styles.rowTitle} />
-          <SkeletonLine className={styles.rowAmount} />
-        </div>
-        <div className={styles.tableBody}>
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div className={styles.tableRow} key={index}>
-              <div className={styles.rowMeta}>
-                <SkeletonLine className={styles.rowTitle} />
-                <SkeletonLine className={styles.rowSubtitle} />
+      <div className={styles.contentColumn}>
+        <section className={styles.section}>
+          <div className={styles.sectionTitle} />
+          <div className={styles.tableHeader}>
+            <SkeletonLine className={styles.rowTitle} />
+            <SkeletonLine className={styles.rowAmount} />
+          </div>
+          <div className={styles.tableBody}>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div className={styles.tableRow} key={index}>
+                <div className={styles.rowMeta}>
+                  <SkeletonLine className={styles.rowTitle} />
+                  <SkeletonLine className={styles.rowSubtitle} />
+                </div>
+                <SkeletonLine className={styles.rowAmount} />
               </div>
-              <SkeletonLine className={styles.rowAmount} />
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      </div>
 
       <div className={styles.shimmer} aria-hidden="true">
         <Lottie animationData={shimmerAnimation} loop autoplay />

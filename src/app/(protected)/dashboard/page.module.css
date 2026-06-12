@@ -1,3 +1,16 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.contentColumn {
+  width: 90dvw;
+  margin: 0 auto;
+}
+
 .headingBlock {
   display: flex;
   flex-direction: column;
@@ -9,4 +22,16 @@
   margin: 0;
   font-size: var(--section-title-font);
   line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .contentColumn {
+    width: 60dvw;
+  }
+}
+
+@media (min-width: 1024px) {
+  .contentColumn {
+    width: 60dvw;
+  }
 }
