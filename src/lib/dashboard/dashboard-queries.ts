@@ -27,6 +27,20 @@ export function getLatestTransaction(userId: string) {
   });
 }
 
+export function getUserTransactionDateRange(userId: string) {
+  return db.transaction.aggregate({
+    where: {
+      user_id: userId,
+    },
+    _min: {
+      date_purchased: true,
+    },
+    _max: {
+      date_purchased: true,
+    },
+  });
+}
+
 export function getDashboardTransactions(
   userId: string,
   startDate: Date,

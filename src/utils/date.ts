@@ -49,6 +49,100 @@ export function parseDateInputValue(value: string | undefined) {
   return parsedDate;
 }
 
+export function formatMonthInputValue(date: Date) {
+  if (!isValidDate(date)) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+
+  return `${year}-${month}`;
+}
+
+export function getMonthStart(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+
+  if (!isValidDate(monthStart)) {
+    return null;
+  }
+
+  return monthStart;
+}
+
+export function getMonthEnd(date: Date) {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  if (!isValidDate(monthEnd)) {
+    return null;
+  }
+
+  return monthEnd;
+}
+
+export function parseMonthInputValue(value: string | null) {
+  if (!value || !/^\d{4}-\d{2}$/.test(value)) {
+    return null;
+  }
+
+  const [yearValue, monthValue] = value.split("-");
+  const year = Number(yearValue);
+  const month = Number(monthValue);
+
+  if (
+    Number.isNaN(year) ||
+    Number.isNaN(month) ||
+    month < 1 ||
+    month > 12
+  ) {
+    return null;
+  }
+
+  const monthStart = new Date(year, month - 1, 1);
+  const monthEnd = new Date(year, month, 0);
+
+  if (!isValidDate(monthStart) || !isValidDate(monthEnd)) {
+    return null;
+  }
+
+  return {
+    monthStart,
+    monthEnd,
+  };
+}
+
+export function getDefaultInsightsDateRange(latestTransactionDate: Date) {
+  const endDate = getMonthEnd(latestTransactionDate);
+
+  if (!endDate) {
+    return { startDate: null, endDate: null };
+  }
+
+  const startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 11, 1);
+
+  if (!isValidDate(startDate)) {
+    return { startDate: null, endDate: null };
+  }
+
+  return { startDate, endDate };
+}
+
+export function isDateWithinRange(date: Date, minDate: Date, maxDate: Date) {
+  if (!isValidDate(date) || !isValidDate(minDate) || !isValidDate(maxDate)) {
+    return false;
+  }
+
+  return date >= minDate && date <= maxDate;
+}
+
 export function getDate(value: string) {
   try {
     const parsedDate = new Date(value);

@@ -1,0 +1,79 @@
+.page {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.panel {
+  width: 90dvw;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background-color: var(--background);
+  box-shadow:
+    0 0.2rem 0.5rem color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 1rem 1.8rem -0.2rem color-mix(in srgb, var(--foreground) 18%, transparent);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--title-font);
+}
+
+.description {
+  margin: 0;
+  max-width: 36ch;
+  font-size: var(--supporting-font);
+  font-weight: 500;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--foreground) 82%, transparent);
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.controls {
+  width: 100%;
+}
+
+.label {
+  font-size: var(--supporting-font);
+  color: color-mix(in srgb, var(--foreground) 82%, transparent);
+}
+
+.amount {
+  font-size: var(--hero-title-font);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--meta-font);
+  color: var(--error);
+}
+
+@media (min-width: 768px) {
+  .panel {
+    width: 60dvw;
+    padding: 1.5rem;
+  }
+
+  .description {
+    font-size: var(--body-font);
+    max-width: 44ch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .panel {
+    width: 60dvw;
+  }
+}

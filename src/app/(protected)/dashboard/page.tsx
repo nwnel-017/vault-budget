@@ -8,6 +8,7 @@ import {
   getDashboardViewData,
   resolveDashboardDateRange,
 } from "@/lib/dashboard/dashboard-service";
+import { getSearchParamValue } from "@/utils/search-params";
 import { setUserPayPeriodBegin } from "../upload/actions";
 import TopCategories from "./_components/categories/TopCategories/TopCategories";
 import RangeSelector from "./_components/date-range/RangeSelector/RangeSelector";
@@ -16,10 +17,6 @@ import WelcomePanel from "./_components/setup/WelcomePanel/WelcomePanel";
 import DashHeader from "./_components/summary/DashHeader/DashHeader";
 import LoadingSkeleton from "./_components/LoadingSkeleton";
 import styles from "./page.module.css";
-
-function getSearchParamValue(value: string | string[] | undefined) {
-  return typeof value === "string" ? value : null;
-}
 
 type DashboardSearchParams = {
   [key: string]: string | string[] | undefined;

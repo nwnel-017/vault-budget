@@ -54,9 +54,9 @@
 }
 
 .submitCategoryButton {
-  border: 1px solid #1f1f1f;
+  border: none;
   border-radius: 8px;
-  background-color: #1f1f1f;
+  background-color: var(--accent);
   color: #ffffff;
   padding: 0.7rem 1rem;
   font: inherit;
@@ -110,14 +110,11 @@
 }
 
 .addCategoryButton {
-  /* border: 1px solid #1f1f1f; */
-  /* border-radius: 999px; */
   border-radius: 8px;
   border: none;
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  /* background-color: var(--background); */
   background-color: var(--accent);
   color: var(--background);
   padding: 0.55rem 0.95rem;
@@ -173,7 +170,7 @@
 
 .closeButton,
 .deleteCategoryButton {
-  border: 1px solid #1f1f1f;
+  /* border: 1px solid #1f1f1f; */
   border-radius: 8px;
   padding: 0.7rem 1rem;
   font: inherit;
@@ -185,7 +182,9 @@
 }
 
 .deleteCategoryButton {
-  background-color: #1f1f1f;
+  /* background-color: #1f1f1f; */
+  border: none;
+  background-color: var(--accent);
   color: #ffffff;
 }
 
