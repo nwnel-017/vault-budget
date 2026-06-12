@@ -2,10 +2,15 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.contentColumn {
   width: 90dvw;
   margin: 0 auto;
-  overflow: hidden;
 }
 
 .headingBlock {
@@ -17,7 +22,7 @@
 
 .rangeCard {
   position: relative;
-  width: 60%;
+  width: min(100%, 22rem);
   min-height: 3.5rem;
   margin: 0 auto;
   border-radius: 0.9rem;
@@ -170,7 +175,7 @@
 }
 
 @media (min-width: 768px) {
-  .shell {
+  .contentColumn {
     width: 60dvw;
   }
 
@@ -180,7 +185,7 @@
 }
 
 @media (min-width: 1024px) {
-  .shell {
+  .contentColumn {
     width: 60dvw;
   }
 

@@ -92,17 +92,19 @@ async function DashboardContent({
   } = dashboardViewData;
 
   return (
-    <div className="flex-col gap col-center max-width">
+    <div className={styles.pageContainer}>
       {!userPayPeriod?.pay_period_start_day ? (
         <PayPeriodConfig onSelectPayPeriod={setUserPayPeriodBegin} />
       ) : null}
-      <div className={styles.headingBlock}>
-        <RangeSelector
-          startDate={startDate}
-          endDate={endDate}
-          selectedLabel={selectedLabel}
-          dateRanges={dateRanges}
-        />
+      <div className={styles.contentColumn}>
+        <div className={styles.headingBlock}>
+          <RangeSelector
+            startDate={startDate}
+            endDate={endDate}
+            selectedLabel={selectedLabel}
+            dateRanges={dateRanges}
+          />
+        </div>
       </div>
       <DashHeader
         totalSpent={totalSpent}
@@ -111,7 +113,9 @@ async function DashboardContent({
         savingsGoal={savingsGoalAmount ?? null}
         savedHistory={savedHistory}
       />
-      <TopCategories categories={topCategories} />
+      <div className={styles.contentColumn}>
+        <TopCategories categories={topCategories} />
+      </div>
     </div>
   );
 }
