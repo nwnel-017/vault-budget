@@ -1,8 +1,8 @@
 export const categories = [
-  { name: "Groceries", amount: "$420", goal: "$500 goal", progress: 84 },
-  { name: "Housing", amount: "$1,250", goal: "Monthly total", progress: 100 },
-  { name: "Transport", amount: "$185", goal: "$250 goal", progress: 74 },
-  { name: "Dining", amount: "$210", goal: "$300 goal", progress: 70 },
+  { name: "Groceries", amount: "$420.00", goal: "$500 goal", goalStatus: "+$80.00 until you reach your goal", progress: 84 },
+  { name: "Housing", amount: "$1,250.00", goal: "Monthly total", goalStatus: null, progress: 100 },
+  { name: "Transport", amount: "$185.00", goal: "$250 goal", goalStatus: "+$65.00 until you reach your goal", progress: 74 },
+  { name: "Dining", amount: "$210.00", goal: "$300 goal", goalStatus: "+$90.00 until you reach your goal", progress: 70 },
 ] as const;
 
 export const transactions = [
