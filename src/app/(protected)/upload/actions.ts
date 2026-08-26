@@ -5,7 +5,7 @@ import {
   getUploadUserData,
   saveUserColumnMappings,
 } from "@/lib/transactions/upload/upload-persistence";
-import { uploadRateLimit } from "../../../lib/redis/rate-limit";
+// import { uploadRateLimit } from "../../../lib/redis/rate-limit";
 import {
   normalizeCsvHeaders,
   parseUploadedTransactionRows,
@@ -70,13 +70,13 @@ export async function normalizeFile(form: FormData) {
     return fileValidationErrorResult("No user in session");
   }
 
-  const user = sessionResult.session?.user.id;
+  // const user = sessionResult.session?.user.id;
 
-  const { success } = await uploadRateLimit.limit(user);
-
-  if (!success) {
-    return fileValidationErrorResult("Too many uploads. Please wait a minute.");
-  }
+  // const { success } = await uploadRateLimit.limit(user);
+  //
+  // if (!success) {
+  //   return fileValidationErrorResult("Too many uploads. Please wait a minute.");
+  // }
 
   const fileResult = validateCsvFile(form);
 
@@ -111,11 +111,11 @@ export async function uploadInput(
     return createUploadFailureResult("Missing user id in session");
   }
 
-  const { success } = await uploadRateLimit.limit(userId);
-
-  if (!success) {
-    return createUploadFailureResult("Too many uploads. Please wait a minute.");
-  }
+  // const { success } = await uploadRateLimit.limit(userId);
+  //
+  // if (!success) {
+  //   return createUploadFailureResult("Too many uploads. Please wait a minute.");
+  // }
 
   const fileResult = validateCsvFile(form);
 
