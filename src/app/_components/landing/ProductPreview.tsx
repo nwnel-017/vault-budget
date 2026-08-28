@@ -5,7 +5,6 @@ export default function ProductPreview() {
   return (
     <figure className={styles.productPreview} aria-label="Sample FlowVault dashboard showing total saved, total earned, total spent, category spending, and top categories">
       <div className={styles.previewGlow} aria-hidden="true" />
-      <div className={styles.importChip}><span aria-hidden="true" />Dashboard preview</div>
       <div className={styles.dashboardCard}>
         <div className={styles.dashboardToolbar}>
           <span aria-hidden="true">‹</span>
